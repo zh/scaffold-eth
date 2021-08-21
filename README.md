@@ -1,4 +1,4 @@
-# 🏗 Scaffold-ETH
+# 🏗 Scaffold-ETH  - 🌔 Moonshot Bots
 
 
 ```bash
