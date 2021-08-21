@@ -47,7 +47,7 @@ const { ethers } = require("ethers");
 */
 
 /// 📡 What chain are your contracts deployed to?
-const targetNetwork = NETWORKS.localhost; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
+const targetNetwork = NETWORKS.mainnet; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
 
 // 😬 Sorry for all the console logging
 const DEBUG = true;
@@ -106,7 +106,7 @@ const web3Modal = new Web3Modal({
           100:"https://dai.poa.network", // xDai
         },
       },
-      
+
     },
     portis: {
       display: {
@@ -425,49 +425,20 @@ function App(props) {
               }}
               to="/"
             >
-              YourContract
+              Mint
             </Link>
           </Menu.Item>
           <Menu.Item key="/hints">
             <Link
               onClick={() => {
-                setRoute("/hints");
+                setRoute("/contract");
               }}
-              to="/hints"
+              to="/contract"
             >
-              Hints
+              Contract
             </Link>
           </Menu.Item>
-          <Menu.Item key="/exampleui">
-            <Link
-              onClick={() => {
-                setRoute("/exampleui");
-              }}
-              to="/exampleui"
-            >
-              ExampleUI
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="/mainnetdai">
-            <Link
-              onClick={() => {
-                setRoute("/mainnetdai");
-              }}
-              to="/mainnetdai"
-            >
-              Mainnet DAI
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="/subgraph">
-            <Link
-              onClick={() => {
-                setRoute("/subgraph");
-              }}
-              to="/subgraph"
-            >
-              Subgraph
-            </Link>
-          </Menu.Item>
+
         </Menu>
 
         <Switch>
@@ -477,66 +448,24 @@ function App(props) {
                 this <Contract/> component will automatically parse your ABI
                 and give you a form to interact with it locally
             */}
+            <div style={{padding:32}}>
+              <Button type={"primary"} onClick={()=>{
 
+                tx( writeContracts.MoonshotBot.requestMint({value: ethers.utils.parseEther("0.001")}) )
+
+              }}>MINT</Button>
+            </div>
+          </Route>
+          <Route path="/contract">
             <Contract
-              name="YourContract"
+              name="MoonshotBot"
               signer={userSigner}
               provider={localProvider}
               address={address}
               blockExplorer={blockExplorer}
             />
           </Route>
-          <Route path="/hints">
-            <Hints
-              address={address}
-              yourLocalBalance={yourLocalBalance}
-              mainnetProvider={mainnetProvider}
-              price={price}
-            />
-          </Route>
-          <Route path="/exampleui">
-            <ExampleUI
-              address={address}
-              userSigner={userSigner}
-              mainnetProvider={mainnetProvider}
-              localProvider={localProvider}
-              yourLocalBalance={yourLocalBalance}
-              price={price}
-              tx={tx}
-              writeContracts={writeContracts}
-              readContracts={readContracts}
-              purpose={purpose}
-              setPurposeEvents={setPurposeEvents}
-            />
-          </Route>
-          <Route path="/mainnetdai">
-            <Contract
-              name="DAI"
-              customContract={mainnetContracts && mainnetContracts.contracts && mainnetContracts.contracts.DAI}
-              signer={userSigner}
-              provider={mainnetProvider}
-              address={address}
-              blockExplorer="https://etherscan.io/"
-            />
-            {/*
-            <Contract
-              name="UNI"
-              customContract={mainnetContracts && mainnetContracts.contracts && mainnetContracts.contracts.UNI}
-              signer={userSigner}
-              provider={mainnetProvider}
-              address={address}
-              blockExplorer="https://etherscan.io/"
-            />
-            */}
-          </Route>
-          <Route path="/subgraph">
-            <Subgraph
-              subgraphUri={props.subgraphUri}
-              tx={tx}
-              writeContracts={writeContracts}
-              mainnetProvider={mainnetProvider}
-            />
-          </Route>
+
         </Switch>
       </BrowserRouter>
 
