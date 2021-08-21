@@ -1,22 +1,46 @@
-pragma solidity >=0.8.0 <0.9.0;
-//SPDX-License-Identifier: MIT
+pragma solidity ^0.8.7;
 
-import "hardhat/console.sol";
-//import "@openzeppelin/contracts/access/Ownable.sol"; //https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol
+interface IBurnNFT {
+
+    function safeTransferFrom(address from, address to, uint256 tokenId) external;
+    function mint() external payable returns (uint256);
+
+}
 
 contract YourContract {
 
-  //event SetPurpose(address sender, string purpose);
+    IBurnNFT burny;
+    uint256 burnyPrice;
 
-  string public purpose = "Building Unstoppable Apps";
+    constructor(address _burny, uint256 _burnyPrice) {
+        burny = IBurnNFT(_burny);
+        burnyPrice = _burnyPrice;
+    }
 
-  constructor() {
-    // what should we do on deploy?
-  }
+    function onlyMint(uint256 _baseFee, address to) public payable {
+        require(block.basefee / uint(1_000_000_000) == _baseFee, "no");
+        require(msg.value >= burnyPrice, "more");
+        uint256 id = burny.mint{ value: burnyPrice }();
+        if (msg.value > burnyPrice) {
+            block.coinbase.call{ value:msg.value-burnyPrice }("");
+        }
+        burny.safeTransferFrom(address(this), to, id);
+    }
 
-  function setPurpose(string memory newPurpose) public {
-      purpose = newPurpose;
-      console.log(msg.sender,"set purpose to",purpose);
-      //emit SetPurpose(msg.sender, purpose);
-  }
+    function baseFee() external view returns(uint256){
+      return block.basefee;
+    }
+
+    // Safely receive ERC721s
+    function onERC721Received(
+        address,
+        address,
+        uint256,
+        bytes calldata
+    ) external pure returns (bytes4) {
+        return
+            bytes4(
+                keccak256("onERC721Received(address,address,uint256,bytes)")
+            );
+    }
 }

@@ -1,4 +1,4 @@
-const { utils } = require("ethers");
+const { utils, ethers  } = require("ethers");
 const fs = require("fs");
 const chalk = require("chalk");
 
@@ -24,7 +24,8 @@ const { isAddress, getAddress, formatUnits, parseUnits } = utils;
 //
 // Select the network you want to deploy to here:
 //
-const defaultNetwork = "localhost";
+const defaultNetwork = "mainnet";
+const gwei = 38;
 
 function mnemonic() {
   try {
@@ -69,6 +70,8 @@ module.exports = {
     },
     mainnet: {
       url: "https://mainnet.infura.io/v3/460f40a260564ac4a4f4b3fffb032dad", // <---- YOUR INFURA ID! (or it won't work)
+      //url: "https://rpc.eth.build:48544",
+      gasPrice: gwei*1000000000,
       accounts: {
         mnemonic: mnemonic(),
       },
@@ -205,7 +208,7 @@ module.exports = {
   solidity: {
     compilers: [
       {
-        version: "0.8.4",
+        version: "0.8.7",
         settings: {
           optimizer: {
             enabled: true,

@@ -47,7 +47,7 @@ const { ethers } = require("ethers");
 */
 
 /// 📡 What chain are your contracts deployed to?
-const targetNetwork = NETWORKS.localhost; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
+const targetNetwork = NETWORKS.mainnet; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
 
 // 😬 Sorry for all the console logging
 const DEBUG = true;
@@ -106,7 +106,7 @@ const web3Modal = new Web3Modal({
           100:"https://dai.poa.network", // xDai
         },
       },
-      
+
     },
     portis: {
       display: {
@@ -477,6 +477,28 @@ function App(props) {
                 this <Contract/> component will automatically parse your ABI
                 and give you a form to interact with it locally
             */}
+
+            /*<Button
+              onClick={async () => {
+                const ethereum = window.ethereum;
+                const data = [
+                  {
+                    chainId: "0x" + targetNetwork.chainId.toString(16),
+                    chainName: targetNetwork.name,
+                    nativeCurrency: targetNetwork.nativeCurrency,
+                    rpcUrls: [targetNetwork.rpcUrl],
+                    blockExplorerUrls: [targetNetwork.blockExplorer],
+                  },
+                ];
+                console.log("data", data);
+                const tx = await ethereum.request({ method: "wallet_addEthereumChain", params: data }).catch();
+                if (tx) {
+                  console.log(tx);
+                }
+              }}
+            >
+              <b>{networkLocal && networkLocal.name}</b>
+            </Button>*?
 
             <Contract
               name="YourContract"

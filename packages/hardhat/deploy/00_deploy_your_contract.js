@@ -1,6 +1,6 @@
 // deploy/00_deploy_your_contract.js
-
-//const { ethers } = require("hardhat");
+const axios = require('axios').default;
+const { ethers } = require("hardhat");
 
 module.exports = async ({ getNamedAccounts, deployments }) => {
   const { deploy } = deployments;
@@ -8,17 +8,30 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   await deploy("YourContract", {
     // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
     from: deployer,
-    //args: [ "Hello", ethers.utils.parseEther("1.5") ],
+    args: [ "0x18a808dd312736fc75eb967fc61990af726f04e4", ethers.utils.parseEther("0.01559") ],
     log: true,
   });
 
-  /*
-    // Getting a previously deployed contract
-    const YourContract = await ethers.getContract("YourContract", deployer);
-    await YourContract.setPurpose("Hello");
+  const targetBaseFeeNFT = 69
+  const range = 1
 
-    //const yourContract = await ethers.getContractAt('YourContract', "0xaAC799eC2d00C013f1F11c37E654e59B0429DF6A") //<-- if you want to instantiate a version of a contract at a specific address!
-  */
+  //to attempt in a loop: while yarn deploy; sleep 10; end
+
+  console.log("Attempting to mint with a baseFee of",targetBaseFeeNFT,"(will attempt within "+range+")")
+
+  const YourContract = await ethers.getContract("YourContract", deployer);
+  const currentFeeBN = await YourContract.baseFee()
+  const currentFee = currentFeeBN.div(1000000000).toNumber()
+  const diff = currentFee - targetBaseFeeNFT
+  console.log("currentFee",currentFee)
+  if(diff > -range && diff <= range){
+    console.log(currentFee,"is within range("+range+") of",targetBaseFeeNFT)
+    const gasPrice = parseInt((targetBaseFeeNFT*1.1)*1000000000)
+    let result = await YourContract.onlyMint(targetBaseFeeNFT,"0x34aA3F359A9D614239015126635CE7732c18fDF3",{value: ethers.utils.parseEther("0.019"), gasLimit: 200000, gasPrice: gasPrice});
+    console.log(result)
+  }else{
+    console.log("(out of range)")
+  }
 
   /*
   //If you want to send value to an address from the deployer
