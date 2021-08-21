@@ -1,4 +1,4 @@
-# 🏗 Scaffold-ETH
+# 🏗 Scaffold-ETH - 🔥 Burny Boy Wrapper
 
 > wraps burnyboys.com mint process in a baseFee check to target specific baseFees
 
