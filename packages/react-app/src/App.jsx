@@ -29,7 +29,7 @@ import {
   useUserSigner
 } from './hooks'
 // import Hints from './Hints'
-import { ExampleUI, Hints, Subgraph } from './views'
+import { ExampleUI, Hints, Subgraph } from './pages'
 
 const { ethers } = require('ethers')
 
@@ -43,7 +43,7 @@ const NETWORKCHECK = true
 // 🛰 providers
 if (DEBUG) console.log('📡 Connecting to Mainnet Ethereum')
 // const mainnetProvider = getDefaultProvider("mainnet", { infura: INFURA_ID, etherscan: ETHERSCAN_KEY, quorum: 1 });
-// const mainnetProvider = new InfuraProvider("mainnet",INFURA_ID);
+// const mainnetProvider = new InfuraProvider("mainnet", INFURA_ID);
 //
 // attempt to connect to our own scaffold eth rpc and if that fails fall back to infura...
 // Using StaticJsonRpcProvider as the chainId won't change see https://github.com/ethers-io/ethers.js/issues/901
