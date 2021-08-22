@@ -1,5 +1,5 @@
 import WalletConnectProvider from '@walletconnect/web3-provider'
-//import Torus from "@toruslabs/torus-embed"
+//import Torus from '@toruslabs/torus-embed'
 import WalletLink from 'walletlink'
 import { Alert, Button, Col, Menu, Row } from 'antd'
 import 'antd/dist/antd.css'
@@ -28,7 +28,7 @@ import {
   useOnBlock,
   useUserSigner
 } from './hooks'
-// import Hints from "./Hints";
+// import Hints from './Hints'
 import { ExampleUI, Hints, Subgraph } from './views'
 
 const { ethers } = require('ethers')
@@ -90,9 +90,7 @@ const walletLinkProvider = walletLink.makeWeb3Provider(
   1
 )
 
-/*
-  Web3 modal helps us "connect" external wallets:
-*/
+// Web3 modal helps us "connect" external wallets:
 const web3Modal = new Web3Modal({
   network: 'mainnet', // Optional. If using WalletConnect on xDai, change network to "xdai" and add RPC info below for xDai chain.
   cacheProvider: true, // optional
@@ -109,9 +107,11 @@ const web3Modal = new Web3Modal({
         }
       }
     },
-    /*torus: {
+    /*
+    torus: {
       package: Torus,
-    },*/
+    },
+    */
     'custom-walletlink': {
       display: {
         logo: 'https://play-lh.googleusercontent.com/PjoJoG27miSglVBXoXrxBSLveV6e3EeBPpNY55aiUUBM9Q1RCETKCOqdOkX2ZydqVf0',
@@ -152,10 +152,10 @@ function App(props) {
     }, 1)
   }
 
-  /* 💵 This hook will get the price of ETH from 🦄 Uniswap: */
-  const price = useExchangePrice(targetNetwork, mainnetProvider)
+  // 💵 This hook will get the price of ETH from 🦄 Uniswap:
+  const ethPriceDollar = useExchangePrice(targetNetwork, mainnetProvider)
 
-  /* 🔥 This hook will get the price of Gas from ⛽️ EtherGasStation */
+  // 🔥 This hook will get the price of Gas from ⛽️ EtherGasStation
   const gasPrice = useGasPrice(targetNetwork, 'fast')
   // Use your injected provider from 🦊 Metamask or if you don't have it then instantly generate a 🔥 burner wallet.
   const userSigner = useUserSigner(injectedProvider, localProvider)
@@ -458,10 +458,12 @@ function App(props) {
   }
 
   return (
-    <div className='App'>
+    <div id='App'>
       {/* ✏️ Edit the header and change the title to your project name */}
       <Header />
+
       {networkDisplay}
+
       <BrowserRouter>
         <Menu
           style={{ textAlign: 'center' }}
@@ -541,7 +543,7 @@ function App(props) {
               address={address}
               yourLocalBalance={yourLocalBalance}
               mainnetProvider={mainnetProvider}
-              price={price}
+              price={ethPriceDollar}
             />
           </Route>
           <Route path='/exampleui'>
@@ -551,7 +553,7 @@ function App(props) {
               mainnetProvider={mainnetProvider}
               localProvider={localProvider}
               yourLocalBalance={yourLocalBalance}
-              price={price}
+              price={ethPriceDollar}
               tx={tx}
               writeContracts={writeContracts}
               readContracts={readContracts}
@@ -611,7 +613,7 @@ function App(props) {
           localProvider={localProvider}
           userSigner={userSigner}
           mainnetProvider={mainnetProvider}
-          price={price}
+          price={ethPriceDollar}
           web3Modal={web3Modal}
           loadWeb3Modal={loadWeb3Modal}
           logoutOfWeb3Modal={logoutOfWeb3Modal}
@@ -632,7 +634,11 @@ function App(props) {
       >
         <Row align='middle' gutter={[4, 4]}>
           <Col span={8}>
-            <Ramp price={price} address={address} networks={NETWORKS} />
+            <Ramp
+              price={ethPriceDollar}
+              address={address}
+              networks={NETWORKS}
+            />
           </Col>
 
           <Col span={8} style={{ textAlign: 'center', opacity: 0.8 }}>
@@ -657,11 +663,11 @@ function App(props) {
         <Row align='middle' gutter={[4, 4]}>
           <Col span={24}>
             {
-              /*  if the local provider has a signer, let's show the faucet:  */
+              /* if the local provider has a signer, let's show the faucet: */
               faucetAvailable ? (
                 <Faucet
                   localProvider={localProvider}
-                  price={price}
+                  price={ethPriceDollar}
                   ensProvider={mainnetProvider}
                 />
               ) : (
