@@ -1,3 +1,7 @@
+VISON FOR THIS SCAFFOLD
+https://miro.com/app/board/o9J_l3HTcwQ=/
+
+
 # 🏗 Scaffold-ETH
 
 > everything you need to build on Ethereum! 🚀
