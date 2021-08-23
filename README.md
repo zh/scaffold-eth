@@ -93,9 +93,9 @@ Mint some NFTs that we can use to test out the Rarible protocol.
 > in a second terminal window:
 
 ```bash
-cd simple-nft-example
+cd scaffold-eth
 yarn generate
-yarn accounts
+yarn account
 ```
 
 🔐 Generate a deploy account with `yarn generate` and view it with `yarn account`
