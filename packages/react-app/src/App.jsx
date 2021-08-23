@@ -39,6 +39,7 @@ import {
   useUserProvider,
 } from "./hooks";
 import { matchSellOrder, prepareMatchingOrder } from "./rarible/createOrders";
+import { RARIBLE_BASE_URL } from "./constants";
 
 const { BufferList } = require("bl");
 // https://www.npmjs.com/package/ipfs-http-client
@@ -643,10 +644,10 @@ function App(props) {
                 setDownloading(true);
                 let sellOrderResult
                 if (tokenId) {
-                const getSellOrdersByItemUrl = `https://api-dev.rarible.com/protocol/v0.1/ethereum/order/orders/sell/byItem?contract=${collectionContract}&tokenId=${tokenId}&sort=LAST_UPDATE`;
+                const getSellOrdersByItemUrl = `${RARIBLE_BASE_URL}order/orders/sell/byItem?contract=${collectionContract}&tokenId=${tokenId}&sort=LAST_UPDATE`
                 sellOrderResult = await fetch(getSellOrdersByItemUrl);
                 } else {
-                const getSellOrderByCollectionUrl = `https://api-dev.rarible.com/protocol/v0.1/ethereum/order/orders/sell/byCollection?collection=${collectionContract}&sort=LAST_UPDATE`;
+                const getSellOrderByCollectionUrl = `${RARIBLE_BASE_URL}order/orders/sell/byCollection?collection=${collectionContract}&sort=LAST_UPDATE`;
                 sellOrderResult = await fetch(getSellOrderByCollectionUrl);
                 }
                 const resultJson = await sellOrderResult.json();

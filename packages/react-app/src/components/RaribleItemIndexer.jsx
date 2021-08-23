@@ -1,6 +1,7 @@
 import React from "react";
 import { Button, Input, List, Card } from "antd";
 import {AddressInput, Sell} from '.'
+import { RARIBLE_BASE_URL } from "../constants";
 
 export default function RaribleItemIndexer(props) {
   const [collectionContract, setCollectionContract] = React.useState();
@@ -36,7 +37,7 @@ export default function RaribleItemIndexer(props) {
         shape="round"
         type="primary"
         onClick={async () => {
-                const getItemMetaByIdUrl = `https://api-dev.rarible.com/protocol/v0.1/ethereum/nft/items/${collectionContract}:${tokenId}/meta`;
+                const getItemMetaByIdUrl = `${RARIBLE_BASE_URL}nft/items/${collectionContract}:${tokenId}/meta`
                 setDownloading(true);
                 const getItemMetaResult = await fetch(getItemMetaByIdUrl);
                 const metaResultJson = await getItemMetaResult.json();

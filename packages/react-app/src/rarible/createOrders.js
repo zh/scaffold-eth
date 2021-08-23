@@ -1,10 +1,11 @@
 import { utils } from "ethers";
+import { RARIBLE_BASE_URL } from "../constants";
 import { sign, getMessageHash } from "./order";
 
 const random = (min, max) => Math.floor(Math.random() * (max - min)) + min;
 
 async function prepareOrderMessage(form) {
-  const raribleEncodeOrderUrl = "https://api-dev.rarible.com/protocol/v0.1/ethereum/order/encoder/order";
+  const raribleEncodeOrderUrl = `${RARIBLE_BASE_URL}order/encoder/order`
   const res = await fetch(raribleEncodeOrderUrl, {
     method: "POST",
     headers: {
@@ -95,7 +96,7 @@ export const createSellOrder = async (type, provider, params) => {
       break;
   }
 
-  const raribleOrderUrl = "https://api-dev.rarible.com/protocol/v0.1/ethereum/order/orders";
+  const raribleOrderUrl = `${RARIBLE_BASE_URL}order/orders`
   const raribleOrderResult = await fetch(raribleOrderUrl, {
     method: "POST",
     headers: {
@@ -133,7 +134,7 @@ export const matchSellOrder = async (sellOrder, params) => {
 };
 
 export async function prepareMatchingOrder(sellOrder, accountAddress) {
-  const rariblePrepareTxUrl = `https://api-dev.rarible.com/protocol/v0.1/ethereum/order/orders/${sellOrder.hash}/prepareTx`
+  const rariblePrepareTxUrl = `${RARIBLE_BASE_URL}order/orders/${sellOrder.hash}/prepareTx`
   const res = await fetch(rariblePrepareTxUrl, {
     method: "POST",
     headers: {

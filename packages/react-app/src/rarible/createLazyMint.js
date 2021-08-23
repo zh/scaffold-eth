@@ -1,9 +1,10 @@
 import { utils } from "ethers";
 import { sign } from "./lazyMint";
+import { RARIBLE_BASE_URL } from "../constants";
 
 export async function generateTokenId(contract, minter) {
 	console.log("generating tokenId for", contract, minter)
-  const raribleTokenIdUrl = `https://api-dev.rarible.com/protocol/v0.1/ethereum/nft/collections/${contract}/generate_token_id?minter=${minter}`;
+  const raribleTokenIdUrl = `${RARIBLE_BASE_URL}nft/collections/${contract}/generate_token_id?minter=${minter}`
   const res = await fetch(raribleTokenIdUrl, {
     method: "GET",
     headers: {
@@ -35,7 +36,7 @@ export async function createLazyMint(tokenId, provider, contract, minter, ipfsHa
 }
 
 export async function putLazyMint(form) {
-  const raribleMintUrl = "https://api-dev.rarible.com/protocol/v0.1/ethereum/nft/mints"
+  const raribleMintUrl = `${RARIBLE_BASE_URL}nft/mints`
   const raribleMintResult = await fetch(raribleMintUrl, {
     method: "POST",
     headers: {
