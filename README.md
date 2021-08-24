@@ -38,7 +38,7 @@ yarn deploy
 ```
 
 
-If you open http://localhost:3000 you should see `YourContract.sol` displayed. 
+If we open http://localhost:3000 we should see `YourContract.sol` displayed. 
 
 <img width="1183" alt="Screen Shot 2021-08-24 at 12 28 21 PM" src="https://user-images.githubusercontent.com/22862292/130670337-0222dc8d-9fb5-4772-b1c1-04d79a389b97.png">
 
