@@ -1,26 +1,24 @@
-# 🏗 Scaffold-ETH
+# 🏗 Scaffold-ETH - new-contract
 
-> everything you need to build on Ethereum! 🚀
+> a quick tutorial on how to deploy and display a new contract with scaffold-eth 🚀
 
-🧪 Quickly experiment with Solidity using a frontend that adapts to your smart contract:
+So you've written a super sweet smart contract and want to quickly see it on the frontend. Let's learn how to throw it into scaffold-eth and begin playing blazing fast 🔥 Boom! Middle rolls!
 
-![image](https://user-images.githubusercontent.com/2653167/124158108-c14ca380-da56-11eb-967e-69cde37ca8eb.png)
-
-
-# 🏄‍♂️ Quick Start
+# 🏄‍♂️ new-contract
 
 Prerequisites: [Node](https://nodejs.org/en/download/) plus [Yarn](https://classic.yarnpkg.com/en/docs/install/) and [Git](https://git-scm.com/downloads)
 
-> clone/fork 🏗 scaffold-eth:
+> clone/fork 🏗 scaffold-eth and move to the new-contract branch:
 
 ```bash
-git clone https://github.com/austintgriffith/scaffold-eth.git
+git clone https://github.com/austintgriffith/scaffold-eth.git new-contract
+cd new-contract
+git checkout new-contract
 ```
 
 > install and start your 👷‍ Hardhat chain:
 
 ```bash
-cd scaffold-eth
 yarn install
 yarn chain
 ```
@@ -39,53 +37,54 @@ cd scaffold-eth
 yarn deploy
 ```
 
-🔏 Edit your smart contract `YourContract.sol` in `packages/hardhat/contracts`
+If you open http://localhost:3000 you should see `YourContract.sol` displayed. 
 
-📝 Edit your frontend `App.jsx` in `packages/react-app/src`
+<img width="1183" alt="Screen Shot 2021-08-24 at 12 28 21 PM" src="https://user-images.githubusercontent.com/22862292/130670337-0222dc8d-9fb5-4772-b1c1-04d79a389b97.png">
 
-💼 Edit your deployment scripts in `packages/hardhat/deploy`
+`YourContract.sol` lives in `packages/hardhat/contracts`
 
-📱 Open http://localhost:3000 to see the app
+Let's add a new contract. Begin by creating a new file `NewContract.sol` in `packages/hardhat/contracts`. 
 
-# 📚 Documentation
+We can easily populate the file by copy and pasting `YourContract.sol`, changing the contract name, and maybe changing the `purpose` variable. 
 
-Documentation, tutorials, challenges, and many more resources, visit: [docs.scaffoldeth.io](https://docs.scaffoldeth.io)
+```
+pragma solidity >=0.8.0 <0.9.0;
+//SPDX-License-Identifier: MIT
 
-# 🔭 Learning Solidity
+import "hardhat/console.sol";
+//import "@openzeppelin/contracts/access/Ownable.sol"; //https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol
 
-📕 Read the docs: https://docs.soliditylang.org
+contract NewContract {
 
-📚 Go through each topic from [solidity by example](https://solidity-by-example.org) editing `YourContract.sol` in **🏗 scaffold-eth**
+  //event SetPurpose(address sender, string purpose);
 
-- [Primitive Data Types](https://solidity-by-example.org/primitives/)
-- [Mappings](https://solidity-by-example.org/mapping/)
-- [Structs](https://solidity-by-example.org/structs/)
-- [Modifiers](https://solidity-by-example.org/function-modifier/)
-- [Events](https://solidity-by-example.org/events/)
-- [Inheritance](https://solidity-by-example.org/inheritance/)
-- [Payable](https://solidity-by-example.org/payable/)
-- [Fallback](https://solidity-by-example.org/fallback/)
+  string public purpose = "Learn Scaffold-eth";
 
-📧 Learn the [Solidity globals and units](https://solidity.readthedocs.io/en/v0.6.6/units-and-global-variables.html)
+  constructor() {
+    // what should we do on deploy?
+  }
 
-# 🛠 Buidl
+  function setPurpose(string memory newPurpose) public {
+      purpose = newPurpose;
+      console.log(msg.sender,"set purpose to",purpose);
+      //emit SetPurpose(msg.sender, purpose);
+  }
+}
+```
 
-Check out all the [active branches](https://github.com/austintgriffith/scaffold-eth/branches/active), [open issues](https://github.com/austintgriffith/scaffold-eth/issues), and join/fund the 🏰 [BuidlGuidl](https://BuidlGuidl.com)!
+Once we have saved `NewContract.sol` let's add it to our deployment in `packages/hardhat/deploy/00_deploy_your_contract.js`
 
-  
- - 🚤  [Follow the full Ethereum Speed Run](https://medium.com/@austin_48503/%EF%B8%8Fethereum-dev-speed-run-bd72bcba6a4c)
+<img width="725" alt="Screen Shot 2021-08-24 at 12 39 30 PM" src="https://user-images.githubusercontent.com/22862292/130671772-ebc29781-05a1-4ce5-b811-b44be4eac696.png">
 
+Now we can add a new `<Contract />` component to our frontend at the `"/"` path in our `App.jx` located at `packages/react-app/src`. 
 
- - 🎟  [Create your first NFT](https://github.com/austintgriffith/scaffold-eth/tree/simple-nft-example)
- - 🥩  [Build a staking smart contract](https://github.com/austintgriffith/scaffold-eth/tree/challenge-1-decentralized-staking)
- - 🏵  [Deploy a token and vendor](https://github.com/austintgriffith/scaffold-eth/tree/challenge-2-token-vendor)
- - 🎫  [Extend the NFT example to make a "buyer mints" marketplace](https://github.com/austintgriffith/scaffold-eth/tree/buyer-mints-nft)
- - 🎲  [Learn about commit/reveal](https://github.com/austintgriffith/scaffold-eth/tree/commit-reveal-with-frontend)
- - ✍️  [Learn how ecrecover works](https://github.com/austintgriffith/scaffold-eth/tree/signature-recover)
- - 👩‍👩‍👧‍👧  [Build a multi-sig that uses off-chain signatures](https://github.com/austintgriffith/scaffold-eth/tree/meta-multi-sig)
- - ⏳  [Extend the multi-sig to stream ETH](https://github.com/austintgriffith/scaffold-eth/tree/streaming-meta-multi-sig)
- - ⚖️  [Learn how a simple DEX works](https://medium.com/@austin_48503/%EF%B8%8F-minimum-viable-exchange-d84f30bd0c90)
- - 🦍  [Ape into learning!](https://github.com/austintgriffith/scaffold-eth/tree/aave-ape)
+<img width="513" alt="Screen Shot 2021-08-24 at 12 41 01 PM" src="https://user-images.githubusercontent.com/22862292/130671968-d9636179-e8cf-4d66-aae6-315bbc309b8d.png">
+
+Run `yarn deploy` to deploy `NewContract.sol` and we should see our new contract displayed on the frontend! 
+
+<img width="513" alt="Screen Shot 2021-08-24 at 12 41 01 PM" src="https://user-images.githubusercontent.com/22862292/130671968-d9636179-e8cf-4d66-aae6-315bbc309b8d.png">
+
+We've just learned how to quickly implement and deploy a new contract in scaffold-eth 🚀 We can start pulling in other contracts and playing with functionality blazing fast 🔥 Boom! Middle rolls! 
 
 # 💬 Support Chat
 
