@@ -37,11 +37,13 @@ cd new-contract
 yarn deploy
 ```
 
+
 If you open http://localhost:3000 you should see `YourContract.sol` displayed. 
 
 <img width="1183" alt="Screen Shot 2021-08-24 at 12 28 21 PM" src="https://user-images.githubusercontent.com/22862292/130670337-0222dc8d-9fb5-4772-b1c1-04d79a389b97.png">
 
-`YourContract.sol` lives in `packages/hardhat/contracts`
+
+`YourContract.sol` lives in `packages/hardhat/contracts`.
 
 Let's add a new contract. Begin by creating a new file `NewContract.sol` in `packages/hardhat/contracts`. 
 
@@ -72,17 +74,21 @@ contract NewContract {
 }
 ```
 
-Once we have saved `NewContract.sol` let's add it to our deployment in `packages/hardhat/deploy/00_deploy_your_contract.js`
+
+Once we have saved `NewContract.sol` let's add it to our deployment in `packages/hardhat/deploy/00_deploy_your_contract.js`.
 
 <img width="725" alt="Screen Shot 2021-08-24 at 12 39 30 PM" src="https://user-images.githubusercontent.com/22862292/130671772-ebc29781-05a1-4ce5-b811-b44be4eac696.png">
+
 
 Now we can add a new `<Contract />` component to our frontend at the `"/"` path in our `App.jx` located at `packages/react-app/src`. 
 
 <img width="513" alt="Screen Shot 2021-08-24 at 12 41 01 PM" src="https://user-images.githubusercontent.com/22862292/130671968-d9636179-e8cf-4d66-aae6-315bbc309b8d.png">
 
+
 Run `yarn deploy` to deploy `NewContract.sol` and we should see our new contract displayed on the frontend! 
 
 <img width="1192" alt="Screen Shot 2021-08-24 at 1 14 54 PM" src="https://user-images.githubusercontent.com/22862292/130676210-1cb41f08-ddfc-4355-9a2e-0f9024a5d743.png">
+
 
 We've just learned how to quickly implement and deploy a new contract in scaffold-eth 🚀 We can start pulling in other contracts and playing with functionality blazing fast 🔥 Boom! Middle rolls! 
 
