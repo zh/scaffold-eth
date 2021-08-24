@@ -2,7 +2,7 @@
 
 > a quick tutorial on how to deploy and display a new contract with scaffold-eth 🚀
 
-So you've written a super sweet smart contract and want to quickly see it on the frontend. Let's learn how to throw it into scaffold-eth and begin playing blazing fast 🔥 Boom! Middle rolls!
+So you've written a super sweet smart contract and want to quickly see it on the frontend. Let's learn how to throw it into scaffold-eth and begin playing with functionality blazing fast 🔥 Boom! Middle rolls!
 
 # 🏄‍♂️ new-contract
 
@@ -26,14 +26,14 @@ yarn chain
 > in a second terminal window, start your 📱 frontend:
 
 ```bash
-cd scaffold-eth
+cd new-contract
 yarn start
 ```
 
 > in a third terminal window, 🛰 deploy your contract:
 
 ```bash
-cd scaffold-eth
+cd new-contract
 yarn deploy
 ```
 
@@ -82,7 +82,7 @@ Now we can add a new `<Contract />` component to our frontend at the `"/"` path 
 
 Run `yarn deploy` to deploy `NewContract.sol` and we should see our new contract displayed on the frontend! 
 
-<img width="513" alt="Screen Shot 2021-08-24 at 12 41 01 PM" src="https://user-images.githubusercontent.com/22862292/130671968-d9636179-e8cf-4d66-aae6-315bbc309b8d.png">
+<img width="1192" alt="Screen Shot 2021-08-24 at 1 14 54 PM" src="https://user-images.githubusercontent.com/22862292/130676210-1cb41f08-ddfc-4355-9a2e-0f9024a5d743.png">
 
 We've just learned how to quickly implement and deploy a new contract in scaffold-eth 🚀 We can start pulling in other contracts and playing with functionality blazing fast 🔥 Boom! Middle rolls! 
 
