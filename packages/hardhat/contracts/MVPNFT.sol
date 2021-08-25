@@ -49,7 +49,6 @@ contract MVPNFT {
         return owner;
     }
 
-    //This is using austin's code from the TG to prevent reentrancy
     function safeTransferFrom(address _from, address _to, uint _tokenId, bytes memory data) public payable {
         require(msg.sender == owner || approved == msg.sender, "Msg.sender not allowed to transfer this NFT!");
         require(_from == owner && _from != address(0) && _tokenId == tokenId);
