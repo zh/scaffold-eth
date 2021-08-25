@@ -95,11 +95,8 @@ contract MVPNFT {
     }
 
     function getApproved(uint _tokenId) external view returns (address) {
-        if(_tokenId == tokenId){
-            return approved;
-        } else {
-            return address(0);
-        }
+        require(_tokenId == tokenId, "approved query for nonexistent token");
+        return approved;
     }
 
     function isApprovedForAll(address _owner, address _operator) external view returns (bool) {
