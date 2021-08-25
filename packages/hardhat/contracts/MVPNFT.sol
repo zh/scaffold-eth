@@ -45,11 +45,8 @@ contract MVPNFT {
     }
 
     function ownerOf(uint _tokenId) external view returns (address) {
-        if(_tokenId == tokenId) {
-            return owner;
-        } else {
-            return address(0);
-        }
+        require(_tokenId == tokenId, "owner query for nonexistent token");
+        return owner;
     }
 
     //This is using austin's code from the TG to prevent reentrancy
