@@ -10,9 +10,9 @@ const tryToDisplay = thing => {
       return "Ξ" + utils.formatUnits(thing, "ether");
     }
   }
-  if (thing && thing.indexOf && thing.indexOf("0x") === 0 && thing.length === 42) {
+  /*  if (thing && thing.indexOf && thing.indexOf("0x") === 0 && thing.length === 42) {
     return <Address address={thing} fontSize={22} />;
-  }
+  }*/
   return JSON.stringify(thing);
 };
 
