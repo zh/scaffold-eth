@@ -50,7 +50,7 @@ const { ethers } = require("ethers");
 const targetNetwork = NETWORKS.rinkeby; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
 
 // 😬 Sorry for all the console logging
-const DEBUG = true;
+const DEBUG = false;
 const NETWORKCHECK = true;
 
 // 🛰 providers
@@ -235,9 +235,24 @@ function App(props) {
   });
 
   // Then read your DAI balance like:
-  const myMainnetDAIBalance = useContractReader(mainnetContracts, "DAI", "balanceOf", [
-    "0x34aA3F359A9D614239015126635CE7732c18fDF3",
-  ]);
+  let myMainnetDAIBalance;
+
+  useEffect(() => {
+    const getTokenData = async () => {
+      let rawTokenURI = await readContracts.LootItems.uri(
+        "104490515208153018042839338659374127468295085559632604326251327038262701126009",
+      );
+
+      console.log(rawTokenURI);
+
+      if (rawTokenURI) {
+        const STARTS_WITH = "data:application/json;base64,";
+        let tokenURIJSON = JSON.parse(atob(rawTokenURI.slice(STARTS_WITH.length)));
+        console.log(tokenURIJSON);
+      }
+    };
+    if (readContracts) getTokenData();
+  }, [readContracts]);
 
   const transfers = useEventListener(readContracts, "LootItems", "TransferBatch", localProvider, 1);
 

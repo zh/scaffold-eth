@@ -377,7 +377,8 @@ contract LootItems is ERC1155 {
 
         string memory description = base;
         string memory suffix;
-        string[2] memory name;
+        string memory name;
+        string memory augmentation = '';
 
         if(tokenComponents[1] > 0) {
           suffix = suffixes[tokenComponents[1] - 1];
@@ -385,12 +386,12 @@ contract LootItems is ERC1155 {
         }
 
         if(tokenComponents[2] > 0) {
-        name[0] = namePrefixes[tokenComponents[2] - 1];
-        name[1] = nameSuffixes[tokenComponents[3] - 1];
+        name = string(abi.encodePacked(namePrefixes[tokenComponents[2] - 1], ' ', nameSuffixes[tokenComponents[3] - 1]));
         if (tokenComponents[4] > 0) {
-          description = string(abi.encodePacked(name[0], ' ', name[1], ' ', description, " +1"));
+          description = string(abi.encodePacked(name, ' ', description, " +1"));
+          augmentation = "+1";
         } else {
-          description = string(abi.encodePacked(name[0], ' ', name[1], ' ', description));
+          description = string(abi.encodePacked(name, ' ', description));
         }
       }
 
@@ -407,7 +408,8 @@ contract LootItems is ERC1155 {
 
         string memory json = string(abi.encodePacked('{"name": "', description, '", "description": "Unbundled loot items, from Loot.sol", "image": "data:image/svg+xml;base64,', Base64.encode(bytes(output)),
         '", "attributes": ',
-                            getAttributes(base, suffix, lootType, name, tokenComponents[4] > 0),'}'));
+                            getAttributes(base, suffix, lootType, name, augmentation),
+                            '}'));
 
         string memory encodedJson = Base64.encode(bytes(json));
         output = string(abi.encodePacked('data:application/json;base64,', encodedJson));
@@ -415,17 +417,30 @@ contract LootItems is ERC1155 {
         return output;
     }
 
-    function getAttributes(string memory base, string memory suffix, LootType lootType, string[2] memory name, bool augmentation) internal view returns (string memory) {
+    function getTrait(string memory _traitType, string memory _value) internal view returns (string memory) {
+
+      string memory empty = "";
+
+      if(keccak256(bytes(_value)) == keccak256(bytes(''))) {
+        return '';
+      } else {
+        return string(abi.encodePacked(',{"trait_type": "',
+        _traitType,
+        '", "value": "',
+        _value,
+        '"}'));
+      }
+    }
+
+    function getAttributes(string memory base, string memory suffix, LootType lootType, string memory name, string memory augmentation) internal view returns (string memory) {
+
       return string(abi.encodePacked('[{"trait_type": "item", "value": "',
                             base,
-                            '"},{"trait_type": "suffix", "value": "',
-                            suffix,
-                            '"},{"trait_type": "lootType", "value": "',
-                            lootTypeArray[uint(lootType)],
-                            '"},{"trait_type": "name", "value": "',
-                            string(abi.encodePacked(name[0], ' ', name[1])),
-                            '"},{"trait_type": "augmentation", "value": "',
-                            augmentation,
-                            '"}]'));
+                            '"}',
+                            getTrait('suffix',suffix),
+                            getTrait('lootType',lootTypeArray[uint(lootType)]),
+                            getTrait('name',name),
+                            getTrait('augmentation',augmentation),
+                            ']'));
     }
 }
