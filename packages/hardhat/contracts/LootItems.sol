@@ -22,20 +22,22 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 
 contract LootItems is ERC1155 {
 
-    ILootComponents lootComponents = ILootComponents(0x3eb43b1545a360d1D065CB7539339363dFD445F3);
-    IERC721 loot = IERC721(0xFF9C1b15B16263C61d017ee9F65C50e4AE0113D7);
+    ILootComponents lootComponents;
+    IERC721 loot;
 
     enum LootType { Weapon, Chest, Head, Waist, Foot, Hand, Neck, Ring }
 
     string[] lootTypeArray = ['weapon','chest','head','waist','foot','hand','neck','ring'];
     uint256[] amounts = new uint256[](8);
 
-    constructor() ERC1155('1155') {
+    constructor(address _loot, address _lootComponents) ERC1155('LootItems') {
 
       for (uint i=0; i<8; i++) {
         amounts[i] = 1;
       }
 
+      lootComponents = ILootComponents(_lootComponents);
+      loot = IERC721(_loot);
     }
 
     struct itemParams {
@@ -52,25 +54,18 @@ contract LootItems is ERC1155 {
       uint256[] memory tokenIds = new uint256[](8);
 
       tokenIds[0] = getID(lootComponents.weaponComponents(_tokenId), LootType.Weapon);
-
       tokenIds[1] = getID(lootComponents.chestComponents(_tokenId), LootType.Chest);
-
       tokenIds[2] = getID(lootComponents.headComponents(_tokenId), LootType.Head);
-
       tokenIds[3] = getID(lootComponents.waistComponents(_tokenId), LootType.Waist);
-
       tokenIds[4] = getID(lootComponents.footComponents(_tokenId), LootType.Foot);
-
       tokenIds[5] = getID(lootComponents.handComponents(_tokenId), LootType.Hand);
-
       tokenIds[6] = getID(lootComponents.neckComponents(_tokenId), LootType.Neck);
-
       tokenIds[7] = getID(lootComponents.ringComponents(_tokenId), LootType.Ring);
 
       return tokenIds;
     }
 
-    function unbundleLoot(uint256 _tokenId) public returns (uint256[8]  memory) {
+    function unbundleLoot(uint256 _tokenId) public {
 
       loot.transferFrom(msg.sender, address(this), _tokenId);
 
@@ -97,7 +92,7 @@ contract LootItems is ERC1155 {
     }
 
     function getID(uint256[5] memory _components, LootType _type) internal view returns (uint256) {
-      return uint256(keccak256(abi.encodePacked(_components, _type)));
+      return uint(keccak256(abi.encodePacked(_components, _type)));
     }
 
     function getChest(uint256 _tokenId) public view returns ( uint256[5]  memory ) {
@@ -401,7 +396,7 @@ contract LootItems is ERC1155 {
 
         string[3] memory parts;
 
-        parts[0] = '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet" viewBox="0 0 350 350"><style>.base { fill: white; font-family: serif; font-size: 14px; }</style><rect width="100%" height="100%" fill="black" /><text x="10" y="20" class="base">';
+        parts[0] = '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet" viewBox="0 0 350 350"><style>.base { fill: white; font-family: serif; font-size: 14px; }</style><rect width="100%" height="100%" fill="orange" /><text x="10" y="20" class="base">';
 
         parts[1] = description;
 
@@ -417,7 +412,7 @@ contract LootItems is ERC1155 {
         string memory encodedJson = Base64.encode(bytes(json));
         output = string(abi.encodePacked('data:application/json;base64,', encodedJson));
 
-        return json;
+        return output;
     }
 
     function getAttributes(string memory base, string memory suffix, LootType lootType, string[2] memory name, bool augmentation) internal view returns (string memory) {

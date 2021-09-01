@@ -275,8 +275,8 @@ contract LootComponents {
         return uint256(keccak256(abi.encodePacked(input)));
     }
 
-    function weaponComponents(uint256 tokenId) public view returns (uint256) {
-        return uint256(keccak256(abi.encodePacked(pluck(tokenId, "WEAPON", weapons))));
+    function weaponComponents(uint256 tokenId) public view returns (uint256[5] memory) {
+        return pluck(tokenId, "WEAPON", weapons);
     }
 
     function chestComponents(uint256 tokenId) public view returns (uint256[5] memory) {

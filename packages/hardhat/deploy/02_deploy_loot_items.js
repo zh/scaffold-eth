@@ -5,10 +5,15 @@ const { ethers } = require("hardhat");
 module.exports = async ({ getNamedAccounts, deployments, network }) => {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
+
+  const LOOT = await deployments.get("Loot");
+
+  const LOOTCOMPONENTS = await deployments.get("LootComponents");
+
   const lootItems = await deploy("LootItems", {
     // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
     from: deployer,
-    //args: [ "Hello", ethers.utils.parseEther("1.5") ],
+    args: [LOOT.address, LOOTCOMPONENTS.address],
     log: true,
   });
 
@@ -17,6 +22,7 @@ module.exports = async ({ getNamedAccounts, deployments, network }) => {
     const YourContract = await ethers.getContract("YourContract", deployer);
     await YourContract.setPurpose("Hello");
 */
+  /*
   const myAccount = "0xe09750abe36bea8b2236e48c84bb9da7ef5aa07c";
   const lootAddress = "0xff9c1b15b16263c61d017ee9f65c50e4ae0113d7";
 
