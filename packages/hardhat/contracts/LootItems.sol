@@ -443,4 +443,13 @@ contract LootItems is ERC1155 {
                             getTrait('augmentation',augmentation),
                             ']'));
     }
+
+    function contractURI() public view returns (string memory) {
+
+      string memory json = '{"name": "LootItems", "description": "Unbundled loot items, from Loot.sol"}';
+      string memory encodedJson = Base64.encode(bytes(json));
+      string memory output = string(abi.encodePacked('data:application/json;base64,', encodedJson));
+
+      return output;
+    }
 }

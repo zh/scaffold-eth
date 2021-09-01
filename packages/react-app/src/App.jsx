@@ -237,6 +237,7 @@ function App(props) {
   // Then read your DAI balance like:
   let myMainnetDAIBalance;
 
+  /*
   useEffect(() => {
     const getTokenData = async () => {
       let rawTokenURI = await readContracts.LootItems.uri(
@@ -263,6 +264,7 @@ function App(props) {
       }
     }
   }
+  */
 
   //
   // 🧫 DEBUG 👨🏻‍🔬
@@ -464,27 +466,7 @@ function App(props) {
               }}
               to="/"
             >
-              YourContract
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="/hints">
-            <Link
-              onClick={() => {
-                setRoute("/hints");
-              }}
-              to="/hints"
-            >
-              Hints
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="/subgraph">
-            <Link
-              onClick={() => {
-                setRoute("/subgraph");
-              }}
-              to="/subgraph"
-            >
-              Subgraph
+              Loot!
             </Link>
           </Menu.Item>
         </Menu>
