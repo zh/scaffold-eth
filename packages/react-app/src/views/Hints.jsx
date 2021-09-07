@@ -1,12 +1,12 @@
 import { utils } from "ethers";
 import { Select } from "antd";
 import React, { useState } from "react";
-import { Address, AddressInput } from "../components";
+import { AddressInput } from "../components";
 import { useTokenList } from "../hooks";
 
 const { Option } = Select;
 
-export default function Hints({ yourLocalBalance, mainnetProvider, price, address }) {
+export default function Hints({ yourLocalBalance, price }) {
   // Get a list of tokens from a tokenlist -> see tokenlists.org!
   const [selectedToken, setSelectedToken] = useState("Pick a token!");
   const listOfTokens = useTokenList(
@@ -130,7 +130,7 @@ export default function Hints({ yourLocalBalance, mainnetProvider, price, addres
         </span>
         component:
         <div style={{ width: 350, padding: 16, margin: "auto" }}>
-          <AddressInput ensProvider={mainnetProvider} />
+          <AddressInput />
         </div>
         <div>(try putting in your address, an ens address, or scanning a QR code)</div>
       </div>
@@ -151,17 +151,6 @@ export default function Hints({ yourLocalBalance, mainnetProvider, price, addres
           usePrice
         </span>{" "}
         hook with the current value: <b>${price}</b>
-      </div>
-
-      <div style={{ marginTop: 32 }}>
-        <span style={{ marginRight: 8 }}>💧</span>
-        use the <b>faucet</b> to send funds to
-        <span
-          className="highlight"
-          style={{ marginLeft: 4, /* backgroundColor: "#f9f9f9", */ padding: 4, borderRadius: 4, fontWeight: "bolder" }}
-        >
-          <Address address={address} minimized /> {address}
-        </span>
       </div>
 
       <div style={{ marginTop: 32 }}>
@@ -250,18 +239,6 @@ export default function Hints({ yourLocalBalance, mainnetProvider, price, addres
         </span>
       </div>
 
-      <div style={{ marginTop: 32 }}>
-        <span style={{ marginRight: 8 }}>💬</span>
-        for support, join this
-        <span
-          className="highlight"
-          style={{ marginLeft: 4, /* backgroundColor: "#f9f9f9", */ padding: 4, borderRadius: 4, fontWeight: "bolder" }}
-        >
-          <a target="_blank" rel="noopener noreferrer" href="https://t.me/joinchat/KByvmRe5wkR-8F_zz6AjpA">
-            Telegram Chat
-          </a>
-        </span>
-      </div>
       <div style={{ padding: 128 }}>
         🛠 Check out your browser&apos;s developer console for more... (inspect console) 🚀
       </div>
