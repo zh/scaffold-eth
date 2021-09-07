@@ -28,6 +28,7 @@
     "accounts": "yarn workspace @scaffold-eth/hardhat accounts",
     "balance": "yarn workspace @scaffold-eth/hardhat balance",
     "send": "yarn workspace @scaffold-eth/hardhat send",
+    "fund": "yarn workspace @scaffold-eth/hardhat fund",
     "ipfs": "yarn workspace @scaffold-eth/react-app ipfs",
     "surge": "yarn workspace @scaffold-eth/react-app surge",
     "s3": "yarn workspace @scaffold-eth/react-app s3",

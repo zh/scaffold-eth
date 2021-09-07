@@ -5,11 +5,11 @@ import React, { useCallback, useEffect, useState } from "react";
 import { BrowserRouter, Link, Route, Switch } from "react-router-dom";
 import Web3Modal from "web3modal";
 import "./App.css";
-import { Account, Contract, Header, ThemeSwitch, Faucet } from "./components";
+import { Account, Contract, Header, ThemeSwitch, Faucet, TokenBalance, Provider } from "./components";
 import { INFURA_ID, NETWORK, NETWORKS } from "./constants";
 import { Transactor } from "./helpers";
 import { useBalance, useContractLoader, useContractReader, useUserSigner } from "./hooks";
-import { ExampleUI, Hints } from "./views";
+import { Hints } from "./views";
 
 const { ethers } = require("ethers");
 /*
@@ -118,12 +118,6 @@ function App(props) {
 
   // If you want to make 🔐 write transactions to your contracts, use the userSigner:
   const writeContracts = useContractLoader(userSigner, { chainId: localChainId });
-
-  // keep track of a variable from the contract in the local React state:
-  const purpose = useContractReader(readContracts, "AwesomeToken", "balance");
-
-  // 📟 Listen for broadcast events
-  // const setPurposeEvents = useEventListener(readContracts, "YourContract", "SetPurpose", localProvider, 1);
 
   //
   // 🧫 DEBUG 👨🏻‍🔬
@@ -302,12 +296,14 @@ function App(props) {
             */}
 
             <Contract
+              title={"🎈 Scaffold Token"}
               name="ScaffoldToken"
               signer={userSigner}
               provider={localProvider}
               address={address}
               blockExplorer={blockExplorer}
               gasPrice={gasPrice}
+              show={["balanceOf", "approve", "transfer"]}
             />
           </Route>
           <Route path="/hints">
@@ -330,6 +326,18 @@ function App(props) {
           logoutOfWeb3Modal={logoutOfWeb3Modal}
           blockExplorer={blockExplorer}
         />
+        <TokenBalance name={"ScaffoldToken"} img={"🎈"} address={address} contracts={readContracts} />
+      </div>
+
+      <div style={{ position: "fixed", textAlign: "right", right: 0, bottom: 20, padding: 10 }}>
+        <Row align="middle" gutter={4}>
+          <Col span={6}>
+            <Provider name={"local"} provider={localProvider} />
+          </Col>
+          <Col span={8}>
+            <Provider name={"injected"} provider={injectedProvider} />
+          </Col>
+        </Row>
       </div>
 
       {/* 🗺 Extra UI like gas price, eth price, faucet, and support: */}
