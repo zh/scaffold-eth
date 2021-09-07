@@ -29,8 +29,7 @@ const deployerAddress = process.env.DEPLOYER;
 //
 // Select the network you want to deploy to here:
 //
-const mainnetGwei = 21;
-const smartbchFee = 1047000000;
+const smartbchFee = 1050000000;
 
 function mnemonic() {
   try {

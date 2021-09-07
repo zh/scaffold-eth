@@ -120,7 +120,7 @@ function App(props) {
   const writeContracts = useContractLoader(userSigner, { chainId: localChainId });
 
   // keep track of a variable from the contract in the local React state:
-  const purpose = useContractReader(readContracts, "YourContract", "purpose");
+  const purpose = useContractReader(readContracts, "AwesomeToken", "balance");
 
   // 📟 Listen for broadcast events
   // const setPurposeEvents = useEventListener(readContracts, "YourContract", "SetPurpose", localProvider, 1);
@@ -278,17 +278,7 @@ function App(props) {
               }}
               to="/"
             >
-              YourContract
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="/exampleui">
-            <Link
-              onClick={() => {
-                setRoute("/exampleui");
-              }}
-              to="/exampleui"
-            >
-              ExampleUI
+              Scaffold Token
             </Link>
           </Menu.Item>
           <Menu.Item key="/hints">
@@ -312,25 +302,12 @@ function App(props) {
             */}
 
             <Contract
-              name="YourContract"
+              name="ScaffoldToken"
               signer={userSigner}
               provider={localProvider}
               address={address}
               blockExplorer={blockExplorer}
               gasPrice={gasPrice}
-            />
-          </Route>
-          <Route path="/exampleui">
-            <ExampleUI
-              address={address}
-              userSigner={userSigner}
-              localProvider={localProvider}
-              yourLocalBalance={yourLocalBalance}
-              price={price}
-              tx={tx}
-              writeContracts={writeContracts}
-              readContracts={readContracts}
-              purpose={purpose}
             />
           </Route>
           <Route path="/hints">
