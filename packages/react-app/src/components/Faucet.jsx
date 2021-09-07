@@ -1,6 +1,5 @@
 import { SendOutlined } from "@ant-design/icons";
 import { Button, Input, Tooltip } from "antd";
-import { useLookupAddress } from "eth-hooks";
 import React, { useCallback, useState, useEffect } from "react";
 import Blockies from "react-blockies";
 import { Transactor } from "../helpers";
@@ -45,11 +44,14 @@ export default function Faucet(props) {
       if (props.localProvider) {
         const _faucetAddress = await props.localProvider.listAccounts();
         setFaucetAddress(_faucetAddress[0]);
-        //console.log(_faucetAddress);
+        if (props.signer) {
+          const _address = await props.signer.getAddress();
+          setAddress(_address);
+        }
       }
     };
     getFaucetAddress();
-  }, [props.localProvider]);
+  }, [props.localProvider, props.signer]);
 
   let blockie;
   if (address && typeof address.toLowerCase === "function") {
@@ -58,25 +60,13 @@ export default function Faucet(props) {
     blockie = <div />;
   }
 
-  const ens = useLookupAddress(props.ensProvider, address);
-
   const updateAddress = useCallback(
     async newValue => {
       if (typeof newValue !== "undefined") {
-        let address = newValue;
-        if (address.indexOf(".eth") > 0 || address.indexOf(".xyz") > 0) {
-          try {
-            const possibleAddress = await props.ensProvider.resolveName(address);
-            if (possibleAddress) {
-              address = possibleAddress;
-            }
-            // eslint-disable-next-line no-empty
-          } catch (e) {}
-        }
-        setAddress(address);
+        setAddress(newValue);
       }
     },
-    [props.ensProvider, props.onChange],
+    [props.onChange],
   );
 
   const tx = Transactor(props.localProvider);
@@ -87,8 +77,7 @@ export default function Faucet(props) {
         size="large"
         placeholder={props.placeholder ? props.placeholder : "local faucet"}
         prefix={blockie}
-        // value={address}
-        value={ens || address}
+        value={address}
         onChange={e => {
           // setAddress(e.target.value);
           updateAddress(e.target.value);
@@ -96,23 +85,18 @@ export default function Faucet(props) {
         suffix={
           <Tooltip title="Faucet: Send local ether to an address.">
             <Button
+              disabled={address === ""}
               onClick={() => {
                 tx({
                   to: address,
-                  value: utils.parseEther("0.01"),
+                  value: utils.parseEther("0.1"),
                 });
                 setAddress("");
               }}
               shape="circle"
               icon={<SendOutlined />}
             />
-            <Wallet
-              color="#888888"
-              provider={props.localProvider}
-              ensProvider={props.ensProvider}
-              price={props.price}
-              address={faucetAddress}
-            />
+            <Wallet color="#888888" provider={props.localProvider} price={props.price} address={faucetAddress} />
           </Tooltip>
         }
       />

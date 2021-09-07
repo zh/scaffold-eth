@@ -1,11 +1,11 @@
 import WalletConnectProvider from "@walletconnect/web3-provider";
-import { Alert, Button, Menu } from "antd";
+import { Alert, Button, Menu, Col, Row } from "antd";
 import "antd/dist/antd.css";
 import React, { useCallback, useEffect, useState } from "react";
 import { BrowserRouter, Link, Route, Switch } from "react-router-dom";
 import Web3Modal from "web3modal";
 import "./App.css";
-import { Account, Contract, Header, ThemeSwitch } from "./components";
+import { Account, Contract, Header, ThemeSwitch, Faucet } from "./components";
 import { INFURA_ID, NETWORK, NETWORKS } from "./constants";
 import { Transactor } from "./helpers";
 import { useBalance, useContractLoader, useContractReader, useUserSigner } from "./hooks";
@@ -23,8 +23,8 @@ const { ethers } = require("ethers");
 */
 
 /// 📡 What chain are your contracts deployed to?
-// const targetNetwork = NETWORKS.localhost; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
-const targetNetwork = NETWORKS.testnetSmartBCH;
+const targetNetwork = NETWORKS.localhost;
+// const targetNetwork = NETWORKS.testnetSmartBCH;
 
 // 😬 Sorry for all the console logging
 const DEBUG = false;
@@ -262,6 +262,8 @@ function App(props) {
     setRoute(window.location.pathname);
   }, [setRoute]);
 
+  const faucetAvailable = localProvider && localProvider.connection && targetNetwork.name.indexOf("local") !== -1;
+
   return (
     <div className="App">
       {/* ✏️ Edit the header and change the title to your project name */}
@@ -351,6 +353,18 @@ function App(props) {
           logoutOfWeb3Modal={logoutOfWeb3Modal}
           blockExplorer={blockExplorer}
         />
+      </div>
+
+      {/* 🗺 Extra UI like gas price, eth price, faucet, and support: */}
+      <div style={{ position: "fixed", textAlign: "left", left: 0, bottom: 20, padding: 10 }}>
+        <Row align="middle" gutter={[4, 4]}>
+          <Col span={24}>
+            {
+              /*  if the local provider has a signer, let's show the faucet:  */
+              faucetAvailable ? <Faucet signer={userSigner} localProvider={localProvider} price={price} /> : ""
+            }
+          </Col>
+        </Row>
       </div>
     </div>
   );
