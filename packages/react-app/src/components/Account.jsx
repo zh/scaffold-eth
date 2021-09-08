@@ -23,6 +23,8 @@ import Wallet from "./Wallet";
     loadWeb3Modal={loadWeb3Modal}
     logoutOfWeb3Modal={logoutOfWeb3Modal}
     blockExplorer={blockExplorer}
+    hideBalance={true/false}
+    hideWallet={true/false}
   />
 
   ~ Features ~
@@ -30,6 +32,8 @@ import Wallet from "./Wallet";
   - Provide address={address} and get balance corresponding to the given address
   - Provide localProvider={localProvider} to access balance on local network
   - Provide userProvider={userProvider} to display a wallet
+  - Provide showBalance={true/false} to show/hide balance (example: hide for contracts)
+  - Provide showWallet={true/false} to show/hide wallet (example: hide for contracts)
   - Provide mainnetProvider={mainnetProvider} and your address will be replaced by ENS name
               (ex. "0xa870" => "user.eth")
   - Provide price={price} of ether and get your balance converted to dollars
@@ -50,6 +54,8 @@ export default function Account({
   loadWeb3Modal,
   logoutOfWeb3Modal,
   blockExplorer,
+  showBalance = true,
+  showWallet = true,
 }) {
   const modalButtons = [];
   if (web3Modal) {
@@ -92,15 +98,17 @@ export default function Account({
       ) : (
         "Connecting..."
       )}
-      <Balance address={address} provider={localProvider} price={price} />
-      <Wallet
-        address={address}
-        provider={localProvider}
-        signer={userSigner}
-        ensProvider={mainnetProvider}
-        price={price}
-        color={currentTheme === "light" ? "#1890ff" : "#2caad9"}
-      />
+      {showBalance && <Balance address={address} provider={localProvider} price={price} />}
+      {showWallet && (
+        <Wallet
+          address={address}
+          provider={localProvider}
+          signer={userSigner}
+          ensProvider={mainnetProvider}
+          price={price}
+          color={currentTheme === "light" ? "#1890ff" : "#2caad9"}
+        />
+      )}
     </span>
   );
 

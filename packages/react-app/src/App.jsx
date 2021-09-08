@@ -7,7 +7,6 @@ import Web3Modal from "web3modal";
 import "./App.css";
 import { Account, Contract, Header, ThemeSwitch, Faucet, TokenBalance, Provider } from "./components";
 import { INFURA_ID, NETWORK, NETWORKS } from "./constants";
-import { Transactor } from "./helpers";
 import { useBalance, useContractLoader, useContractReader, useUserSigner } from "./hooks";
 import { Hints } from "./views";
 
@@ -23,8 +22,8 @@ const { ethers } = require("ethers");
 */
 
 /// 📡 What chain are your contracts deployed to?
-const targetNetwork = NETWORKS.localhost;
-// const targetNetwork = NETWORKS.testnetSmartBCH;
+// const targetNetwork = NETWORKS.localhost;
+const targetNetwork = NETWORKS.testnetSmartBCH;
 
 // 😬 Sorry for all the console logging
 const DEBUG = false;
@@ -103,10 +102,6 @@ function App(props) {
 
   // For more hooks, check out 🔗eth-hooks at: https://www.npmjs.com/package/eth-hooks
 
-  // The transactor wraps transactions and provides notificiations
-  // const tx = Transactor(userSigner, gasPrice);
-  const tx = Transactor(userSigner, gasPrice);
-
   // 🏗 scaffold-eth is full of handy hooks like this one to get your balance:
   const yourLocalBalance = useBalance(localProvider, address);
 
@@ -118,6 +113,8 @@ function App(props) {
 
   // If you want to make 🔐 write transactions to your contracts, use the userSigner:
   const writeContracts = useContractLoader(userSigner, { chainId: localChainId });
+
+  useContractReader(readContracts, "ScaffoldToken", "balance");
 
   //
   // 🧫 DEBUG 👨🏻‍🔬
@@ -294,7 +291,6 @@ function App(props) {
                 this <Contract/> component will automatically parse your ABI
                 and give you a form to interact with it locally
             */}
-
             <Contract
               title={"🎈 Scaffold Token"}
               name="ScaffoldToken"
@@ -303,7 +299,8 @@ function App(props) {
               address={address}
               blockExplorer={blockExplorer}
               gasPrice={gasPrice}
-              show={["balanceOf", "approve", "transfer"]}
+              chainId={localChainId}
+              show={["balanceOf", "transfer"]}
             />
           </Route>
           <Route path="/hints">
