@@ -58,7 +58,7 @@ module.exports = {
       url: "http://localhost:8545",
     },
     testnetSmartBCH: {
-      url: "http://35.220.203.194:8545",
+      url: "https://moeing.tech:9545", // "http://35.220.203.194:8545",
       chainId: 10001,
       gasPrice: smartbchFee,
       accounts: {
@@ -66,7 +66,7 @@ module.exports = {
       },
     },
     mainnetSmartBCH: {
-      url: "https://smartbch.greyh.at",
+      url: "https://smartbch.greyh.at", // "https://global.uat.cash",
       chainId: 10000,
       gasPrice: smartbchFee,
       accounts: {
