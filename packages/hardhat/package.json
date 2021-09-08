@@ -38,7 +38,7 @@
     "accounts": "hardhat accounts",
     "balance": "hardhat balance",
     "send": "hardhat send",
-    "fund": "hardhat run scripts/fund.js",
+    "fund": "hardhat fund",
     "generate": "hardhat generate",
     "account": "hardhat account",
     "etherscan-verify": "hardhat etherscan-verify --api-key PSW8C433Q667DVEX5BCRMGNAH9FSGFZ7Q8"

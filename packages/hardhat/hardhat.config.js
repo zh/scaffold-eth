@@ -378,6 +378,18 @@ function send(signer, txparams) {
   });
 }
 
+task("fund", "Send ERC-20 tokens")
+  .addParam("account", "The account's address")
+  .addOptionalParam("amount", "Amount of tokens to send")
+  .setAction(async (taskArgs, { ethers }) => {
+    console.log("\n\n 🎫 Minting to " + taskArgs.account + "...\n");
+
+    const { deployer } = await getNamedAccounts();
+    const scfToken = await ethers.getContract("ScaffoldToken", deployer);
+    const amount = taskArgs.amount ? parseInt(taskArgs.amount, 10) : 10
+    await scfToken.transfer(taskArgs.account, "" + amount * 10 ** 18);
+  });
+
 task("send", "Send ETH")
   .addParam("from", "From address or account index")
   .addOptionalParam("to", "To address or account index")

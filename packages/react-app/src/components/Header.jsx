@@ -6,7 +6,7 @@ import React from "react";
 export default function Header() {
   return (
     <a href="https://github.com/zh/scaffold-eth" target="_blank" rel="noopener noreferrer">
-      <PageHeader title="🏗 scaffold-bch" subTitle="forkable SmartBCH dev stack" style={{ cursor: "pointer" }} />
+      <PageHeader title="🎈 ERC-20 Wallet" style={{ cursor: "pointer" }} />
     </a>
   );
 }

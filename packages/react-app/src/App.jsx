@@ -2,13 +2,12 @@ import WalletConnectProvider from "@walletconnect/web3-provider";
 import { Alert, Button, Menu, Col, Row } from "antd";
 import "antd/dist/antd.css";
 import React, { useCallback, useEffect, useState } from "react";
-import { BrowserRouter, Link, Route, Switch } from "react-router-dom";
+import { HashRouter, Link, Route, Switch } from "react-router-dom";
 import Web3Modal from "web3modal";
 import "./App.css";
-import { Account, Contract, Header, ThemeSwitch, Faucet, TokenBalance, Provider } from "./components";
+import { Account, Contract, Header, ThemeSwitch, Faucet, TokenBalance } from "./components";
 import { INFURA_ID, NETWORK, NETWORKS } from "./constants";
 import { useBalance, useContractLoader, useContractReader, useUserSigner } from "./hooks";
-import { Hints } from "./views";
 
 const { ethers } = require("ethers");
 /*
@@ -22,8 +21,8 @@ const { ethers } = require("ethers");
 */
 
 /// 📡 What chain are your contracts deployed to?
-// const targetNetwork = NETWORKS.localhost;
-const targetNetwork = NETWORKS.testnetSmartBCH;
+const targetNetwork = NETWORKS.localhost;
+// const targetNetwork = NETWORKS.testnetSmartBCH;
 
 // 😬 Sorry for all the console logging
 const DEBUG = false;
@@ -260,7 +259,7 @@ function App(props) {
       {/* ✏️ Edit the header and change the title to your project name */}
       <Header />
       {networkDisplay}
-      <BrowserRouter>
+      <HashRouter>
         <Menu style={{ textAlign: "center" }} selectedKeys={[route]} mode="horizontal">
           <Menu.Item key="/">
             <Link
@@ -272,14 +271,14 @@ function App(props) {
               Scaffold Token
             </Link>
           </Menu.Item>
-          <Menu.Item key="/hints">
+          <Menu.Item key="/debugcontracts">
             <Link
               onClick={() => {
-                setRoute("/hints");
+                setRoute("/debugcontracts");
               }}
-              to="/hints"
+              to="/debugcontracts"
             >
-              Hints
+              Debug Contracts
             </Link>
           </Menu.Item>
         </Menu>
@@ -303,38 +302,41 @@ function App(props) {
               show={["balanceOf", "transfer"]}
             />
           </Route>
-          <Route path="/hints">
-            <Hints yourLocalBalance={yourLocalBalance} price={price} />
+          <Route path="/debugcontracts">
+            <Contract
+              name="ScaffoldToken"
+              signer={userSigner}
+              provider={localProvider}
+              address={address}
+              blockExplorer={blockExplorer}
+              gasPrice={gasPrice}
+              chainId={localChainId}
+            />
           </Route>
         </Switch>
-      </BrowserRouter>
+      </HashRouter>
 
       <ThemeSwitch />
 
       {/* 👨💼 Your account is in the top right with a wallet at connect options */}
       <div style={{ position: "fixed", textAlign: "right", right: 0, top: 0, padding: 10 }}>
-        <Account
-          address={address}
-          localProvider={localProvider}
-          userSigner={userSigner}
-          price={price}
-          web3Modal={web3Modal}
-          loadWeb3Modal={loadWeb3Modal}
-          logoutOfWeb3Modal={logoutOfWeb3Modal}
-          blockExplorer={blockExplorer}
-        />
-        <TokenBalance name={"ScaffoldToken"} img={"🎈"} address={address} contracts={readContracts} />
-      </div>
-
-      <div style={{ position: "fixed", textAlign: "right", right: 0, bottom: 20, padding: 10 }}>
-        <Row align="middle" gutter={4}>
-          <Col span={6}>
-            <Provider name={"local"} provider={localProvider} />
+        <Row>
+          <Col>
+            <TokenBalance name={"ScaffoldToken"} img={"🎈"} address={address} contracts={readContracts} />
           </Col>
-          <Col span={8}>
-            <Provider name={"injected"} provider={injectedProvider} />
+          <Col>
+            <Account
+              address={address}
+              localProvider={localProvider}
+              userSigner={userSigner}
+              price={price}
+              web3Modal={web3Modal}
+              loadWeb3Modal={loadWeb3Modal}
+              logoutOfWeb3Modal={logoutOfWeb3Modal}
+              blockExplorer={blockExplorer}
+            />
           </Col>
-        </Row>
+        </Row> 
       </div>
 
       {/* 🗺 Extra UI like gas price, eth price, faucet, and support: */}
