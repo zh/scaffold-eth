@@ -10,12 +10,13 @@ require("hardhat-deploy");
 require("@eth-optimism/hardhat-ovm");
 require("@nomiclabs/hardhat-ethers");
 
-require('dotenv').config();
+require("dotenv").config();
 
 const { isAddress, getAddress, formatUnits, parseUnits } = utils;
 
 const defaultNetwork = process.env.NETWORK || "localhost";
 const deployerAddress = process.env.DEPLOYER;
+const walletURL = process.env.WALLET_URL || "http://localhost:3000";
 
 /*
       📡 This is where you configure your deploy configuration for 🏗 scaffold-eth
@@ -117,6 +118,7 @@ module.exports = {
 };
 
 const DEBUG = false;
+const qrcode = require("qrcode-terminal");
 
 function debug(text) {
   if (DEBUG) {
@@ -127,8 +129,10 @@ function debug(text) {
 task("wallet", "Create a wallet (pk) link", async (_, { ethers }) => {
   const randomWallet = ethers.Wallet.createRandom();
   const privateKey = randomWallet._signingKey().privateKey;
+  const address = `${walletURL}/pk#${privateKey}`;
+  qrcode.generate(address, {small: true});
   console.log("🔐 WALLET Generated as " + randomWallet.address + "");
-  console.log("🔗 http://localhost:3000/pk#" + privateKey);
+  console.log(`🔗 ${address}`);
 });
 
 task("fundedwallet", "Create a wallet (pk) link and fund it with deployer?")
@@ -141,7 +145,7 @@ task("fundedwallet", "Create a wallet (pk) link and fund it with deployer?")
     const randomWallet = ethers.Wallet.createRandom();
     const privateKey = randomWallet._signingKey().privateKey;
     console.log("🔐 WALLET Generated as " + randomWallet.address + "");
-    let url = taskArgs.url ? taskArgs.url : "http://localhost:3000";
+    let url = taskArgs.url ? taskArgs.url : walletURL;
 
     let localDeployerMnemonic;
     try {
@@ -155,6 +159,7 @@ task("fundedwallet", "Create a wallet (pk) link and fund it with deployer?")
     const tx = {
       to: randomWallet.address,
       value: ethers.utils.parseEther(amount),
+      gasPrice: smartbchFee,
     };
 
     //SEND USING LOCAL DEPLOYER MNEMONIC IF THERE IS ONE
@@ -310,7 +315,6 @@ task(
     const address =
       "0x" + EthUtil.privateToAddress(wallet._privKey).toString("hex");
 
-    var qrcode = require("qrcode-terminal");
     qrcode.generate(address);
     console.log("📬 Deployer Account is " + address);
     for (let n in config.networks) {
