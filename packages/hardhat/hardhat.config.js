@@ -129,7 +129,7 @@ function debug(text) {
 task("wallet", "Create a wallet (pk) link", async (_, { ethers }) => {
   const randomWallet = ethers.Wallet.createRandom();
   const privateKey = randomWallet._signingKey().privateKey;
-  const address = `${walletURL}/#/pk/${privateKey}`;
+  const address = `${walletURL}/pk#/${privateKey}`;
   qrcode.generate(address, {small: true});
   console.log("🔐 WALLET Generated as " + randomWallet.address + "");
   console.log(`🔗 ${address}`);
@@ -187,7 +187,7 @@ task("fundedwallet", "Create a wallet (pk) link and fund it with deployer?")
           randomWallet.address +
           " using local node"
       );
-      console.log("\n" + url + "/pk#" + privateKey + "\n");
+      console.log("\n" + url + "/pk#/" + privateKey + "\n");
       return send(ethers.provider.getSigner(), tx);
     }
   });

@@ -30,7 +30,7 @@ const useUserSigner = (injectedProvider, localProvider) => {
     } else if (!localProvider) setSigner();
     else {
       if (window.location.pathname && window.location.pathname.indexOf("/pk") >= 0) {
-        const incomingPK = window.location.hash.replace("#", "");
+        const incomingPK = window.location.hash.replace("#/", "");
         let rawPK;
         if (incomingPK.length === 64 || incomingPK.length === 66) {
           console.log("🔑 Incoming Private Key...");

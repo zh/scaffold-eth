@@ -2,7 +2,7 @@ import WalletConnectProvider from "@walletconnect/web3-provider";
 import { useThemeSwitcher } from "react-css-theme-switcher";
 import { Alert, Button, Menu, Col, Row } from "antd";
 import "antd/dist/antd.css";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useParams } from "react";
 import { HashRouter, Link, Route, Switch } from "react-router-dom";
 import Web3Modal from "web3modal";
 import "./App.css";
@@ -288,7 +288,18 @@ function App(props) {
         </Menu>
 
         <Switch>
-          <Route exact path="/">
+          <Route path="/debugcontracts">
+            <Contract
+              name={contractName}
+              address={address}
+              signer={userSigner}
+              provider={localProvider}
+              blockExplorer={blockExplorer}
+              gasPrice={gasPrice}
+              chainId={localChainId}
+            />
+          </Route>
+          <Route path="/:pk?">
             <div style={{ width: 480, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
               <TokenWallet
                 name={contractName}
@@ -302,17 +313,6 @@ function App(props) {
                 color={currentTheme === "light" ? "#1890ff" : "#2caad9"}
               />
             </div>
-          </Route>
-          <Route path="/debugcontracts">
-            <Contract
-              name={contractName}
-              address={address}
-              signer={userSigner}
-              provider={localProvider}
-              blockExplorer={blockExplorer}
-              gasPrice={gasPrice}
-              chainId={localChainId}
-            />
           </Route>
         </Switch>
       </HashRouter>
