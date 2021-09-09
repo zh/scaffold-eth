@@ -130,6 +130,7 @@ export default function Wallet(props) {
         </div>
       );
     } else {
+      const url = process.env.WALLET_URL || "http://localhost:3000";
       const extraPkDisplayAdded = {};
       const extraPkDisplay = [];
       extraPkDisplayAdded[wallet.address] = true;
@@ -171,13 +172,13 @@ export default function Wallet(props) {
 
           <i>
             Point your camera phone at qr code to open in
-            <a target="_blank" href={"https://xdai.io/" + pk} rel="noopener noreferrer">
+            <a target="_blank" href={url + "/" + pk} rel="noopener noreferrer">
               burner wallet
             </a>
             :
           </i>
           <QR
-            value={"https://xdai.io/" + pk}
+            value={url + "/" + pk}
             size="450"
             level="H"
             includeMargin
@@ -186,7 +187,7 @@ export default function Wallet(props) {
           />
 
           <Paragraph style={{ fontSize: "16" }} copyable>
-            {"https://xdai.io/" + pk}
+            {url + "/" + pk}
           </Paragraph>
 
           {extraPkDisplay ? (

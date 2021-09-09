@@ -1,11 +1,12 @@
 import WalletConnectProvider from "@walletconnect/web3-provider";
+import { useThemeSwitcher } from "react-css-theme-switcher";
 import { Alert, Button, Menu, Col, Row } from "antd";
 import "antd/dist/antd.css";
 import React, { useCallback, useEffect, useState } from "react";
 import { HashRouter, Link, Route, Switch } from "react-router-dom";
 import Web3Modal from "web3modal";
 import "./App.css";
-import { Account, Contract, Header, ThemeSwitch, Faucet, TokenBalance } from "./components";
+import { Account, Contract, Faucet, Header, ThemeSwitch, TokenWallet } from "./components";
 import { INFURA_ID, NETWORK, NETWORKS } from "./constants";
 import { useBalance, useContractLoader, useContractReader, useUserSigner } from "./hooks";
 
@@ -253,6 +254,7 @@ function App(props) {
   }, [setRoute]);
 
   const faucetAvailable = localProvider && localProvider.connection && targetNetwork.name.indexOf("local") !== -1;
+  const { currentTheme } = useThemeSwitcher();
 
   return (
     <div className="App">
@@ -285,29 +287,25 @@ function App(props) {
 
         <Switch>
           <Route exact path="/">
-            {/*
-                🎛 this scaffolding is full of commonly used components
-                this <Contract/> component will automatically parse your ABI
-                and give you a form to interact with it locally
-            */}
-            <Contract
-              title={"🎈 Scaffold Token"}
-              name="ScaffoldToken"
-              signer={userSigner}
-              provider={localProvider}
-              address={address}
-              blockExplorer={blockExplorer}
-              gasPrice={gasPrice}
-              chainId={localChainId}
-              show={["balanceOf", "transfer"]}
-            />
+            <div style={{ width: 480, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
+              <TokenWallet
+                name="ScaffoldToken"
+                address={address}
+                signer={userSigner}
+                provider={localProvider}
+                readContracts={readContracts}
+                gasPrice={gasPrice}
+                chainId={localChainId}
+                color={currentTheme === "light" ? "#1890ff" : "#2caad9"}
+              />
+            </div>
           </Route>
           <Route path="/debugcontracts">
             <Contract
               name="ScaffoldToken"
+              address={address}
               signer={userSigner}
               provider={localProvider}
-              address={address}
               blockExplorer={blockExplorer}
               gasPrice={gasPrice}
               chainId={localChainId}
@@ -320,23 +318,16 @@ function App(props) {
 
       {/* 👨💼 Your account is in the top right with a wallet at connect options */}
       <div style={{ position: "fixed", textAlign: "right", right: 0, top: 0, padding: 10 }}>
-        <Row>
-          <Col>
-            <TokenBalance name={"ScaffoldToken"} img={"🎈"} address={address} contracts={readContracts} />
-          </Col>
-          <Col>
-            <Account
-              address={address}
-              localProvider={localProvider}
-              userSigner={userSigner}
-              price={price}
-              web3Modal={web3Modal}
-              loadWeb3Modal={loadWeb3Modal}
-              logoutOfWeb3Modal={logoutOfWeb3Modal}
-              blockExplorer={blockExplorer}
-            />
-          </Col>
-        </Row> 
+        <Account
+          address={address}
+          localProvider={localProvider}
+          userSigner={userSigner}
+          price={price}
+          web3Modal={web3Modal}
+          loadWeb3Modal={loadWeb3Modal}
+          logoutOfWeb3Modal={logoutOfWeb3Modal}
+          blockExplorer={blockExplorer}
+        />
       </div>
 
       {/* 🗺 Extra UI like gas price, eth price, faucet, and support: */}
