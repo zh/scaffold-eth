@@ -16,9 +16,10 @@ export default function TokenWallet(props) {
   const { name, provider, chainId } = props;
 
   const contracts = useContractLoader(provider, { chainId });
-  const contract = contracts ? contracts[name] : "";
+  const contract = contracts ? contracts[name] : null;
 
   const sendTokens = async () => {
+    if (!contract) return;
     let value;
     try {
       value = utils.parseEther("" + amount);
@@ -54,7 +55,7 @@ export default function TokenWallet(props) {
               Balance:
             </Col>
             <Col>
-              <TokenBalance name={"ScaffoldToken"} img={"🎈"} address={props.address} contracts={props.readContracts} />
+              <TokenBalance name={name} img={"🎈"} address={props.address} contracts={props.readContracts} />
             </Col>
           </Row>
         </div>
