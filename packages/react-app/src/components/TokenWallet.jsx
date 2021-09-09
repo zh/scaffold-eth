@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { SendOutlined } from "@ant-design/icons";
-import { Button, Col, Row, Tooltip } from "antd";
-import { notification } from "antd";
+import { Button, Col, Row, Tooltip, Card } from "antd";
 import { utils } from "ethers";
 import { useContractLoader } from "../hooks";
 import { Transactor } from "../helpers";
-// import Address from "./Address";
 import AddressInput from "./AddressInput";
-// import Balance from "./Balance";
 import EtherInput from "./EtherInput";
 import TokenBalance from "./TokenBalance";
 
@@ -42,48 +39,52 @@ export default function TokenWallet(props) {
   };
 
   return (
-    <Tooltip title="Send ERC-20 tokens">
-      <div>
-        <Row>
-          <Col
-            style={{
-              textAlign: "left",
-              opacity: 0.333,
-              paddingRight: 6,
-              fontSize: 24,
-            }}
-          >
-            Balance:
-          </Col>
-          <Col>
-            <TokenBalance name={"ScaffoldToken"} img={"🎈"} address={props.address} contracts={props.readContracts} />
-          </Col>
-        </Row>
-      </div>
-      <div>
+    <Card>
+      <Tooltip title="Send ERC-20 tokens">
         <div>
-          <AddressInput
-            autoFocus
-            ensProvider={props.ensProvider}
-            placeholder="to address"
-            address={toAddress}
-            onChange={setToAddress}
-          />
+          <Row>
+            <Col
+              style={{
+                textAlign: "left",
+                opacity: 0.333,
+                paddingRight: 8,
+                fontSize: 24,
+              }}
+            >
+              Balance:
+            </Col>
+            <Col>
+              <TokenBalance name={"ScaffoldToken"} img={"🎈"} address={props.address} contracts={props.readContracts} />
+            </Col>
+          </Row>
         </div>
         <div>
-          <EtherInput
-            price={props.price}
-            value={amount}
-            placeholder="Amount of tokens"
-            onChange={value => {
-              setAmount(value);
-            }}
-          />
+          <div>
+            <AddressInput
+              autoFocus
+              ensProvider={props.ensProvider}
+              placeholder="to address"
+              address={toAddress}
+              onChange={setToAddress}
+            />
+          </div>
+          <div>
+            <EtherInput
+              price={props.price}
+              value={amount}
+              placeholder="Amount of tokens"
+              onChange={value => {
+                setAmount(value);
+              }}
+            />
+          </div>
         </div>
-      </div>
-      <Button key="submit" type="primary" disabled={!amount || !toAddress} loading={false} onClick={sendTokens}>
-        <SendOutlined /> Send
-      </Button>
+        <div style={{ textAlign: "right", marginTop: 7 }}>
+          <Button key="submit" type="primary" disabled={!amount || !toAddress} loading={false} onClick={sendTokens}>
+            <SendOutlined /> Send
+          </Button>
+        </div>
     </Tooltip>
+    </Card>
   );
 }
