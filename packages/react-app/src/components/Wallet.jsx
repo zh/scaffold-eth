@@ -90,7 +90,7 @@ export default function Wallet(props) {
         </div>
         <QR
           value={selectedAddress}
-          size="450"
+          size={450}
           level="H"
           includeMargin
           renderAs="svg"
