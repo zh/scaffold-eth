@@ -75,6 +75,7 @@ export default function TokenWallet(props) {
         <div>
           <Row>
             <Col
+              span={8}
               style={{
                 textAlign: "left",
                 opacity: 0.333,
@@ -84,10 +85,11 @@ export default function TokenWallet(props) {
             >
               Balance:
             </Col>
-            <Col>
+            <Col span={12}>
               <TokenBalance name={name} img={"🎈"} address={props.address} contracts={props.readContracts} />
             </Col>
             <Col
+              span={4}
               style={{
                 textAlign: "right",
                 paddingLeft: 32,
