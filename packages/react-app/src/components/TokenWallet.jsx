@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { SendOutlined } from "@ant-design/icons";
 import { Button, Col, Row, Tooltip, Card } from "antd";
+import QR from "qrcode.react";
 import { utils } from "ethers";
 import { useContractLoader } from "../hooks";
 import { Transactor } from "../helpers";
@@ -60,6 +61,18 @@ export default function TokenWallet(props) {
           </Row>
         </div>
         <div>
+          <div>
+            {props.address && props.showQR && (
+              <QR
+                value={props.address}
+                size="450"
+                level="H"
+                includeMargin
+                renderAs="svg"
+                imageSettings={{ excavate: false }}
+              />
+            )}
+          </div>
           <div>
             <AddressInput
               autoFocus

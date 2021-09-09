@@ -298,6 +298,7 @@ function App(props) {
                 readContracts={readContracts}
                 gasPrice={gasPrice}
                 chainId={localChainId}
+                showQR={true}
                 color={currentTheme === "light" ? "#1890ff" : "#2caad9"}
               />
             </div>
