@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { SendOutlined } from "@ant-design/icons";
 import { Button, Col, Row, Tooltip, Card } from "antd";
 import { utils } from "ethers";
@@ -84,7 +84,7 @@ export default function TokenWallet(props) {
             <SendOutlined /> Send
           </Button>
         </div>
-    </Tooltip>
+      </Tooltip>
     </Card>
   );
 }

@@ -29,6 +29,8 @@ const targetNetwork = NETWORKS.localhost;
 const DEBUG = false;
 const NETWORKCHECK = true;
 
+const contractName = "ScaffoldToken";
+
 // 🛰 providers
 // 🏠 Your local provider is usually pointed at your local blockchain
 const localProviderUrl = targetNetwork.rpcUrl;
@@ -114,7 +116,7 @@ function App(props) {
   // If you want to make 🔐 write transactions to your contracts, use the userSigner:
   const writeContracts = useContractLoader(userSigner, { chainId: localChainId });
 
-  useContractReader(readContracts, "ScaffoldToken", "balance");
+  useContractReader(readContracts, contractName, "balance");
 
   //
   // 🧫 DEBUG 👨🏻‍🔬
@@ -289,7 +291,7 @@ function App(props) {
           <Route exact path="/">
             <div style={{ width: 480, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
               <TokenWallet
-                name="ScaffoldToken"
+                name={contractName}
                 address={address}
                 signer={userSigner}
                 provider={localProvider}
@@ -302,7 +304,7 @@ function App(props) {
           </Route>
           <Route path="/debugcontracts">
             <Contract
-              name="ScaffoldToken"
+              name={contractName}
               address={address}
               signer={userSigner}
               provider={localProvider}
