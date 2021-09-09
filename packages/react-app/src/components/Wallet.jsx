@@ -136,7 +136,7 @@ export default function Wallet(props) {
       extraPkDisplayAdded[wallet.address] = true;
       extraPkDisplay.push(
         <div style={{ fontSize: 16, padding: 2, backgroundStyle: "#89e789" }}>
-          <a href={"/pk#" + pk}>
+          <a href={"/#/pk/" + pk}>
             <Address minimized address={wallet.address} ensProvider={props.ensProvider} /> {wallet.address.substr(0, 6)}
           </a>
         </div>,
@@ -150,7 +150,7 @@ export default function Wallet(props) {
             extraPkDisplayAdded[pastwallet.address] = true;
             extraPkDisplay.push(
               <div style={{ fontSize: 16 }}>
-                <a href={"/pk#" + pastpk}>
+                <a href={"/#/pk/" + pastpk}>
                   <Address minimized address={pastwallet.address} ensProvider={props.ensProvider} />{" "}
                   {pastwallet.address.substr(0, 6)}
                 </a>
@@ -172,13 +172,13 @@ export default function Wallet(props) {
 
           <i>
             Point your camera phone at qr code to open in
-            <a target="_blank" href={url + "/" + pk} rel="noopener noreferrer">
+            <a target="_blank" href={url + "/#/pk/" + pk} rel="noopener noreferrer">
               burner wallet
             </a>
             :
           </i>
           <QR
-            value={url + "/" + pk}
+            value={url + "/#/pk/" + pk}
             size="450"
             level="H"
             includeMargin
@@ -187,7 +187,7 @@ export default function Wallet(props) {
           />
 
           <Paragraph style={{ fontSize: "16" }} copyable>
-            {url + "/" + pk}
+            {url + "/#/pk/" + pk}
           </Paragraph>
 
           {extraPkDisplay ? (
