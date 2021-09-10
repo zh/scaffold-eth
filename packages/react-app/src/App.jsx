@@ -3,6 +3,7 @@ import { useThemeSwitcher } from "react-css-theme-switcher";
 import { Alert, Button, Col, Row } from "antd";
 import "antd/dist/antd.css";
 import React, { useCallback, useEffect, useState } from "react";
+import { HashRouter, Link, Route, Switch } from "react-router-dom";
 import Web3Modal from "web3modal";
 import "./App.css";
 import { Account, Faucet, Header, ThemeSwitch, BigWallet } from "./components";
@@ -18,8 +19,8 @@ const { ethers } = require("ethers");
 
 /// 📡 What chain are your contracts deployed to?
 // const targetNetwork = NETWORKS.localhost;
-const targetNetwork = NETWORKS.testnetSmartBCH;
-// const targetNetwork = NETWORKS.mainnetSmartBCH;
+// const targetNetwork = NETWORKS.testnetSmartBCH;
+const targetNetwork = NETWORKS.mainnetSmartBCH;
 
 // 😬 Sorry for all the console logging
 const DEBUG = false;
@@ -259,9 +260,15 @@ function App(props) {
       {/* ✏️ Edit the header and change the title to your project name */}
       <Header />
       {networkDisplay}
-      <div style={{ width: 480, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
-        <BigWallet signer={userSigner} provider={localProvider} price={price} gasPrice={gasPrice} />
-      </div>
+      <HashRouter>
+        <Switch>
+          <Route exact path="/:pk?">
+            <div style={{ width: 480, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
+              <BigWallet signer={userSigner} provider={localProvider} price={price} gasPrice={gasPrice} />
+            </div>
+          </Route>
+        </Switch>
+      </HashRouter>
 
       <ThemeSwitch />
 

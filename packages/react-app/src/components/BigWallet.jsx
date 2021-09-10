@@ -40,7 +40,7 @@ export default function BigWallet(props) {
             level="H"
             includeMargin
             renderAs="svg"
-            imageSettings={{ src: logoURI, excavate: false, height: 32, width: 32 }}
+            imageSettings={{ src: logoURI, excavate: false, height: 48, width: 48 }}
           />
         )}
       </div>

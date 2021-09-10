@@ -10,7 +10,7 @@ import Balance from "./Balance";
 import EtherInput from "./EtherInput";
 
 const { Text, Paragraph } = Typography;
-const logoURI = "https://via.placeholder.com/32.png";
+const logoURI = "https://www.marketcap.cash/bch.svg";
 
 /*
   ~ What it does? ~
@@ -131,13 +131,12 @@ export default function Wallet(props) {
         </div>
       );
     } else {
-      const url = process.env.WALLET_URL || "http://localhost:3000";
       const extraPkDisplayAdded = {};
       const extraPkDisplay = [];
       extraPkDisplayAdded[wallet.address] = true;
       extraPkDisplay.push(
         <div style={{ fontSize: 16, padding: 2, backgroundStyle: "#89e789" }}>
-          <a href={"/" + pk}>
+          <a href={"/#/" + pk}>
             <Address minimized address={wallet.address} ensProvider={props.ensProvider} /> {wallet.address.substr(0, 6)}
           </a>
         </div>,
@@ -151,7 +150,7 @@ export default function Wallet(props) {
             extraPkDisplayAdded[pastwallet.address] = true;
             extraPkDisplay.push(
               <div style={{ fontSize: 16 }}>
-                <a href={"/" + pastpk}>
+                <a href={"/#/" + pastpk}>
                   <Address minimized address={pastwallet.address} ensProvider={props.ensProvider} />{" "}
                   {pastwallet.address.substr(0, 6)}
                 </a>
@@ -173,13 +172,13 @@ export default function Wallet(props) {
 
           <i>
             Point your camera phone at qr code to open in
-            <a target="_blank" href={url + "/" + pk} rel="noopener noreferrer">
+            <a target="_blank" href={"/#/" + pk} rel="noopener noreferrer">
               burner wallet
             </a>
             :
           </i>
           <QR
-            value={url + "/" + pk}
+            value={window.location.origin + "/#/" + pk}
             size="450"
             level="H"
             includeMargin
@@ -188,7 +187,7 @@ export default function Wallet(props) {
           />
 
           <Paragraph style={{ fontSize: "16" }} copyable>
-            {url + "/" + pk}
+            {window.location.origin + "/#/" + pk}
           </Paragraph>
 
           {extraPkDisplay ? (
