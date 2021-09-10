@@ -20,6 +20,7 @@ const { ethers } = require("ethers");
 /// 📡 What chain are your contracts deployed to?
 // const targetNetwork = NETWORKS.localhost;
 const targetNetwork = NETWORKS.testnetSmartBCH;
+// const targetNetwork = NETWORKS.mainnetSmartBCH;
 
 // 😬 Sorry for all the console logging
 const DEBUG = false;

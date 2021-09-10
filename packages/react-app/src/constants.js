@@ -29,7 +29,7 @@ export const NETWORKS = {
     name: "SmartBCH",
     color: "#ff8b9e",
     chainId: 10000,
-    rpcUrl: "https://smartbch.greyh.at", // "https://global.uat.cash",
+    rpcUrl: "https://global.uat.cash", // https://smartbch.greyh.at
     blockExplorer: "https://smartscan.cash/",
     gasPrice: 1050000000,
   },

@@ -30,10 +30,11 @@ export default function BigWallet(props) {
   return (
     <Card>
       <div style={{ textAlign: "center" }}>
-        <Balance size={64} address={selectedAddress} provider={props.provider} price={props.price} />
+        <Balance suffix="BCH" size={48} address={selectedAddress} provider={props.provider} price={props.price} />
       </div>
       <div>
-        {selectedAddress && (<QR
+        {selectedAddress && (
+          <QR
             value={selectedAddress}
             size={450}
             level="H"
