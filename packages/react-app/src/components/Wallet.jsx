@@ -10,6 +10,7 @@ import Balance from "./Balance";
 import EtherInput from "./EtherInput";
 
 const { Text, Paragraph } = Typography;
+const logoURI = "https://via.placeholder.com/32.png";
 
 /*
   ~ What it does? ~
@@ -94,7 +95,7 @@ export default function Wallet(props) {
           level="H"
           includeMargin
           renderAs="svg"
-          imageSettings={{ excavate: false }}
+          imageSettings={{ src: logoURI, excavate: false, height: 32, width: 32 }}
         />
       </div>
     );
@@ -245,7 +246,7 @@ export default function Wallet(props) {
 
     display = (
       <div>
-        <div style={inputStyle}>
+        <div style={inputStyle} key="address">
           <AddressInput
             autoFocus
             ensProvider={props.ensProvider}
@@ -254,7 +255,7 @@ export default function Wallet(props) {
             onChange={setToAddress}
           />
         </div>
-        <div style={inputStyle}>
+        <div style={inputStyle} key="ether">
           <EtherInput
             price={props.price}
             value={amount}

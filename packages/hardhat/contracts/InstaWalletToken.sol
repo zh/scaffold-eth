@@ -6,12 +6,16 @@ import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol";
 
-contract ScaffoldToken is ERC20, ERC20Burnable, Ownable, ERC20Permit {
-    constructor() ERC20("Scaffold Token", "SCF") ERC20Permit("Scaffold Token") {
-        _mint(msg.sender, 10000 * 10 ** decimals());
+contract InstaWalletToken is ERC20, ERC20Burnable, Ownable, ERC20Permit {
+    constructor() ERC20("Instant Wallet Token", "IWT") ERC20Permit("Instant Wallet Token") {
+        _mint(msg.sender, 1000000 * 10 ** decimals());
     }
 
     function mint(address to, uint256 amount) public onlyOwner {
         _mint(to, amount);
+    }
+
+    function decimals() public view virtual override returns (uint8) {
+        return 0;
     }
 }

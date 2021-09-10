@@ -9,7 +9,7 @@ export default function TokenBalance(props) {
   const tokenContract = props.contracts && props.contracts[props.name];
   const balance = useTokenBalance(tokenContract, props.address, 1777);
 
-  let floatBalance = parseFloat("0.00");
+  let floatBalance = parseInt(balance); // parseFloat("0.00")
 
   let usingBalance = balance;
 
@@ -18,12 +18,16 @@ export default function TokenBalance(props) {
   }
 
   if (usingBalance) {
+    /*
     const etherBalance = utils.formatEther(usingBalance);
     parseFloat(etherBalance).toFixed(2);
     floatBalance = parseFloat(etherBalance);
+    */
+    floatBalance = parseInt(usingBalance);
   }
 
-  let displayBalance = floatBalance.toFixed(4);
+  // let displayBalance = floatBalance.toFixed(4);
+  let displayBalance = floatBalance;
 
   if (props.dollarMultiplier && dollarMode) {
     displayBalance = "$" + (floatBalance * props.dollarMultiplier).toFixed(2);
@@ -41,7 +45,7 @@ export default function TokenBalance(props) {
         setDollarMode(!dollarMode);
       }}
     >
-      {props.img} {displayBalance}
+      {displayBalance} {props.img} {props.suffix}
     </span>
   );
 }

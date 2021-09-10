@@ -17,6 +17,7 @@ const { isAddress, getAddress, formatUnits, parseUnits } = utils;
 const defaultNetwork = process.env.NETWORK || "localhost";
 const deployerAddress = process.env.DEPLOYER;
 const walletURL = process.env.WALLET_URL || "http://localhost:3000";
+const tokensContract = "InstaWalletToken";
 
 /*
       📡 This is where you configure your deploy configuration for 🏗 scaffold-eth
@@ -138,14 +139,18 @@ task("wallet", "Create a wallet (pk) link", async (_, { ethers }) => {
 task("fundedwallet", "Create a wallet (pk) link and fund it with deployer?")
   .addOptionalParam(
     "amount",
-    "Amount of ETH to send to wallet after generating"
+    "Amount of BCH to send to wallet after generating"
+  )
+  .addOptionalParam(
+    "tokens",
+    "Amount of Tokens to send to wallet after generating"
   )
   .addOptionalParam("url", "URL to add pk to")
   .setAction(async (taskArgs, { network, ethers }) => {
     const randomWallet = ethers.Wallet.createRandom();
     const privateKey = randomWallet._signingKey().privateKey;
     console.log("🔐 WALLET Generated as " + randomWallet.address + "");
-    let url = taskArgs.url ? taskArgs.url : walletURL;
+    const url = taskArgs.url ? taskArgs.url : walletURL;
 
     let localDeployerMnemonic;
     try {
@@ -155,12 +160,25 @@ task("fundedwallet", "Create a wallet (pk) link and fund it with deployer?")
       /* do nothing - this file isn't always there */
     }
 
-    let amount = taskArgs.amount ? taskArgs.amount : "0.01";
+    const amount = taskArgs.amount ? taskArgs.amount : "0.01";
     const tx = {
       to: randomWallet.address,
       value: ethers.utils.parseEther(amount),
       gasPrice: smartbchFee,
     };
+
+    let successMsg = "💵 Sending " + amount + " BCH";
+    if (taskArgs.tokens) {
+      successMsg += " and " + taskArgs.tokens + " tokens";
+    }
+    successMsg += " to " + randomWallet.address;
+
+    if (taskArgs.tokens) {
+      const { deployer } = await getNamedAccounts();
+      const contract = await ethers.getContract(tokensContract, deployer);
+      const tokensAmount = parseInt(taskArgs.tokens, 10);
+      await contract.transfer(taskArgs.account, "" + tokensAmount); // decimals = 0, 10**decimals
+    }
 
     //SEND USING LOCAL DEPLOYER MNEMONIC IF THERE IS ONE
     // IF NOT SEND USING LOCAL HARDHAT NODE:
@@ -169,25 +187,11 @@ task("fundedwallet", "Create a wallet (pk) link and fund it with deployer?")
         localDeployerMnemonic
       );
       deployerWallet = deployerWallet.connect(ethers.provider);
-      console.log(
-        "💵 Sending " +
-          amount +
-          " ETH to " +
-          randomWallet.address +
-          " using deployer account"
-      );
-      let sendresult = await deployerWallet.sendTransaction(tx);
+      console.log(successMsg + " using deployer account");
+      await deployerWallet.sendTransaction(tx);
       console.log("\n" + url + "/#/pk/" + privateKey + "\n");
-      return;
     } else {
-      console.log(
-        "💵 Sending " +
-          amount +
-          " ETH to " +
-          randomWallet.address +
-          " using local node"
-      );
-      console.log("\n" + url + "/pk#/" + privateKey + "\n");
+      console.log(successMsg + " using local node");
       return send(ethers.provider.getSigner(), tx);
     }
   });
@@ -385,12 +389,12 @@ task("fund", "Send ERC-20 tokens")
     console.log("\n\n 🎫 Minting to " + taskArgs.account + "...\n");
 
     const { deployer } = await getNamedAccounts();
-    const scfToken = await ethers.getContract("ScaffoldToken", deployer);
+    const contract = await ethers.getContract(tokensContract, deployer);
     const amount = taskArgs.amount ? parseInt(taskArgs.amount, 10) : 10
-    await scfToken.transfer(taskArgs.account, "" + amount * 10 ** 18);
+    await contract.transfer(taskArgs.account, "" + amount); // decimals = 0, 10**decimals
   });
 
-task("send", "Send ETH")
+task("send", "Send BCH")
   .addParam("from", "From address or account index")
   .addOptionalParam("to", "To address or account index")
   .addOptionalParam("amount", "Amount to send in ether")

@@ -1,8 +1,8 @@
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { useThemeSwitcher } from "react-css-theme-switcher";
-import { Alert, Button, Menu, Col, Row } from "antd";
+import { Alert, Button, Col, Menu, Row } from "antd";
 import "antd/dist/antd.css";
-import React, { useCallback, useEffect, useState, useParams } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { HashRouter, Link, Route, Switch } from "react-router-dom";
 import Web3Modal from "web3modal";
 import "./App.css";
@@ -14,11 +14,7 @@ const { ethers } = require("ethers");
 /*
     Welcome to 🏗 scaffold-bch !
 
-    Code: https://github.com/zh/scaffold-eth
-
-    🌏 EXTERNAL CONTRACTS:
-    You can also bring in contract artifacts in `constants.js`
-    (and then use the `useExternalContractLoader()` hook!)
+    Code: https://github.com/zh/scaffold-eth , Branch: instawallet
 */
 
 /// 📡 What chain are your contracts deployed to?
@@ -29,7 +25,7 @@ const targetNetwork = NETWORKS.localhost;
 const DEBUG = false;
 const NETWORKCHECK = true;
 
-const contractName = "ScaffoldToken";
+const contractName = "InstaWalletToken";
 
 // 🛰 providers
 // 🏠 Your local provider is usually pointed at your local blockchain
@@ -264,41 +260,44 @@ function App(props) {
       <Header />
       {networkDisplay}
       <HashRouter>
-        <Menu style={{ textAlign: "center" }} selectedKeys={[route]} mode="horizontal">
-          <Menu.Item key="/">
-            <Link
-              onClick={() => {
-                setRoute("/");
-              }}
-              to="/"
-            >
-              Scaffold Token
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="/debugcontracts">
-            <Link
-              onClick={() => {
-                setRoute("/debugcontracts");
-              }}
-              to="/debugcontracts"
-            >
-              Debug Contracts
-            </Link>
-          </Menu.Item>
-        </Menu>
-
+        {DEBUG && (
+          <Menu style={{ textAlign: "center" }} selectedKeys={[route]} mode="horizontal">
+            <Menu.Item key="/">
+              <Link
+                onClick={() => {
+                  setRoute("/");
+                }}
+                to="/"
+              >
+                Scaffold Token
+              </Link>
+            </Menu.Item>
+            <Menu.Item key="/debugcontracts">
+              <Link
+                onClick={() => {
+                  setRoute("/debugcontracts");
+                }}
+                to="/debugcontracts"
+              >
+                Debug Contracts
+              </Link>
+            </Menu.Item>
+          </Menu>
+        )}
         <Switch>
-          <Route path="/debugcontracts">
-            <Contract
-              name={contractName}
-              address={address}
-              signer={userSigner}
-              provider={localProvider}
-              blockExplorer={blockExplorer}
-              gasPrice={gasPrice}
-              chainId={localChainId}
-            />
-          </Route>
+          {DEBUG && (
+            <Route path="/debugcontracts">
+              <Contract
+                name={contractName}
+                address={address}
+                signer={userSigner}
+                provider={localProvider}
+                blockExplorer={blockExplorer}
+                gasPrice={gasPrice}
+                chainId={localChainId}
+              />
+            </Route>
+          )}
           <Route path="/:pk?">
             <div style={{ width: 480, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
               <TokenWallet
@@ -309,7 +308,7 @@ function App(props) {
                 readContracts={readContracts}
                 gasPrice={gasPrice}
                 chainId={localChainId}
-                showQR={true}
+                showQR={false}
                 color={currentTheme === "light" ? "#1890ff" : "#2caad9"}
               />
             </div>

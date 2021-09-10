@@ -11,6 +11,7 @@ import TokenBalance from "./TokenBalance";
 import { useTokenList } from "../hooks";
 
 const DEBUG = true;
+const logoURI = "https://via.placeholder.com/32.png";
 
 export default function TokenWallet(props) {
   const { name, provider, chainId } = props;
@@ -24,13 +25,18 @@ export default function TokenWallet(props) {
 
   const sendTokens = async () => {
     if (!contract) return;
+
+    /*
     let value;
     try {
       value = utils.parseEther("" + amount);
     } catch (e) {
       // failed to parseEther, try something else
-      value = utils.parseEther("" + parseFloat(amount).toFixed(8));
+      // value = utils.parseEther("" + parseFloat(amount).toFixed(8));
+      value = utils.parseEther("" + parseInt(amount));
     }
+    */
+    const value = amount;
 
     try {
       const tx = Transactor(provider, props.gasPrice);
@@ -86,7 +92,13 @@ export default function TokenWallet(props) {
               Balance:
             </Col>
             <Col span={12}>
-              <TokenBalance name={name} img={"🎈"} address={props.address} contracts={props.readContracts} />
+              <TokenBalance
+                name={name}
+                img={"💰"}
+                suffix={"tokens"}
+                address={props.address}
+                contracts={props.readContracts}
+              />
             </Col>
             <Col
               span={4}
@@ -110,7 +122,7 @@ export default function TokenWallet(props) {
               level="H"
               includeMargin
               renderAs="svg"
-              imageSettings={{ excavate: false }}
+              imageSettings={{ src: logoURI, excavate: false, height: 32, width: 32 }}
             />
           )}
         </div>
