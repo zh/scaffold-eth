@@ -14,7 +14,7 @@ Prerequisites: [Node](https://nodejs.org/en/download/) plus [Yarn](https://class
 > clone/fork 🏗 scaffold-eth:
 
 ```bash
-git clone -b erc-20 https://github.com/zh/scaffold-eth.git scaffold-bch
+git clone -b instawallet https://github.com/zh/scaffold-eth.git instawallet
 ```
 
 > install and start your 👷‍ Hardhat chain:
