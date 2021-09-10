@@ -1,12 +1,12 @@
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { useThemeSwitcher } from "react-css-theme-switcher";
-import { Alert, Button, Col, Menu, Row } from "antd";
+import { Alert, Button, Col, Row } from "antd";
 import "antd/dist/antd.css";
 import React, { useCallback, useEffect, useState } from "react";
-import { HashRouter, Link, Route, Switch } from "react-router-dom";
+import { HashRouter, Route, Switch } from "react-router-dom";
 import Web3Modal from "web3modal";
 import "./App.css";
-import { Account, Contract, Faucet, Header, ThemeSwitch, TokenWallet } from "./components";
+import { Account, Faucet, Header, ThemeSwitch, BigWallet } from "./components";
 import { INFURA_ID, NETWORK, NETWORKS } from "./constants";
 import { useBalance, useContractLoader, useContractReader, useUserSigner } from "./hooks";
 
@@ -18,8 +18,8 @@ const { ethers } = require("ethers");
 */
 
 /// 📡 What chain are your contracts deployed to?
-const targetNetwork = NETWORKS.localhost;
-// const targetNetwork = NETWORKS.testnetSmartBCH;
+// const targetNetwork = NETWORKS.localhost;
+const targetNetwork = NETWORKS.testnetSmartBCH;
 
 // 😬 Sorry for all the console logging
 const DEBUG = false;
@@ -260,57 +260,10 @@ function App(props) {
       <Header />
       {networkDisplay}
       <HashRouter>
-        {DEBUG && (
-          <Menu style={{ textAlign: "center" }} selectedKeys={[route]} mode="horizontal">
-            <Menu.Item key="/">
-              <Link
-                onClick={() => {
-                  setRoute("/");
-                }}
-                to="/"
-              >
-                Scaffold Token
-              </Link>
-            </Menu.Item>
-            <Menu.Item key="/debugcontracts">
-              <Link
-                onClick={() => {
-                  setRoute("/debugcontracts");
-                }}
-                to="/debugcontracts"
-              >
-                Debug Contracts
-              </Link>
-            </Menu.Item>
-          </Menu>
-        )}
         <Switch>
-          {DEBUG && (
-            <Route path="/debugcontracts">
-              <Contract
-                name={contractName}
-                address={address}
-                signer={userSigner}
-                provider={localProvider}
-                blockExplorer={blockExplorer}
-                gasPrice={gasPrice}
-                chainId={localChainId}
-              />
-            </Route>
-          )}
           <Route path="/:pk?">
             <div style={{ width: 480, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
-              <TokenWallet
-                name={contractName}
-                address={address}
-                signer={userSigner}
-                provider={localProvider}
-                readContracts={readContracts}
-                gasPrice={gasPrice}
-                chainId={localChainId}
-                showQR={false}
-                color={currentTheme === "light" ? "#1890ff" : "#2caad9"}
-              />
+              <BigWallet signer={userSigner} provider={localProvider} price={price} gasPrice={gasPrice} />
             </div>
           </Route>
         </Switch>
@@ -325,6 +278,7 @@ function App(props) {
           localProvider={localProvider}
           userSigner={userSigner}
           price={price}
+          showBalance={false}
           web3Modal={web3Modal}
           loadWeb3Modal={loadWeb3Modal}
           logoutOfWeb3Modal={logoutOfWeb3Modal}

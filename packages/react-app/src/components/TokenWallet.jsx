@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { SendOutlined } from "@ant-design/icons";
 import { Button, Col, Row, Tooltip, Card } from "antd";
 import QR from "qrcode.react";
-import { utils } from "ethers";
 import { useContractLoader } from "../hooks";
 import { Transactor } from "../helpers";
 import AddressInput from "./AddressInput";
