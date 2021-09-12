@@ -8,7 +8,6 @@ export default function ExampleUI({
   purpose,
   setPurposeEvents,
   address,
-  mainnetProvider,
   localProvider,
   yourLocalBalance,
   price,
@@ -62,14 +61,7 @@ export default function ExampleUI({
         </div>
         <Divider />
         Your Address:
-        <Address address={address} ensProvider={mainnetProvider} fontSize={16} />
-        <Divider />
-        ENS Address Example:
-        <Address
-          address="0x34aA3F359A9D614239015126635CE7732c18fDF3" /* this will show as austingriffith.eth */
-          ensProvider={mainnetProvider}
-          fontSize={16}
-        />
+        <Address address={address} fontSize={16} />
         <Divider />
         {/* use utils.formatEther to display a BigNumber: */}
         <h2>Your Balance: {yourLocalBalance ? utils.formatEther(yourLocalBalance) : "..."}</h2>
@@ -85,7 +77,6 @@ export default function ExampleUI({
         Your Contract Address:
         <Address
           address={readContracts && readContracts.YourContract ? readContracts.YourContract.address : null}
-          ensProvider={mainnetProvider}
           fontSize={16}
         />
         <Divider />
@@ -162,7 +153,7 @@ export default function ExampleUI({
           renderItem={item => {
             return (
               <List.Item key={item.blockNumber + "_" + item.sender + "_" + item.purpose}>
-                <Address address={item[0]} ensProvider={mainnetProvider} fontSize={16} />
+                <Address address={item[0]} fontSize={16} />
                 {item[1]}
               </List.Item>
             );

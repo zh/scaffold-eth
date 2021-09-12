@@ -10,6 +10,7 @@ import Balance from "./Balance";
 import EtherInput from "./EtherInput";
 
 const { Text, Paragraph } = Typography;
+const logoURI = "https://www.marketcap.cash/bch.svg";
 
 /*
   ~ What it does? ~
@@ -90,11 +91,11 @@ export default function Wallet(props) {
         </div>
         <QR
           value={selectedAddress}
-          size="450"
+          size={450}
           level="H"
           includeMargin
           renderAs="svg"
-          imageSettings={{ excavate: false }}
+          imageSettings={{ src: logoURI, excavate: false, height: 32, width: 32 }}
         />
       </div>
     );
@@ -135,7 +136,7 @@ export default function Wallet(props) {
       extraPkDisplayAdded[wallet.address] = true;
       extraPkDisplay.push(
         <div style={{ fontSize: 16, padding: 2, backgroundStyle: "#89e789" }}>
-          <a href={"/pk#" + pk}>
+          <a href={"/#/" + pk}>
             <Address minimized address={wallet.address} ensProvider={props.ensProvider} /> {wallet.address.substr(0, 6)}
           </a>
         </div>,
@@ -149,7 +150,7 @@ export default function Wallet(props) {
             extraPkDisplayAdded[pastwallet.address] = true;
             extraPkDisplay.push(
               <div style={{ fontSize: 16 }}>
-                <a href={"/pk#" + pastpk}>
+                <a href={"/#/" + pastpk}>
                   <Address minimized address={pastwallet.address} ensProvider={props.ensProvider} />{" "}
                   {pastwallet.address.substr(0, 6)}
                 </a>
@@ -171,13 +172,13 @@ export default function Wallet(props) {
 
           <i>
             Point your camera phone at qr code to open in
-            <a target="_blank" href={"https://xdai.io/" + pk} rel="noopener noreferrer">
+            <a target="_blank" href={"/#/" + pk} rel="noopener noreferrer">
               burner wallet
             </a>
             :
           </i>
           <QR
-            value={"https://xdai.io/" + pk}
+            value={window.location.origin + "/#/" + pk}
             size="450"
             level="H"
             includeMargin
@@ -186,7 +187,7 @@ export default function Wallet(props) {
           />
 
           <Paragraph style={{ fontSize: "16" }} copyable>
-            {"https://xdai.io/" + pk}
+            {window.location.origin + "/#/" + pk}
           </Paragraph>
 
           {extraPkDisplay ? (
@@ -244,7 +245,7 @@ export default function Wallet(props) {
 
     display = (
       <div>
-        <div style={inputStyle}>
+        <div style={inputStyle} key="address">
           <AddressInput
             autoFocus
             ensProvider={props.ensProvider}
@@ -253,7 +254,7 @@ export default function Wallet(props) {
             onChange={setToAddress}
           />
         </div>
-        <div style={inputStyle}>
+        <div style={inputStyle} key="ether">
           <EtherInput
             price={props.price}
             value={amount}

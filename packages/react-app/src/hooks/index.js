@@ -1,4 +1,5 @@
 export { default as useBalance } from "./Balance";
+export { default as useContractConfig } from "./ContractConfig";
 export { default as useContractExistsAtAddress } from "./ContractExistsAtAddress";
 export { default as useContractLoader } from "./ContractLoader";
 export { default as useContractReader } from "./ContractReader";

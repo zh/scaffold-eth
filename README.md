@@ -1,6 +1,6 @@
-# 🏗 Scaffold-ETH
+# 🏗 Scaffold-BCH
 
-> everything you need to build on Ethereum! 🚀
+> everything you need to build on SmartBCH! 🚀
 
 🧪 Quickly experiment with Solidity using a frontend that adapts to your smart contract:
 
@@ -14,13 +14,13 @@ Prerequisites: [Node](https://nodejs.org/en/download/) plus [Yarn](https://class
 > clone/fork 🏗 scaffold-eth:
 
 ```bash
-git clone https://github.com/austintgriffith/scaffold-eth.git
+git clone -b smartbch https://github.com/zh/scaffold-eth.git smartbch
 ```
 
 > install and start your 👷‍ Hardhat chain:
 
 ```bash
-cd scaffold-eth
+cd scaffold-bch
 yarn install
 yarn chain
 ```
@@ -28,20 +28,29 @@ yarn chain
 > in a second terminal window, start your 📱 frontend:
 
 ```bash
-cd scaffold-eth
+cd scaffold-bch
 yarn start
 ```
 
 > in a third terminal window, 🛰 deploy your contract:
 
 ```bash
-cd scaffold-eth
+cd scaffold-bch
 yarn deploy
+
+// deploy on testnet
+yarn deploy --network testnetSmartBCH
 ```
 
 🔏 Edit your smart contract `YourContract.sol` in `packages/hardhat/contracts`
 
 📝 Edit your frontend `App.jsx` in `packages/react-app/src`
+
+For using with SmartBCH testnet change target network:
+
+```js
+const targetNetwork = NETWORKS.testnetSmartBCH;
+```
 
 💼 Edit your deployment scripts in `packages/hardhat/deploy`
 
@@ -72,7 +81,7 @@ Documentation, tutorials, challenges, and many more resources, visit: [docs.scaf
 
 Check out all the [active branches](https://github.com/austintgriffith/scaffold-eth/branches/active), [open issues](https://github.com/austintgriffith/scaffold-eth/issues), and join/fund the 🏰 [BuidlGuidl](https://BuidlGuidl.com)!
 
-  
+
  - 🚤  [Follow the full Ethereum Speed Run](https://medium.com/@austin_48503/%EF%B8%8Fethereum-dev-speed-run-bd72bcba6a4c)
 
 

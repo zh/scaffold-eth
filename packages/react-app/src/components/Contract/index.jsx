@@ -2,6 +2,7 @@ import { Card } from "antd";
 import React, { useMemo, useState } from "react";
 import { useContractExistsAtAddress, useContractLoader } from "../../hooks";
 import Account from "../Account";
+import AddTokenLogo from "../AddTokenLogo";
 import DisplayVariable from "./DisplayVariable";
 import FunctionForm from "./FunctionForm";
 
@@ -65,12 +66,13 @@ export default function Contract({
 
   const address = contract ? contract.address : "";
   const contractIsDeployed = useContractExistsAtAddress(provider, address);
+  const canAddLogo = chainId === 10000 || chainId === 10001; // SmartBCH
 
   const displayedContractFunctions = useMemo(
     () =>
       contract
         ? Object.values(contract.interface.functions).filter(
-            fn => fn.type === "function" && !(show && show.indexOf(fn.name) < 0),
+            fn => fn.type === "function" && fn.name !== `DOMAIN_SEPARATOR` && !(show && show.indexOf(fn.name) < 0),
           )
         : [],
     [contract, show],
@@ -109,6 +111,7 @@ export default function Contract({
 
   return (
     <div style={{ margin: "auto", width: "70vw" }}>
+      {canAddLogo && <AddTokenLogo contract={contract} provider={provider} />}
       <Card
         title={
           <div>
@@ -121,6 +124,8 @@ export default function Contract({
                 mainnetProvider={provider}
                 price={price}
                 blockExplorer={blockExplorer}
+                showWallet={false}
+                showBalance={false}
               />
               {account}
             </div>

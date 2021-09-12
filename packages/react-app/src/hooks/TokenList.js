@@ -18,7 +18,7 @@ import { useEffect, useState } from "react";
 const useTokenList = (tokenListUri, chainId) => {
   const [tokenList, setTokenList] = useState([]);
 
-  const _tokenListUri = tokenListUri || "https://gateway.ipfs.io/ipns/tokens.uniswap.org";
+  const _tokenListUri = tokenListUri || "https://zh.thedev.id/sep20tokens/smartbch.tokenlist.json";
 
   useEffect(() => {
     const getTokenList = async () => {
@@ -26,17 +26,17 @@ const useTokenList = (tokenListUri, chainId) => {
         try {
           const tokenList = await fetch(_tokenListUri);
           const tokenListJson = await tokenList.json();
-          let _tokenList;
 
+          let _tokenList;
           if (chainId) {
-            _tokenList = tokenListJson.tokens.filter(function (t) {
+            _tokenList = Object.values(tokenListJson.tokens).filter(function (t) {
               return t.chainId === chainId;
             });
           } else {
-            _tokenList = tokenListJson;
+            _tokenList = tokenListJson.tokens;
           }
 
-          setTokenList(_tokenList.tokens);
+          setTokenList(_tokenList);
         } catch (e) {
           console.log(e);
         }
@@ -45,7 +45,7 @@ const useTokenList = (tokenListUri, chainId) => {
     getTokenList();
   }, [tokenListUri]);
 
-  return tokenList;
+  return tokenList || [];
 };
 
 export default useTokenList;
