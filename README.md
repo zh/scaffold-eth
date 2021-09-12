@@ -1,4 +1,4 @@
-# 🏗 Scaffold-AVA, (Example for ERC-20 tokens wallet)
+# 🏗 Scaffold-AVA, ERC-20 Token example
 
 > everything you need to build on Avalanche! 🚀
 
