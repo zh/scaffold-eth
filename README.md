@@ -1,6 +1,6 @@
 # 🏗 Scaffold-BC,Simple DEX with AMM example
 
-> AMM for a simgle token! 🚀
+> AMM for a single ERC-20 token! 🚀
 
 🧪 Quickly experiment with Solidity using a frontend that adapts to your smart contract:
 
