@@ -1,4 +1,4 @@
-# 🏗 Scaffold-BC, SEP-20 Token example
+# 🏗 Scaffold-BHC, SEP-20 Token example
 
 > everything you need to build on SmartBCH! 🚀
 
