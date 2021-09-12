@@ -6,7 +6,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { HashRouter, Route, Switch } from "react-router-dom";
 import Web3Modal from "web3modal";
 import "./App.css";
-import { Account, BigWallet, Faucet, Header, NetworkSelect, ThemeSwitch } from "./components";
+import { Account, BigWallet, Faucet, Header, NetworkSelect, Ramp, ThemeSwitch } from "./components";
 import { FIAT_PRICE, INFURA_ID, NETWORKS } from "./constants";
 import { useBalance, useContractLoader, useUserSigner, useExchangePrice } from "./hooks";
 
@@ -215,6 +215,7 @@ function App(props) {
 
       {/* 🗺 Extra UI like gas price, eth price, faucet, and support: */}
       <div style={{ position: "fixed", textAlign: "left", left: 0, bottom: 20, padding: 10 }}>
+<<<<<<< HEAD
         {FIAT_PRICE && (
           <Row align="middle" gutter={[4, 4]}>
             <Col span={8}>
@@ -223,6 +224,13 @@ function App(props) {
           </Row>
         )}
 
+=======
+        <Row align="middle" gutter={[4, 4]}>
+          <Col span={8}>
+            <Ramp price={price} address={address} networks={NETWORKS} />
+          </Col>
+        </Row>
+>>>>>>> 6655904f (BCH price in Ramp component)
         <Row align="middle" gutter={[4, 4]}>
           <Col span={24}>
             {
