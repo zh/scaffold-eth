@@ -3,9 +3,9 @@
 module.exports = async ({ getNamedAccounts, deployments }) => {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
-  await deploy("YourNFTs", {
+  await deploy("ScaffoldToken", {
     from: deployer,
     log: true,
   });
 };
-module.exports.tags = ["YNFT"];
+module.exports.tags = ["SCF"];
