@@ -5,8 +5,8 @@ import React from "react";
 
 export default function Header() {
   return (
-    <a href="https://github.com/zh/scaffold-eth/tree/multi-evm" target="_blank" rel="noopener noreferrer">
-      <PageHeader title="scaffold-multi" subTitle="forkable EVM dev stack" style={{ cursor: "pointer" }} />
+    <a href="https://github.com/zh/scaffold-eth/tree/multi-wallet" target="_blank" rel="noopener noreferrer">
+      <PageHeader title="SPA Wallet" style={{ cursor: "pointer" }} />
     </a>
   );
 }
