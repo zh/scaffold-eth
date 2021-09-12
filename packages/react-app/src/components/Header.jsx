@@ -5,8 +5,8 @@ import React from "react";
 
 export default function Header() {
   return (
-    <a href="https://github.com/zh/scaffold-eth/tree/multi-evm" target="_blank" rel="noopener noreferrer">
-      <PageHeader title="scaffold-multi" subTitle="forkable EVM dev stack" style={{ cursor: "pointer" }} />
+    <a href="https://github.com/zh/scaffold-eth/tree/simple-dex" target="_blank" rel="noopener noreferrer">
+      <PageHeader title="scaffold-multi" subTitle="Simple DEX with AMM example" style={{ cursor: "pointer" }} />
     </a>
   );
 }
