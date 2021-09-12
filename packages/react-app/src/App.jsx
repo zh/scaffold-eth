@@ -6,14 +6,14 @@ import React, { useCallback, useEffect, useState } from "react";
 import { HashRouter, Route, Switch } from "react-router-dom";
 import Web3Modal from "web3modal";
 import "./App.css";
-import { Account, BigWallet, Faucet, Header, NetworkSelect, Ramp, ThemeSwitch } from "./components";
+import { Account, BigWallet, Faucet, Header, NetworkSelect, ThemeSwitch } from "./components";
 import { GAS_PRICE, FIAT_PRICE, INFURA_ID, NETWORKS } from "./constants";
 import { useBalance, useContractLoader, useUserSigner, useExchangePrice } from "./hooks";
 
 const { ethers } = require("ethers");
 /*
     Welcome to 🏗 scaffold-eth !
-    Code: https://github.com/zh/scaffold-eth , Branch: multi-wallet
+    Code: https://github.com/zh/scaffold-eth , Branch: fantom-wallet
 */
 
 // 📡 What chain are your contracts deployed to?

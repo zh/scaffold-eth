@@ -1,4 +1,4 @@
-# Scaffold-Multi, SPA Wallet
+# Scaffold-Multi, Fantom SPA Wallet
 
 > everything you need to build on EVM-compatible blockchains! 🚀
 
@@ -13,13 +13,13 @@ Prerequisites: [Node](https://nodejs.org/en/download/) plus [Yarn](https://class
 > clone/fork 🏗 scaffold-eth:
 
 ```bash
-git clone -b multi-wallet https://github.com/zh/scaffold-eth.git multi-wallet
+git clone -b fantom-wallet https://github.com/zh/scaffold-eth.git fantom-wallet
 ```
 
 > install and start your 👷‍ Hardhat chain:
 
 ```bash
-cd multi-wallet
+cd fantom-wallet
 yarn install
 yarn chain
 ```
@@ -27,7 +27,7 @@ yarn chain
 > in a second terminal window, start your 📱 frontend:
 
 ```bash
-cd multi-wallet
+cd fantom-wallet
 yarn start
 ```
 
