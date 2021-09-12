@@ -6,10 +6,17 @@ import React, { useCallback, useEffect, useState } from "react";
 import { HashRouter, Link, Route, Switch } from "react-router-dom";
 import Web3Modal from "web3modal";
 import "./App.css";
-import { Account, Faucet, Contract, Header, ThemeSwitch, TokenBalance } from "./components";
+import { Account, Faucet, Contract, Header, Ramp, ThemeSwitch, TokenBalance } from "./components";
 import { INFURA_ID, NETWORK, NETWORKS } from "./constants";
 import { Transactor } from "./helpers";
-import { useBalance, useContractLoader, useContractReader, useUserSigner, useEventListener } from "./hooks";
+import {
+  useBalance,
+  useContractLoader,
+  useContractReader,
+  useUserSigner,
+  useEventListener,
+  useExchangePrice
+} from "./hooks";
 import { ExampleUI, Hints } from "./views";
 
 const { ethers } = require("ethers");
@@ -77,9 +84,9 @@ function App(props) {
     }, 1);
   };
 
-  /* 💵 This hook will get the price of ETH from 🦄 Uniswap: */
-  // const price = useExchangePrice(targetNetwork, mainnetProvider);
-  const price = 0;
+  /* 💵 This hook will get the price of BCH */
+  const price = useExchangePrice(targetNetwork);
+  // const price = 0;
 
   /* 🔥 This hook will get the price of Gas from ⛽️ EtherGasStation */
   const gasPrice = targetNetwork.gasPrice || 1050000000; // SmartBCH minimal fee
@@ -436,6 +443,12 @@ function App(props) {
 
       {/* 🗺 Extra UI like gas price, eth price, faucet, and support: */}
       <div style={{ position: "fixed", textAlign: "left", left: 0, bottom: 20, padding: 10 }}>
+        <Row align="middle" gutter={[4, 4]}>
+          <Col span={8}>
+            <Ramp price={price} address={address} networks={NETWORKS} />
+          </Col>
+        </Row>
+
         <Row align="middle" gutter={[4, 4]}>
           <Col span={24}>
             {
