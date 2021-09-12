@@ -1,4 +1,4 @@
-# 🏗 Scaffold-BCH
+# 🏗 Scaffold-BC, SEP-20 Token example
 
 > everything you need to build on SmartBCH! 🚀
 
@@ -14,7 +14,7 @@ Prerequisites: [Node](https://nodejs.org/en/download/) plus [Yarn](https://class
 > clone/fork 🏗 scaffold-eth:
 
 ```bash
-git clone -b smartbch https://github.com/zh/scaffold-eth.git smartbch
+git clone -b sep-20 https://github.com/zh/scaffold-eth.git sep-20
 ```
 
 > install and start your 👷‍ Hardhat chain:

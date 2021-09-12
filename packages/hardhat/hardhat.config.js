@@ -17,7 +17,7 @@ const { isAddress, getAddress, formatUnits, parseUnits } = utils;
 const defaultNetwork = process.env.NETWORK || "localhost";
 const deployerAddress = process.env.DEPLOYER;
 const walletURL = process.env.WALLET_URL || "http://localhost:3000";
-const tokensContract = "YourToken";
+const tokensContract = "ScaffoldToken";
 
 /*
       📡 This is where you configure your deploy configuration for 🏗 scaffold-eth
