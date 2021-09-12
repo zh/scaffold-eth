@@ -9,6 +9,40 @@ import EtherInput from "./EtherInput";
 import TokenBalance from "./TokenBalance";
 import { useTokenList } from "../hooks";
 
+import { utils } from "ethers";
+
+/*
+  ~ What it does? ~
+
+  Displays a wallet where you can specify address and send token, with options to
+  scan address, to see and generate private keys,
+  to send, receive and extract the burner wallet
+
+  ~ How can I use? ~
+
+  <TokenWallet
+    name={tokenName}
+    address={address}
+    signer={userSigner}
+    provider={localProvider}
+    readContracts={readContracts}
+    gasPrice={gasPrice}
+    chainId={localChainId}
+    showQR={true}
+    color={currentTheme === "light" ? "#1890ff" : "#2caad9"}
+  />
+
+  ~ Features ~
+
+  - Provide signer={userSigner} to sign transactions
+  - Provide provider={localProvider} to display a wallet
+  - Provide address={address} if you want to specify address, otherwise
+    your default address will be used
+  - Provide showQR={true} to show wallet address QR code
+  - Provide price={price} of ether and easily convert between USD and ETH
+  - Provide color to specify the color of wallet icon
+*/
+
 const DEBUG = true;
 const logoURI = "https://via.placeholder.com/32.png";
 
@@ -25,17 +59,13 @@ export default function TokenWallet(props) {
   const sendTokens = async () => {
     if (!contract) return;
 
-    /*
     let value;
     try {
       value = utils.parseEther("" + amount);
     } catch (e) {
       // failed to parseEther, try something else
-      // value = utils.parseEther("" + parseFloat(amount).toFixed(8));
-      value = utils.parseEther("" + parseInt(amount));
+      value = utils.parseEther("" + parseFloat(amount).toFixed(8));
     }
-    */
-    const value = amount;
 
     try {
       const tx = Transactor(provider, props.gasPrice);

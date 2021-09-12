@@ -24,7 +24,6 @@ const logoURI = "https://www.marketcap.cash/bch.svg";
   <Wallet
     provider={userProvider}
     address={address}
-    ensProvider={mainnetProvider}
     price={price}
     color='red'
   />
@@ -33,9 +32,7 @@ const logoURI = "https://www.marketcap.cash/bch.svg";
 
   - Provide provider={userProvider} to display a wallet
   - Provide address={address} if you want to specify address, otherwise
-                                                    your default address will be used
-  - Provide ensProvider={mainnetProvider} and your address will be replaced by ENS name
-              (ex. "0xa870" => "user.eth") or you can enter directly ENS name instead of address
+    your default address will be used
   - Provide price={price} of ether and easily convert between USD and ETH
   - Provide color to specify the color of wallet icon
 */
