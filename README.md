@@ -1,4 +1,4 @@
-# 🏗 Scaffold-Multi
+# Scaffold-Multi, SPA Wallet
 
 > everything you need to build on EVM-compatible blockchains! 🚀
 
@@ -13,13 +13,13 @@ Prerequisites: [Node](https://nodejs.org/en/download/) plus [Yarn](https://class
 > clone/fork 🏗 scaffold-eth:
 
 ```bash
-git clone -b multi-evm https://github.com/zh/scaffold-eth.git multi-evm
+git clone -b multi-wallet https://github.com/zh/scaffold-eth.git multi-wallet
 ```
 
 > install and start your 👷‍ Hardhat chain:
 
 ```bash
-cd multi-evm
+cd multi-wallet
 yarn install
 yarn chain
 ```
@@ -27,22 +27,9 @@ yarn chain
 > in a second terminal window, start your 📱 frontend:
 
 ```bash
-cd multi-evm
+cd multi-wallet
 yarn start
 ```
-
-> (optional) in a third terminal window, 🛰 deploy your contract:
-
-```bash
-cd multi-evm
-yarn deploy
-
-// deploy on another blockchains
-yarn deploy --network testnetSmartBCH
-yarn deploy --network testnetFantom
-```
-
-🔏 Edit your smart contract `YourContract.sol` in `packages/hardhat/contracts`
 
 📝 Edit your frontend `App.jsx` in `packages/react-app/src`
 
