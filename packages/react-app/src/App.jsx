@@ -1,29 +1,19 @@
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { useThemeSwitcher } from "react-css-theme-switcher";
-import { Button, Menu, Col, Row } from "antd";
+import { Button, Col, Row } from "antd";
 import "antd/dist/antd.css";
 import React, { useCallback, useEffect, useState } from "react";
-import { HashRouter, Link, Route, Switch } from "react-router-dom";
+import { HashRouter, Route, Switch } from "react-router-dom";
 import Web3Modal from "web3modal";
 import "./App.css";
-import { Account, Faucet, Contract, Header, NetworkSelect, Ramp, ThemeSwitch, TokenBalance } from "./components";
-import { GAS_PRICE, FIAT_PRICE, INFURA_ID, NETWORKS } from "./constants";
-import { Transactor } from "./helpers";
-import {
-  useBalance,
-  useContractLoader,
-  useContractReader,
-  useUserSigner,
-  useEventListener,
-  useExchangePrice,
-} from "./hooks";
-import { ExampleUI, Hints } from "./views";
+import { Account, BigWallet, Faucet, Header, NetworkSelect, ThemeSwitch } from "./components";
+import { FIAT_PRICE, INFURA_ID, NETWORKS } from "./constants";
+import { useBalance, useContractLoader, useUserSigner, useExchangePrice } from "./hooks";
 
 const { ethers } = require("ethers");
 /*
-    Welcome to 🏗 scaffold-multi !
-
-    Code: https://github.com/zh/scaffold-eth , Branch: multi-evm
+    Welcome to 🏗 scaffold-eth !
+    Code: https://github.com/zh/scaffold-eth , Branch: multi-wallet
 */
 
 // 📡 What chain are your contracts deployed to?
@@ -42,9 +32,6 @@ const targetNetwork = NETWORKS.localhost;
 
 // 😬 Sorry for all the console logging
 const DEBUG = false;
-
-const contractName = "YourContract";
-const tokenName = "YourToken";
 const coinName = targetNetwork.coin || "ETH";
 
 // 🛰 providers
@@ -118,9 +105,6 @@ function App(props) {
 
   // For more hooks, check out 🔗eth-hooks at: https://www.npmjs.com/package/eth-hooks
 
-  // The transactor wraps transactions and provides notificiations
-  const tx = Transactor(userSigner, gasPrice);
-
   // 🏗 scaffold-eth is full of handy hooks like this one to get your balance:
   const yourLocalBalance = useBalance(localProvider, address);
 
@@ -132,12 +116,6 @@ function App(props) {
 
   // If you want to make 🔐 write transactions to your contracts, use the userSigner:
   const writeContracts = useContractLoader(userSigner, { chainId: localChainId });
-
-  // keep track of a variable from the contract in the local React state:
-  const purpose = useContractReader(readContracts, "YourContract", "purpose");
-
-  // 📟 Listen for broadcast events
-  const setPurposeEvents = useEventListener(readContracts, "YourContract", "SetPurpose", localProvider, 1);
 
   //
   // 🧫 DEBUG 👨🏻‍🔬
@@ -200,110 +178,11 @@ function App(props) {
       <Header />
       <NetworkSelect targetNetwork={targetNetwork} localChainId={localChainId} selectedChainId={selectedChainId} />
       <HashRouter>
-        <Menu style={{ textAlign: "center" }} selectedKeys={[route]} mode="horizontal">
-          <Menu.Item key="/">
-            <Link
-              onClick={() => {
-                setRoute("/");
-              }}
-              to="/"
-            >
-              Your Contract
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="/token">
-            <Link
-              onClick={() => {
-                setRoute("/");
-              }}
-              to="/token"
-            >
-              Your ERC-20 Token
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="/hints">
-            <Link
-              onClick={() => {
-                setRoute("/hints");
-              }}
-              to="/hints"
-            >
-              Hints
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="/exampleui">
-            <Link
-              onClick={() => {
-                setRoute("/exampleui");
-              }}
-              to="/exampleui"
-            >
-              ExampleUI
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="/debugcontracts">
-            <Link
-              onClick={() => {
-                setRoute("/debugcontracts");
-              }}
-              to="/debugcontracts"
-            >
-              Debug Contracts
-            </Link>
-          </Menu.Item>
-        </Menu>
         <Switch>
-          <Route exact path="/">
-            <Contract
-              name="YourContract"
-              name={contractName}
-              address={address}
-              signer={userSigner}
-              provider={localProvider}
-              blockExplorer={blockExplorer}
-              gasPrice={gasPrice}
-              chainId={localChainId}
-            />
-          </Route>
-          <Route path="/token">
-            <Contract
-              name={tokenName}
-              address={address}
-              signer={userSigner}
-              provider={localProvider}
-              blockExplorer={blockExplorer}
-              gasPrice={gasPrice}
-              chainId={localChainId}
-              show={["balanceOf", "transfer"]}
-            />
-          </Route>
-          <Route path="/hints">
-            <Hints address={address} yourLocalBalance={yourLocalBalance} price={price} />
-          </Route>
-          <Route path="/exampleui">
-            <ExampleUI
-              address={address}
-              userSigner={userSigner}
-              localProvider={localProvider}
-              yourLocalBalance={yourLocalBalance}
-              price={price}
-              tx={tx}
-              writeContracts={writeContracts}
-              readContracts={readContracts}
-              purpose={purpose}
-              setPurposeEvents={setPurposeEvents}
-            />
-          </Route>
-          <Route path="/debugcontracts">
-            <Contract
-              name={tokenName}
-              address={address}
-              signer={userSigner}
-              provider={localProvider}
-              blockExplorer={blockExplorer}
-              gasPrice={gasPrice}
-              chainId={localChainId}
-            />
+          <Route exact path="/:pk?">
+            <div style={{ width: 480, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
+              <BigWallet signer={userSigner} provider={localProvider} price={price} gasPrice={gasPrice} />
+            </div>
           </Route>
         </Switch>
       </HashRouter>
@@ -318,18 +197,11 @@ function App(props) {
           userSigner={userSigner}
           price={price}
           coin={coinName}
+          showBalance={false}
           web3Modal={web3Modal}
           loadWeb3Modal={loadWeb3Modal}
           logoutOfWeb3Modal={logoutOfWeb3Modal}
           blockExplorer={blockExplorer}
-        />
-        <TokenBalance
-          name={tokenName}
-          img={"💰"}
-          suffix={"YTK"}
-          fontSize={16}
-          address={address}
-          contracts={readContracts}
         />
       </div>
 
