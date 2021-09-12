@@ -1,4 +1,4 @@
-# 🏗 Scaffold-AVA
+# 🏗 Scaffold-AVA, SPA Wallet
 
 > everything you need to build on Avalanche! 🚀
 
@@ -13,13 +13,13 @@ Prerequisites: [Node](https://nodejs.org/en/download/) plus [Yarn](https://class
 > clone/fork 🏗 scaffold-ava:
 
 ```bash
-git clone -b ava https://github.com/zh/scaffold-eth.git scaffold-ava
+git clone -b ava-wallet https://github.com/zh/scaffold-eth.git ava-wallet
 ```
 
 > install and start your 👷‍ Hardhat chain:
 
 ```bash
-cd scaffold-ava
+cd ava-wallet
 yarn install
 yarn chain
 ```
@@ -27,14 +27,14 @@ yarn chain
 > in a second terminal window, start your 📱 frontend:
 
 ```bash
-cd scaffold-ava
+cd ava-wallet
 yarn start
 ```
 
 > in a third terminal window, 🛰 deploy your contract:
 
 ```bash
-cd scaffold-ava
+cd ava-wallet
 yarn deploy
 
 // deploy on testnet
@@ -45,10 +45,10 @@ yarn deploy --network fuji
 
 📝 Edit your frontend `App.jsx` in `packages/react-app/src`
 
-For using with SmartBCH testnet change target network:
+For using with Fuji testnet change target network:
 
 ```js
-const targetNetwork = NETWORKS.testnetSmartBCH;
+const targetNetwork = NETWORKS.fuji;
 ```
 
 💼 Edit your deployment scripts in `packages/hardhat/deploy`

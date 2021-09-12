@@ -31,19 +31,11 @@
   },
   "scripts": {
     "chain": "hardhat node --network hardhat --no-deploy",
-    "fork": "hardhat node --no-deploy --network hardhat --fork https://mainnet.infura.io/v3/460f40a260564ac4a4f4b3fffb032dad",
-    "test": "hardhat test --network hardhat",
-    "compile": "hardhat compile",
-    "deploy": "hardhat deploy --export-all ../react-app/src/contracts/hardhat_contracts.json",
-    "postdeploy": "hardhat run scripts/publish.js",
     "watch": "node scripts/watch.js",
     "accounts": "hardhat accounts",
     "balances": "hardhat balances",
     "send": "hardhat send",
-    "fund": "hardhat fund",
     "generate": "hardhat generate",
-    "account": "hardhat account",
-    "etherscan-verify": "hardhat etherscan-verify --api-key PSW8C433Q667DVEX5BCRMGNAH9FSGFZ7Q8",
     "fund-cchain-addresses": "hardhat run scripts/fund-cchain-addresses.js"
   }
 }
