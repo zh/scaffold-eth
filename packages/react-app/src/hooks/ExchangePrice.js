@@ -16,7 +16,6 @@ export default function useExchangePrice(targetNetwork, pollTime) {
           url: "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin-cash&vs_currencies=usd",
         };
         const result = await axios(options);
-        console.log(result.data);
         if (result && result.data) {
           setPrice(parseFloat(result.data["bitcoin-cash"]["usd"]));
         }
