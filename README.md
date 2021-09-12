@@ -1,4 +1,4 @@
-# 🏗 Scaffold-BC,Simple AMM DEX example
+# 🏗 Scaffold-BC,Simple DEX with AMM example
 
 > AMM for a simgle token! 🚀
 
