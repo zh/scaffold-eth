@@ -29,17 +29,12 @@ import {
   useEventListener,
   useExchangePrice,
 } from "./hooks";
-import assets from "./assets";
 
 const { BufferList } = require("bl");
 // https://www.npmjs.com/package/ipfs-http-client
 const ipfsAPI = require("ipfs-http-client");
+const ipfs = ipfsAPI({ host: "ipfs.infura.io", port: "5001", protocol: "https" });
 const { ethers } = require("ethers");
-/*
-    Welcome to 🏗 scaffold-ava !
-
-    Code: https://github.com/zh/scaffold-eth , Branch: ava
-*/
 
 /// 📡 What chain are your contracts deployed to?
 // const targetNetwork = NETWORKS.hardhat;
@@ -48,9 +43,9 @@ const targetNetwork = NETWORKS.fuji;
 // const targetNetwork = NETWORKS.mainnet;
 
 // 😬 Sorry for all the console logging
-const DEBUG = false;
+const DEBUG = true;
 
-const tokenName = "ScaffoldNFTs";
+const tokenName = "AwesomeAssets";
 
 // helper function to "Get" from IPFS
 // you usually go content.toString() after this...
@@ -66,9 +61,6 @@ const getFromIPFS = async hashToGet => {
     return content;
   }
 };
-
-const ipfs = ipfsAPI({ host: "ipfs.infura.io", port: "5001", protocol: "https" });
-if (DEBUG) console.log("📦 Assets: ", assets);
 
 // 🛰 providers
 // 🏠 Your local provider is usually pointed at your local blockchain
@@ -216,7 +208,6 @@ function App(props) {
   if (DEBUG) console.log("📟 Transfer events: ", transferEvents);
 
   // Loading Collectibles
-  
   const [yourCollectibles, setYourCollectibles] = useState();
 
   useEffect(() => {
@@ -226,7 +217,8 @@ function App(props) {
         try {
           const tokenId = await readContracts[tokenName].tokenOfOwnerByIndex(address, tokenIndex);
           const tokenURI = await readContracts[tokenName].tokenURI(tokenId);
-          const ipfsHash = tokenURI.replace("https://ipfs.io/ipfs/", "");
+
+          const ipfsHash = tokenURI.replace("ipfs://", "");
           const jsonManifestBuffer = await getFromIPFS(ipfsHash);
           try {
             const jsonManifest = JSON.parse(jsonManifestBuffer.toString());
@@ -249,46 +241,6 @@ function App(props) {
     };
     updateYourCollectibles();
   }, [address, tokenCount]);
-
-  // Loading Assets to mint
-  const [loadedAssets, setLoadedAssets] = useState();
-  useEffect(() => {
-    const updateYourCollectibles = async () => {
-      const assetUpdate = [];
-      for (const a in assets) {
-        try {
-          const forSale = await readContracts[tokenName].forSale(utils.id(a));
-          let owner;
-          if (!forSale) {
-            const tokenId = await readContracts[tokenName].uriToTokenId(utils.id(a));
-            owner = await readContracts[tokenName].ownerOf(tokenId);
-          }
-          assetUpdate.push({ id: a, ...assets[a], forSale, owner });
-        } catch (e) {
-          console.log(e);
-        }
-      }
-      setLoadedAssets(assetUpdate);
-    };
-    if (readContracts && readContracts[tokenName]) updateYourCollectibles();
-  }, [assets, readContracts, transferEvents]);
-
-  const galleryList = [];
-  for (const a in loadedAssets) {
-    if (loadedAssets[a].forSale) {
-      galleryList.push(
-        <NftCard
-          address={address}
-          asset={loadedAssets[a]}
-          signer={userSigner}
-          contractName={tokenName}
-          writeContracts={writeContracts}
-          gasPrice={gasPrice}
-          blockExplorer={blockExplorer}
-        />,
-      );
-    }
-  }
 
   return (
     <div className="App">
