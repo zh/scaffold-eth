@@ -2,7 +2,6 @@ import { Card } from "antd";
 import React, { useMemo, useState } from "react";
 import { useContractExistsAtAddress, useContractLoader } from "../../hooks";
 import Account from "../Account";
-import AddTokenLogo from "../AddTokenLogo";
 import DisplayVariable from "./DisplayVariable";
 import FunctionForm from "./FunctionForm";
 
@@ -111,7 +110,6 @@ export default function Contract({
 
   return (
     <div style={{ margin: "auto", width: "70vw" }}>
-      {canAddLogo && <AddTokenLogo contract={contract} provider={provider} />}
       <Card
         title={
           <div>

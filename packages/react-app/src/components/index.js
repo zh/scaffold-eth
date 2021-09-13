@@ -15,5 +15,4 @@ export { default as TokenBalance } from "./TokenBalance";
 export { default as TokenWallet } from "./TokenWallet";
 export { default as BigWallet } from "./BigWallet";
 export { default as Wallet } from "./Wallet";
-export { default as AddTokenLogo } from "./AddTokenLogo";
 export { default as NetworkSelect } from "./NetworkSelect";
