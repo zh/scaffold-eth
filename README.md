@@ -1,4 +1,4 @@
-# 🏗 Scaffold-AVA
+# 🏗 Scaffold-AVA, Example for ERC-721 (NFT)
 
 > everything you need to build on Avalanche! 🚀
 
@@ -13,7 +13,7 @@ Prerequisites: [Node](https://nodejs.org/en/download/) plus [Yarn](https://class
 > clone/fork 🏗 scaffold-ava:
 
 ```bash
-git clone -b ava https://github.com/zh/scaffold-eth.git scaffold-ava
+git clone -b ava-nfts https://github.com/zh/scaffold-eth.git ava-nfts
 ```
 
 > (optional) install and start your 👷‍ Hardhat chain:

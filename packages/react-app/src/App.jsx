@@ -1,14 +1,26 @@
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { useThemeSwitcher } from "react-css-theme-switcher";
-import { Button, Menu, Col, Row } from "antd";
+import { Col, List, Menu, Row } from "antd";
 import "antd/dist/antd.css";
 import React, { useCallback, useEffect, useState } from "react";
 import { HashRouter, Link, Route, Switch } from "react-router-dom";
+import StackGrid from "react-stack-grid";
+import { utils } from "ethers";
 import Web3Modal from "web3modal";
 import "./App.css";
-import { Account, Faucet, Contract, Header, NetworkSelect, Ramp, ThemeSwitch, TokenBalance } from "./components";
+import {
+  Address,
+  Account,
+  Faucet,
+  Contract,
+  Header,
+  NetworkSelect,
+  NftCard,
+  OwnerNftCard,
+  Ramp,
+  ThemeSwitch,
+} from "./components";
 import { FIAT_PRICE, INFURA_ID, NETWORKS } from "./constants";
-import { Transactor } from "./helpers";
 import {
   useBalance,
   useContractLoader,
@@ -17,8 +29,11 @@ import {
   useEventListener,
   useExchangePrice,
 } from "./hooks";
-import { ExampleUI, Hints } from "./views";
+import assets from "./assets";
 
+const { BufferList } = require("bl");
+// https://www.npmjs.com/package/ipfs-http-client
+const ipfsAPI = require("ipfs-http-client");
 const { ethers } = require("ethers");
 /*
     Welcome to 🏗 scaffold-ava !
@@ -35,8 +50,25 @@ const targetNetwork = NETWORKS.fuji;
 // 😬 Sorry for all the console logging
 const DEBUG = false;
 
-const contractName = "YourContract";
-const tokenName = "YourToken";
+const tokenName = "ScaffoldNFTs";
+
+// helper function to "Get" from IPFS
+// you usually go content.toString() after this...
+const getFromIPFS = async hashToGet => {
+  for await (const file of ipfs.get(hashToGet)) {
+    if (DEBUG) console.log("📦 File path: ", file.path);
+    if (!file.content) continue;
+    const content = new BufferList();
+    for await (const chunk of file.content) {
+      content.append(chunk);
+    }
+    if (DEBUG) console.log(content);
+    return content;
+  }
+};
+
+const ipfs = ipfsAPI({ host: "ipfs.infura.io", port: "5001", protocol: "https" });
+if (DEBUG) console.log("📦 Assets: ", assets);
 
 // 🛰 providers
 // 🏠 Your local provider is usually pointed at your local blockchain
@@ -110,26 +142,14 @@ function App(props) {
 
   // For more hooks, check out 🔗eth-hooks at: https://www.npmjs.com/package/eth-hooks
 
-  // The transactor wraps transactions and provides notificiations
-  const tx = Transactor(userSigner, gasPrice);
-
   // 🏗 scaffold-eth is full of handy hooks like this one to get your balance:
   const yourLocalBalance = useBalance(localProvider, address);
-
-  // Just plug in different 🛰 providers to get your balance on different chains:
-  // const yourMainnetBalance = useBalance(mainnetProvider, address);
 
   // Load in your local 📝 contract and read a value from it:
   const readContracts = useContractLoader(localProvider);
 
   // If you want to make 🔐 write transactions to your contracts, use the userSigner:
   const writeContracts = useContractLoader(userSigner, { chainId: localChainId });
-
-  // keep track of a variable from the contract in the local React state:
-  const purpose = useContractReader(readContracts, "YourContract", "purpose");
-
-  // 📟 Listen for broadcast events
-  const setPurposeEvents = useEventListener(readContracts, "YourContract", "SetPurpose", localProvider, 1);
 
   //
   // 🧫 DEBUG 👨🏻‍🔬
@@ -186,6 +206,88 @@ function App(props) {
 
   useThemeSwitcher();
 
+  // keep track of a variable from the contract in the local React state:
+  const tokenBalance = useContractReader(readContracts, "ScaffoldNFTs", "balanceOf", [address]);
+  if (DEBUG) console.log("🤗 token balance: ", tokenBalance);
+
+  // 📟 Listen for broadcast events
+  const transferEvents = useEventListener(readContracts, "ScaffoldNFTs", "Transfer", localProvider, 1);
+  if (DEBUG) console.log("📟 Transfer events: ", transferEvents);
+
+  // Loading Collectibles
+  const nftIndex = tokenBalance && tokenBalance.toNumber && tokenBalance.toNumber();
+  const [yourCollectibles, setYourCollectibles] = useState();
+
+  useEffect(() => {
+    const updateYourCollectibles = async () => {
+      const collectibleUpdate = [];
+      for (let tokenIndex = 0; tokenIndex < tokenBalance; tokenIndex++) {
+        try {
+          const tokenId = await readContracts.ScaffoldNFTs.tokenOfOwnerByIndex(address, tokenIndex);
+          const tokenURI = await readContracts.ScaffoldNFTs.tokenURI(tokenId);
+          const ipfsHash = tokenURI.replace("https://ipfs.io/ipfs/", "");
+          const jsonManifestBuffer = await getFromIPFS(ipfsHash);
+          try {
+            const jsonManifest = JSON.parse(jsonManifestBuffer.toString());
+            if (DEBUG) console.log("🤗 jsonManifest: ", jsonManifest);
+            collectibleUpdate.push({ id: tokenId, uri: tokenURI, owner: address, ...jsonManifest });
+          } catch (e) {
+            console.log(e);
+          }
+          if (DEBUG) {
+            console.log("🤗 Getting token index: ", tokenIndex);
+            console.log("🤗 tokenId: ", tokenId);
+            console.log("🤗 tokenURI: ", tokenURI);
+            console.log("🤗 ipfsHash: ", ipfsHash);
+          }
+        } catch (e) {
+          console.log(e);
+        }
+      }
+      setYourCollectibles(collectibleUpdate);
+    };
+    updateYourCollectibles();
+  }, [address, nftIndex]);
+
+  // Loading Assets to mint
+  const [loadedAssets, setLoadedAssets] = useState();
+  useEffect(() => {
+    const updateYourCollectibles = async () => {
+      const assetUpdate = [];
+      for (const a in assets) {
+        try {
+          const forSale = await readContracts.ScaffoldNFTs.forSale(utils.id(a));
+          let owner;
+          if (!forSale) {
+            const tokenId = await readContracts.ScaffoldNFTs.uriToTokenId(utils.id(a));
+            owner = await readContracts.ScaffoldNFTs.ownerOf(tokenId);
+          }
+          assetUpdate.push({ id: a, ...assets[a], forSale, owner });
+        } catch (e) {
+          console.log(e);
+        }
+      }
+      setLoadedAssets(assetUpdate);
+    };
+    if (readContracts && readContracts.ScaffoldNFTs) updateYourCollectibles();
+  }, [assets, readContracts, transferEvents]);
+
+  const galleryList = [];
+  for (const a in loadedAssets) {
+    if (loadedAssets[a].forSale) {
+      galleryList.push(
+        <NftCard
+          address={address}
+          asset={loadedAssets[a]}
+          signer={userSigner}
+          writeContracts={writeContracts}
+          gasPrice={gasPrice}
+          blockExplorer={blockExplorer}
+        />,
+      );
+    }
+  }
+
   return (
     <div className="App">
       {/* ✏️ Edit the header and change the title to your project name */}
@@ -200,37 +302,27 @@ function App(props) {
               }}
               to="/"
             >
-              Your Contract
+              Assets Gallery
             </Link>
           </Menu.Item>
-          <Menu.Item key="/token">
+          <Menu.Item key="/yourcollectibles">
             <Link
               onClick={() => {
-                setRoute("/");
+                setRoute("/yourcollectibles");
               }}
-              to="/token"
+              to="/yourcollectibles"
             >
-              Your ERC-20 Token
+              Your NFTs
             </Link>
           </Menu.Item>
-          <Menu.Item key="/hints">
+          <Menu.Item key="/transfers">
             <Link
               onClick={() => {
-                setRoute("/hints");
+                setRoute("/transfers");
               }}
-              to="/hints"
+              to="/transfers"
             >
-              Hints
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="/exampleui">
-            <Link
-              onClick={() => {
-                setRoute("/exampleui");
-              }}
-              to="/exampleui"
-            >
-              ExampleUI
+              Transfers
             </Link>
           </Menu.Item>
           <Menu.Item key="/debugcontracts">
@@ -246,45 +338,52 @@ function App(props) {
         </Menu>
         <Switch>
           <Route exact path="/">
-            <Contract
-              name="YourContract"
-              name={contractName}
-              address={address}
-              signer={userSigner}
-              provider={localProvider}
-              blockExplorer={blockExplorer}
-              gasPrice={gasPrice}
-              chainId={localChainId}
-            />
+            <div style={{ maxWidth: 820, margin: "auto", marginTop: 32, paddingBottom: 256 }}>
+              <StackGrid columnWidth={200} gutterWidth={16} gutterHeight={16}>
+                {galleryList}
+              </StackGrid>
+            </div>
           </Route>
-          <Route path="/token">
-            <Contract
-              name={tokenName}
-              address={address}
-              signer={userSigner}
-              provider={localProvider}
-              blockExplorer={blockExplorer}
-              gasPrice={gasPrice}
-              chainId={localChainId}
-              show={["balanceOf", "transfer"]}
-            />
+          <Route path="/yourcollectibles">
+            <div style={{ width: 640, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
+              <List
+                bordered
+                dataSource={yourCollectibles}
+                renderItem={item => {
+                  const id = item.id.toNumber();
+                  return (
+                    <List.Item key={id + "_" + item.uri + "_" + item.owner}>
+                      <OwnerNftCard
+                        address={address}
+                        item={item}
+                        signer={userSigner}
+                        writeContracts={writeContracts}
+                        blockExplorer={blockExplorer}
+                        gasPrice={gasPrice}
+                        fontSize={16}
+                      />
+                    </List.Item>
+                  );
+                }}
+              />
+            </div>
           </Route>
-          <Route path="/hints">
-            <Hints address={address} yourLocalBalance={yourLocalBalance} price={price} />
-          </Route>
-          <Route path="/exampleui">
-            <ExampleUI
-              address={address}
-              userSigner={userSigner}
-              localProvider={localProvider}
-              yourLocalBalance={yourLocalBalance}
-              price={price}
-              tx={tx}
-              writeContracts={writeContracts}
-              readContracts={readContracts}
-              purpose={purpose}
-              setPurposeEvents={setPurposeEvents}
-            />
+          <Route path="/transfers">
+            <div style={{ width: 600, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
+              <List
+                bordered
+                dataSource={transferEvents}
+                renderItem={item => {
+                  return (
+                    <List.Item key={item[0] + "_" + item[1] + "_" + item.blockNumber + "_" + item[2].toNumber()}>
+                      <span style={{ fontSize: 16, marginRight: 8 }}>#{item[2].toNumber()}</span>
+                      <Address address={item[0]} fontSize={16} /> =&gt;
+                      <Address address={item[1]} fontSize={16} />
+                    </List.Item>
+                  );
+                }}
+              />
+            </div>
           </Route>
           <Route path="/debugcontracts">
             <Contract
@@ -313,14 +412,6 @@ function App(props) {
           loadWeb3Modal={loadWeb3Modal}
           logoutOfWeb3Modal={logoutOfWeb3Modal}
           blockExplorer={blockExplorer}
-        />
-        <TokenBalance
-          name={tokenName}
-          img={"💰"}
-          suffix={"YTK"}
-          fontSize={16}
-          address={address}
-          contracts={readContracts}
         />
       </div>
 
