@@ -24,6 +24,7 @@ contract Staker is Ownable {
     mapping(address => uint256) public balances;
 
     event Stake(address indexed sender, uint256 amount);
+    event Withdraw(address indexed sender, uint256 amount);
 
     /**
      * @notice Contract Constructor
@@ -44,8 +45,10 @@ contract Staker is Ownable {
      */
     function stake() public payable {
         balances[msg.sender] += msg.value;
-        emit Stake(msg.sender, msg.value);
         totalAmount += msg.value;
+
+        emit Stake(msg.sender, msg.value);
+        console.log("%s stake %s", msg.sender, msg.value);
     }
 
     /**
@@ -61,5 +64,8 @@ contract Staker is Ownable {
         balances[user] = 0;
         totalAmount -= amount;
         user.transfer(amount);
+
+        emit Withdraw(user, amount);
+        console.log("%s withdraw %s", user, amount);
     }
 }
