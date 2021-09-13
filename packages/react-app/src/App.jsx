@@ -6,7 +6,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { HashRouter, Link, Route, Switch } from "react-router-dom";
 import Web3Modal from "web3modal";
 import "./App.css";
-import { Account, Faucet, Contract, Header, NetworkSelect, Ramp, ThemeSwitch, TokenBalance } from "./components";
+import { Account, Faucet, Contract, Header, NetworkSelect, Ramp, ThemeSwitch } from "./components";
 import { FIAT_PRICE, INFURA_ID, NETWORKS } from "./constants";
 import { Transactor } from "./helpers";
 import {
@@ -17,7 +17,6 @@ import {
   useEventListener,
   useExchangePrice,
 } from "./hooks";
-import { ExampleUI, Hints } from "./views";
 
 const { ethers } = require("ethers");
 /*
@@ -35,7 +34,6 @@ const targetNetwork = NETWORKS.localhost;
 const DEBUG = false;
 
 const contractName = "YourContract";
-const tokenName = "YourToken";
 
 // 🛰 providers
 // 🏠 Your local provider is usually pointed at your local blockchain
@@ -199,37 +197,7 @@ function App(props) {
               }}
               to="/"
             >
-              Your Contract
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="/token">
-            <Link
-              onClick={() => {
-                setRoute("/");
-              }}
-              to="/token"
-            >
-              Your ERC-20 Token
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="/hints">
-            <Link
-              onClick={() => {
-                setRoute("/hints");
-              }}
-              to="/hints"
-            >
-              Hints
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="/exampleui">
-            <Link
-              onClick={() => {
-                setRoute("/exampleui");
-              }}
-              to="/exampleui"
-            >
-              ExampleUI
+              Main Page
             </Link>
           </Menu.Item>
           <Menu.Item key="/debugcontracts">
@@ -245,49 +213,11 @@ function App(props) {
         </Menu>
         <Switch>
           <Route exact path="/">
-            <Contract
-              name="YourContract"
-              name={contractName}
-              address={address}
-              signer={userSigner}
-              provider={localProvider}
-              blockExplorer={blockExplorer}
-              gasPrice={gasPrice}
-              chainId={localChainId}
-            />
-          </Route>
-          <Route path="/token">
-            <Contract
-              name={tokenName}
-              address={address}
-              signer={userSigner}
-              provider={localProvider}
-              blockExplorer={blockExplorer}
-              gasPrice={gasPrice}
-              chainId={localChainId}
-              show={["balanceOf", "transfer"]}
-            />
-          </Route>
-          <Route path="/hints">
-            <Hints address={address} yourLocalBalance={yourLocalBalance} price={price} />
-          </Route>
-          <Route path="/exampleui">
-            <ExampleUI
-              address={address}
-              userSigner={userSigner}
-              localProvider={localProvider}
-              yourLocalBalance={yourLocalBalance}
-              price={price}
-              tx={tx}
-              writeContracts={writeContracts}
-              readContracts={readContracts}
-              purpose={purpose}
-              setPurposeEvents={setPurposeEvents}
-            />
+            Add your components here
           </Route>
           <Route path="/debugcontracts">
             <Contract
-              name={tokenName}
+              name={contractName}
               address={address}
               signer={userSigner}
               provider={localProvider}
@@ -312,14 +242,6 @@ function App(props) {
           loadWeb3Modal={loadWeb3Modal}
           logoutOfWeb3Modal={logoutOfWeb3Modal}
           blockExplorer={blockExplorer}
-        />
-        <TokenBalance
-          name={tokenName}
-          img={"💰"}
-          suffix={"YTK"}
-          fontSize={16}
-          address={address}
-          contracts={readContracts}
         />
       </div>
 
