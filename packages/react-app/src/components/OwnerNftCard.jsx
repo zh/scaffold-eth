@@ -1,7 +1,8 @@
-import { Button, Card } from "antd";
+import { Button, Card, Col, Row } from "antd";
 import "antd/dist/antd.css";
+import { ethers } from "ethers";
 import { React, useState } from "react";
-import { Address, AddressInput } from "../components";
+import { Address, AddressInput, EtherInput } from "../components";
 import { Transactor } from "../helpers";
 
 // added display of 0 instead of NaN if gas price is not provided
@@ -35,6 +36,7 @@ export default function OwnerNftCard(props) {
   const id = item.id.toNumber();
 
   const [transferToAddresses, setTransferToAddresses] = useState({});
+  const [sellPrices, setSellPrices] = useState({});
 
   return (
     <>
@@ -49,9 +51,10 @@ export default function OwnerNftCard(props) {
           <img src={item.image} style={{ maxWidth: 150 }} alt="" />
         </div>
         <div>{item.description}</div>
+        <div>{sellPrices[id] ? `Price: ${sellPrices[id]}` : "Not for sell"}</div>
       </Card>
 
-      <div>
+      <Row>
         owner:
         <Address address={item.owner} blockExplorer={props.blockExplorer} fontSize={props.fontSize || 16} />
         <AddressInput
@@ -63,15 +66,26 @@ export default function OwnerNftCard(props) {
             setTransferToAddresses({ ...transferToAddresses, ...update });
           }}
         />
-      </div>
-
-      <Button
-        onClick={() => {
-          tx(props.writeContracts[props.contractName].transferFrom(props.address, transferToAddresses[id], id));
-        }}
-      >
-        Transfer
-      </Button>
+        <Button
+          onClick={() => {
+            tx(props.writeContracts[props.contractName].transferFrom(props.address, transferToAddresses[id], id));
+          }}
+        >
+          Transfer
+        </Button>
+      </Row>
+      <Row>
+        <EtherInput
+          price={props.price}
+          value={sellPrices[id]}
+          onChange={newPrice => {
+            const update = {};
+            update[id] = newPrice;
+            setSellPrices({ ...sellPrices, ...update });
+          }}
+        />
+        <Button onClick={() => {}}>Sell</Button>
+      </Row>
     </>
   );
 }

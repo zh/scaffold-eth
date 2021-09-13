@@ -4,8 +4,6 @@ import { Col, List, Menu, Row } from "antd";
 import "antd/dist/antd.css";
 import React, { useCallback, useEffect, useState } from "react";
 import { HashRouter, Link, Route, Switch } from "react-router-dom";
-import StackGrid from "react-stack-grid";
-import { utils } from "ethers";
 import Web3Modal from "web3modal";
 import "./App.css";
 import {
@@ -310,6 +308,7 @@ function App(props) {
                         contractName={tokenName}
                         writeContracts={writeContracts}
                         blockExplorer={blockExplorer}
+                        price={price}
                         gasPrice={gasPrice}
                         fontSize={16}
                       />
