@@ -33,7 +33,6 @@ const targetNetwork = NETWORKS.localhost;
 
 // 😬 Sorry for all the console logging
 const DEBUG = false;
-const NETWORKCHECK = true;
 
 const contractName = "YourContract";
 const tokenName = "YourToken";
