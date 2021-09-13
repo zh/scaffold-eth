@@ -37,7 +37,7 @@ const targetNetwork = NETWORKS.localhost;
 // 😬 Sorry for all the console logging
 const DEBUG = false;
 
-const contractName = "YourContract";
+const contractName = "Staker";
 const coinName = targetNetwork.coin || "ETH";
 
 // 🛰 providers
@@ -126,12 +126,6 @@ function App(props) {
   // If you want to make 🔐 write transactions to your contracts, use the userSigner:
   const writeContracts = useContractLoader(userSigner, { chainId: localChainId });
 
-  // keep track of a variable from the contract in the local React state:
-  const purpose = useContractReader(readContracts, "YourContract", "purpose");
-
-  // 📟 Listen for broadcast events
-  const setPurposeEvents = useEventListener(readContracts, "YourContract", "SetPurpose", localProvider, 1);
-
   //
   // 🧫 DEBUG 👨🏻‍🔬
   //
@@ -217,7 +211,16 @@ function App(props) {
         </Menu>
         <Switch>
           <Route exact path="/">
-            Add your components here
+            <Contract
+              name={contractName}
+              address={address}
+              signer={userSigner}
+              provider={localProvider}
+              blockExplorer={blockExplorer}
+              gasPrice={gasPrice}
+              chainId={localChainId}
+              show={["balanceOf", "balances", "stake", "withdraw"]}
+            />
           </Route>
           <Route path="/debugcontracts">
             <Contract
