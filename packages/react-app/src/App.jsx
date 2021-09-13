@@ -43,7 +43,7 @@ const targetNetwork = NETWORKS.fuji;
 // const targetNetwork = NETWORKS.mainnet;
 
 // 😬 Sorry for all the console logging
-const DEBUG = true;
+const DEBUG = false;
 
 const tokenName = "AwesomeAssets";
 
@@ -292,11 +292,7 @@ function App(props) {
         </Menu>
         <Switch>
           <Route exact path="/">
-            <div style={{ maxWidth: 820, margin: "auto", marginTop: 32, paddingBottom: 256 }}>
-              <StackGrid columnWidth={200} gutterWidth={16} gutterHeight={16}>
-                {galleryList}
-              </StackGrid>
-            </div>
+            Your components here
           </Route>
           <Route path="/yourcollectibles">
             <div style={{ width: 640, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
