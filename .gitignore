@@ -10,6 +10,8 @@ packages/hardhat/artifacts*
 packages/hardhat/deployments
 packages/react-app/src/contracts/*
 !packages/react-app/src/contracts/external_contracts.js
+packages/react-app/src/assets.js
+packages/hardhat/uploaded.json
 packages/hardhat/cache*
 
 packages/**/data
