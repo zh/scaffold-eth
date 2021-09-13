@@ -18,6 +18,7 @@ import { Transactor } from "../helpers";
     address={address}
     asset={asset}
     signer={userSigner}
+    contractName={contractName}
     writeContracts={writeContracts}
     gasPrice={gasPrice}
     blockExplorer={blockExplorer}
@@ -37,7 +38,7 @@ export default function NftCard(props) {
       <div>
         <Button
           onClick={() => {
-            tx(props.writeContracts.ScaffoldNFTs.safeMint(props.address, props.asset.id));
+            tx(props.writeContracts[props.contractName].safeMint(props.address, props.asset.id));
           }}
         >
           Mint

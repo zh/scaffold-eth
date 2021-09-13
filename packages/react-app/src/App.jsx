@@ -207,24 +207,25 @@ function App(props) {
   useThemeSwitcher();
 
   // keep track of a variable from the contract in the local React state:
-  const tokenBalance = useContractReader(readContracts, "ScaffoldNFTs", "balanceOf", [address]);
-  if (DEBUG) console.log("🤗 token balance: ", tokenBalance);
+  const _tokenBalance = useContractReader(readContracts, tokenName, "balanceOf", [address]);
+  const tokenCount = _tokenBalance && _tokenBalance.toNumber && _tokenBalance.toNumber();
+  if (DEBUG) console.log("🤗 Token count: ", tokenCount);
 
   // 📟 Listen for broadcast events
-  const transferEvents = useEventListener(readContracts, "ScaffoldNFTs", "Transfer", localProvider, 1);
+  const transferEvents = useEventListener(readContracts, tokenName, "Transfer", localProvider, 1);
   if (DEBUG) console.log("📟 Transfer events: ", transferEvents);
 
   // Loading Collectibles
-  const nftIndex = tokenBalance && tokenBalance.toNumber && tokenBalance.toNumber();
+  
   const [yourCollectibles, setYourCollectibles] = useState();
 
   useEffect(() => {
     const updateYourCollectibles = async () => {
       const collectibleUpdate = [];
-      for (let tokenIndex = 0; tokenIndex < tokenBalance; tokenIndex++) {
+      for (let tokenIndex = 0; tokenIndex < tokenCount; tokenIndex++) {
         try {
-          const tokenId = await readContracts.ScaffoldNFTs.tokenOfOwnerByIndex(address, tokenIndex);
-          const tokenURI = await readContracts.ScaffoldNFTs.tokenURI(tokenId);
+          const tokenId = await readContracts[tokenName].tokenOfOwnerByIndex(address, tokenIndex);
+          const tokenURI = await readContracts[tokenName].tokenURI(tokenId);
           const ipfsHash = tokenURI.replace("https://ipfs.io/ipfs/", "");
           const jsonManifestBuffer = await getFromIPFS(ipfsHash);
           try {
@@ -247,7 +248,7 @@ function App(props) {
       setYourCollectibles(collectibleUpdate);
     };
     updateYourCollectibles();
-  }, [address, nftIndex]);
+  }, [address, tokenCount]);
 
   // Loading Assets to mint
   const [loadedAssets, setLoadedAssets] = useState();
@@ -256,11 +257,11 @@ function App(props) {
       const assetUpdate = [];
       for (const a in assets) {
         try {
-          const forSale = await readContracts.ScaffoldNFTs.forSale(utils.id(a));
+          const forSale = await readContracts[tokenName].forSale(utils.id(a));
           let owner;
           if (!forSale) {
-            const tokenId = await readContracts.ScaffoldNFTs.uriToTokenId(utils.id(a));
-            owner = await readContracts.ScaffoldNFTs.ownerOf(tokenId);
+            const tokenId = await readContracts[tokenName].uriToTokenId(utils.id(a));
+            owner = await readContracts[tokenName].ownerOf(tokenId);
           }
           assetUpdate.push({ id: a, ...assets[a], forSale, owner });
         } catch (e) {
@@ -269,7 +270,7 @@ function App(props) {
       }
       setLoadedAssets(assetUpdate);
     };
-    if (readContracts && readContracts.ScaffoldNFTs) updateYourCollectibles();
+    if (readContracts && readContracts[tokenName]) updateYourCollectibles();
   }, [assets, readContracts, transferEvents]);
 
   const galleryList = [];
@@ -280,6 +281,7 @@ function App(props) {
           address={address}
           asset={loadedAssets[a]}
           signer={userSigner}
+          contractName={tokenName}
           writeContracts={writeContracts}
           gasPrice={gasPrice}
           blockExplorer={blockExplorer}
@@ -357,6 +359,7 @@ function App(props) {
                         address={address}
                         item={item}
                         signer={userSigner}
+                        contractName={tokenName}
                         writeContracts={writeContracts}
                         blockExplorer={blockExplorer}
                         gasPrice={gasPrice}
