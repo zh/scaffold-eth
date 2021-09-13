@@ -17,6 +17,7 @@ import { Transactor } from "../helpers";
     item={item}
     address={address}
     signer={userSigner}
+    contractName={contractName}
     writeContracts={writeContracts}
     gasPrice={gasPrice}
     blockExplorer={blockExplorer}
@@ -66,7 +67,7 @@ export default function OwnerNftCard(props) {
 
       <Button
         onClick={() => {
-          tx(props.writeContracts.ScaffoldNFTs.transferFrom(props.address, transferToAddresses[id], id));
+          tx(props.writeContracts[props.contractName].transferFrom(props.address, transferToAddresses[id], id));
         }}
       >
         Transfer
