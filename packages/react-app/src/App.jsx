@@ -1,12 +1,13 @@
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { useThemeSwitcher } from "react-css-theme-switcher";
-import { Button, Menu, Col, Row } from "antd";
+import { Button, List, Menu, Col, Row } from "antd";
 import "antd/dist/antd.css";
 import React, { useCallback, useEffect, useState } from "react";
 import { HashRouter, Link, Route, Switch } from "react-router-dom";
+import moment from "moment";
 import Web3Modal from "web3modal";
 import "./App.css";
-import { Account, Faucet, Contract, Header, NetworkSelect, Ramp, ThemeSwitch } from "./components";
+import { Account, Address, Balance, Faucet, Contract, Header, NetworkSelect, Ramp, ThemeSwitch } from "./components";
 import { GAS_PRICE, FIAT_PRICE, INFURA_ID, NETWORKS } from "./constants";
 import { Transactor } from "./helpers";
 import {
@@ -22,7 +23,7 @@ const { ethers } = require("ethers");
 /*
     Welcome to 🏗 scaffold-multi !
 
-    Code: https://github.com/zh/scaffold-eth , Branch: multi-evm
+    Code: https://github.com/zh/scaffold-eth , Branch: staker
 */
 
 // 📡 What chain are your contracts deployed to?
@@ -126,6 +127,55 @@ function App(props) {
   // If you want to make 🔐 write transactions to your contracts, use the userSigner:
   const writeContracts = useContractLoader(userSigner, { chainId: localChainId });
 
+  //keep track of contract balance to know how much has been staked total:
+  const stakerContractBalance = useBalance(
+    localProvider,
+    readContracts && readContracts[contractName] ? readContracts[contractName].address : null,
+  );
+  if (DEBUG) console.log("💵 stakerContractBalance", stakerContractBalance);
+
+  //keep track of total 'threshold' needed of ETH
+  const threshold = useContractReader(readContracts, "Staker", "threshold");
+  console.log("💵 threshold:", threshold);
+
+  // keep track of a variable from the contract in the local React state:
+  const balanceStaked = useContractReader(readContracts, "Staker", "balances", [address]);
+  console.log("💸 balanceStaked:", balanceStaked);
+
+  //📟 Listen for broadcast events
+  const stakeEvents = useEventListener(readContracts, "Staker", "Stake", localProvider, 1);
+  console.log("📟 stake events:", stakeEvents);
+
+  // keep track of a variable from the contract in the local React state:
+  const timeLeft = useContractReader(readContracts, "Staker", "timeLeft");
+  console.log("⏳ timeLeft:", timeLeft);
+
+  const complete = useContractReader(readContracts, "ExampleExternalContract", "completed");
+  console.log("✅ complete:", complete);
+
+  const externalContractBalance = useBalance(
+    localProvider,
+    readContracts && readContracts["ExampleExternalContract"] ? readContracts["ExampleExternalContract"].address : null,
+  );
+  if (DEBUG) console.log("💵 exampleExternalContractBalance", externalContractBalance);
+
+  let completeDisplay = "";
+  if (complete) {
+    completeDisplay = (
+      <div
+        style={{
+          padding: 32,
+          backgroundColor: "#eeffef",
+          fontWeight: "bolder",
+        }}
+      >
+        Staking App triggered `ExampleExternalContract`
+        <Balance balance={externalContractBalance} fontSize={64} />
+        BCH staked!
+      </div>
+    );
+  }
+
   //
   // 🧫 DEBUG 👨🏻‍🔬
   //
@@ -211,6 +261,67 @@ function App(props) {
         </Menu>
         <Switch>
           <Route exact path="/">
+            {completeDisplay}
+            <div style={{ padding: 8, marginTop: 32 }}>
+              <div>Timeleft:</div>
+              {timeLeft && moment.duration(timeLeft.toNumber() * 1000).humanize()}
+            </div>
+            <div style={{ padding: 8 }}>
+              <div>Total staked:</div>
+              <Balance balance={stakerContractBalance} fontSize={64} />
+              /
+              <Balance balance={threshold} fontSize={64} />
+            </div>
+            <div style={{ padding: 8 }}>
+              <div>You staked:</div>
+              <Balance balance={balanceStaked} fontSize={64} />
+            </div>
+            <div style={{ padding: 8 }}>
+              <Button
+                type={"default"}
+                onClick={() => {
+                  tx(writeContracts.Staker.execute());
+                }}
+              >
+                {"📡  Execute!"}
+              </Button>
+            </div>
+            <div style={{ padding: 8 }}>
+              <Button
+                type={"default"}
+                onClick={() => {
+                  tx(writeContracts.Staker.withdraw(address));
+                }}
+              >
+                {"🏧  Withdraw"}
+              </Button>
+            </div>
+            <div style={{ padding: 8 }}>
+              <Button
+                type={balanceStaked ? "success" : "primary"}
+                onClick={() => {
+                  tx(writeContracts.Staker.stake({ value: ethers.utils.parseEther("0.5") }));
+                }}
+              >
+                {"🥩 Stake 0.5 ether!"}
+              </Button>
+            </div>
+            <div style={{ width: 500, margin: "auto", marginTop: 64 }}>
+              <div>Stake Events:</div>
+              <List
+                dataSource={stakeEvents}
+                renderItem={item => {
+                  return (
+                    <List.Item key={item[0] + item[1] + item.blockNumber}>
+                      <Address value={item[0]} fontSize={16} /> =&gt;
+                      <Balance balance={item[1]} />
+                    </List.Item>
+                  );
+                }}
+              />
+            </div>
+          </Route>
+          <Route path="/debugcontracts">
             <Contract
               name={contractName}
               address={address}
@@ -219,12 +330,9 @@ function App(props) {
               blockExplorer={blockExplorer}
               gasPrice={gasPrice}
               chainId={localChainId}
-              show={["balanceOf", "balances", "stake", "withdraw"]}
             />
-          </Route>
-          <Route path="/debugcontracts">
             <Contract
-              name={contractName}
+              name={"ExampleExternalContract"}
               address={address}
               signer={userSigner}
               provider={localProvider}

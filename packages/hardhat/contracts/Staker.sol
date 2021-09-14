@@ -24,7 +24,6 @@ contract Staker is Ownable {
     mapping(address => uint256) public balances;
 
     event Stake(address indexed sender, uint256 amount);
-    event Withdraw(address indexed sender, uint256 amount);
 
     /**
      * @notice Contract Constructor
@@ -58,14 +57,34 @@ contract Staker is Ownable {
     function withdraw(address payable user) public {
         require(msg.sender == user, "Only own funds");
         require(balances[user] > 0, "Zero balance");
-        require(address(this).balance < threshold, "Under threshold");
+        require(address(this).balance < threshold, "Above threshold");
         require(block.timestamp < deadline, "Deadline reached");
         uint256 amount = balances[user];
         balances[user] = 0;
         totalAmount -= amount;
         user.transfer(amount);
 
-        emit Withdraw(user, amount);
         console.log("%s withdraw %s", user, amount);
+    }
+
+    /**
+     * @notice Call external contract on reaching deadline or threshold
+     */
+    function execute() public {
+        require(block.timestamp >= deadline, "Not at deadline yet");
+        if (address(this).balance >= threshold) {// silent, no require
+            externalContract.complete{value: address(this).balance}();
+        }
+    }
+
+    /**
+     * @notice Time left until the deadline
+     */
+    function timeLeft() public view returns (uint256) {
+        uint256 _now = block.timestamp;
+        if (_now >= deadline) {
+            return 0;
+        }
+        return deadline - _now;
     }
 }

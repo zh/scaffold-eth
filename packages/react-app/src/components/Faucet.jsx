@@ -23,6 +23,7 @@ const { utils } = require("ethers");
     coin={coin}
     localProvider={localProvider}
     placeholder={"Send local faucet"}
+    amount={amount}
   />
 
   ~ Features ~
@@ -31,6 +32,7 @@ const { utils } = require("ethers");
   - Provide coin={coin} blockchain main coin name - ETH, BCH, FTM etc.
   - Provide localProvider={localProvider} to be able to send ETH to given address
   - Provide placeholder="Send local faucet" value for the input
+  - Provide amount={amount} how much to send on every request
 */
 
 export default function Faucet(props) {
@@ -88,7 +90,7 @@ export default function Faucet(props) {
               onClick={() => {
                 tx({
                   to: address,
-                  value: utils.parseEther("1.0"),
+                  value: utils.parseEther("" + props.amount || "1.0"),
                 });
                 setAddress("");
               }}
