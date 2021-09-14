@@ -55,7 +55,7 @@ export default function BchTransactor(providerOrSigner, gasPrice = 1050000000) {
             console.log("CHECK IN ON THE TX", txResult, provider);
             const currentTransactionReceipt = await provider.getTransactionReceipt(txResult.hash);
             if (currentTransactionReceipt && currentTransactionReceipt.confirmations) {
-              callback({ ...txResult, ...currentTransactionReceipt });
+              if (callback instanceof Function) callback({ ...txResult, ...currentTransactionReceipt });
               clearInterval(listeningInterval);
             }
           }, 500);
