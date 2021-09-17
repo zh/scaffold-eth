@@ -41,7 +41,7 @@
     "balances": "hardhat balances",
     "send": "hardhat send",
     "fund": "hardhat fund",
-    "mint": "hardhat run scripts/mint.js",
+    "mint": "hardhat mint",
     "upload": "hardhat run scripts/upload.js",
     "generate": "hardhat generate",
     "account": "hardhat account",

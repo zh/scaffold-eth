@@ -17,7 +17,7 @@ const { isAddress, getAddress, formatUnits, parseUnits } = utils;
 const defaultNetwork = process.env.NETWORK || "hardhat";
 const deployerAddress = process.env.DEPLOYER;
 const walletURL = process.env.WALLET_URL || "http://localhost:3000";
-const tokensContract = "YourToken";
+const tokensContract = "AwesomeAssets";
 
 /*
       📡 This is where you configure your deploy configuration for 🏗 scaffold-eth
@@ -424,6 +424,17 @@ task("fund", "Send ERC-20 tokens")
     const contract = await ethers.getContract(tokensContract, deployer);
     const amount = taskArgs.amount ? parseInt(taskArgs.amount, 10) : 10
     await contract.transfer(taskArgs.account, "" + amount * 10 ** 18);
+  });
+
+task("mint", "Send ERC-721 NFTs")
+  .addParam("account", "The account's address")
+  .addParam("cid", "The metadata CID")
+  .setAction(async (taskArgs, { ethers }) => {
+    console.log("\n\n 🎫 Minting " + taskArgs.cid + " for " + taskArgs.account + "...\n");
+
+    const { deployer } = await getNamedAccounts();
+    const contract = await ethers.getContract(tokensContract, deployer);
+    await contract.mintItem(taskArgs.account, taskArgs.cid, `ipfs://${taskArgs.cid}`);
   });
 
 task("send", "Send BCH")

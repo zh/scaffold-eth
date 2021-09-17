@@ -1,9 +1,9 @@
-import { Button, Card, Col, Row } from "antd";
+import { Button, Card } from "antd";
 import "antd/dist/antd.css";
 import { ethers } from "ethers";
 import { React, useState } from "react";
 import { Address, AddressInput, EtherInput } from "../components";
-import { Transactor } from "../helpers";
+import { formatUri } from "../helpers";
 
 // added display of 0 instead of NaN if gas price is not provided
 
@@ -17,10 +17,9 @@ import { Transactor } from "../helpers";
   <OwnerNftCard
     item={item}
     address={address}
-    signer={userSigner}
+    tx={tx}
     contractName={contractName}
     writeContracts={writeContracts}
-    gasPrice={gasPrice}
     blockExplorer={blockExplorer}
     fontSize={fontSize}
   />
@@ -31,16 +30,51 @@ import { Transactor } from "../helpers";
 */
 
 export default function OwnerNftCard(props) {
-  const tx = Transactor(props.signer, props.gasPrice);
   const item = props.item;
   const id = item.id.toNumber();
 
   const [transferToAddresses, setTransferToAddresses] = useState({});
   const [sellPrices, setSellPrices] = useState({});
 
+  const cardActions = [];
+  if (item.price == "0.0") {
+    cardActions.push(
+      <EtherInput
+        price={props.price}
+        value={sellPrices[id]}
+        onChange={newPrice => {
+          const update = {};
+          update[id] = newPrice;
+          setSellPrices({ ...sellPrices, ...update });
+        }}
+      />,
+    );
+    cardActions.push(
+      <Button
+        onClick={() => {
+          props.tx(props.writeContracts[props.contractName].sellItem(id, ethers.utils.parseEther(sellPrices[id])));
+        }}
+      >
+        Sell
+      </Button>,
+    );
+  } else {
+    cardActions.push(
+      <Button
+        onClick={() => {
+          props.tx(props.writeContracts[props.contractName].cancelSellItem(item.id));
+        }}
+      >
+        Cancel Sell
+      </Button>,
+    );
+  }
+
   return (
     <>
       <Card
+        key={item.id}
+        actions={cardActions}
         title={
           <div>
             <span style={{ fontSize: props.fontSize || 16, marginRight: 8 }}>#{id}</span> {item.name}
@@ -48,13 +82,13 @@ export default function OwnerNftCard(props) {
         }
       >
         <div>
-          <img src={item.image} style={{ maxWidth: 150 }} alt="" />
+          <img src={formatUri(item.image)} style={{ maxWidth: 150 }} alt="" />
         </div>
         <div>{item.description}</div>
-        <div>{sellPrices[id] ? `Price: ${sellPrices[id]}` : "Not for sell"}</div>
+        <div>Price {item.price} BCH</div>
       </Card>
 
-      <Row>
+      <div>
         owner:
         <Address address={item.owner} blockExplorer={props.blockExplorer} fontSize={props.fontSize || 16} />
         <AddressInput
@@ -68,24 +102,12 @@ export default function OwnerNftCard(props) {
         />
         <Button
           onClick={() => {
-            tx(props.writeContracts[props.contractName].transferFrom(props.address, transferToAddresses[id], id));
+            props.tx(props.writeContracts[props.contractName].transferFrom(props.address, transferToAddresses[id], id));
           }}
         >
           Transfer
         </Button>
-      </Row>
-      <Row>
-        <EtherInput
-          price={props.price}
-          value={sellPrices[id]}
-          onChange={newPrice => {
-            const update = {};
-            update[id] = newPrice;
-            setSellPrices({ ...sellPrices, ...update });
-          }}
-        />
-        <Button onClick={() => {}}>Sell</Button>
-      </Row>
+      </div>
     </>
   );
 }

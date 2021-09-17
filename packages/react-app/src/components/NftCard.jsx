@@ -1,9 +1,11 @@
 import { Button, Card } from "antd";
 import { LinkOutlined } from "@ant-design/icons";
 import "antd/dist/antd.css";
+import { ethers } from "ethers";
 import React from "react";
 import { Address } from "../components";
-import { Transactor } from "../helpers";
+import { notification } from "antd";
+import { parseJsonMessage, formatUri } from "../helpers";
 
 // added display of 0 instead of NaN if gas price is not provided
 
@@ -16,11 +18,8 @@ import { Transactor } from "../helpers";
 
   <NftCard
     address={address}
-    asset={asset}
-    signer={userSigner}
-    contractName={contractName}
-    writeContracts={writeContracts}
-    gasPrice={gasPrice}
+    asset={loadedAssets[a]}
+    contract={writeContracts[tokenName]}
     blockExplorer={blockExplorer}
   />
 
@@ -29,29 +28,44 @@ import { Transactor } from "../helpers";
   - Provide address={address} current address
 */
 
-export default function NftCard(props) {
-  const tx = Transactor(props.signer, props.gasPrice);
+const buyTx = async (contract, asset) => {
+  try {
+    const result = await contract.buyItem(asset.id, {
+      value: ethers.utils.parseEther(asset.price),
+    });
+    notification.info({
+      message: "Transaction Sent",
+      description: result.hash,
+      placement: "bottomRight",
+    });
+  } catch (e) {
+    const message = parseJsonMessage(e);
+    console.log("buy error: ", message);
+    notification.error({
+      message: "Transaction Error",
+      description: message,
+    });
+  }
+};
 
+export default function NftCard(props) {
   const cardActions = [];
-  if (props.asset.forSale) {
-    cardActions.push(
-      <div>
-        <Button
-          onClick={() => {
-            tx(props.writeContracts[props.contractName].safeMint(props.address, props.asset.id));
-          }}
-        >
-          Mint
-        </Button>
-      </div>,
-    );
-  } else {
+  if (props.asset.owner != props.address) {
     cardActions.push(
       <div>
         owned by:
         <Address address={props.asset.owner} blockExplorer={props.blockExplorer} minimized />
       </div>,
+      <Button
+        onClick={() => {
+          buyTx(props.contract, props.asset);
+        }}
+      >
+        Buy
+      </Button>,
     );
+  } else {
+    cardActions.push(<div>OWN ASSET</div>);
   }
 
   return (
@@ -61,20 +75,24 @@ export default function NftCard(props) {
       actions={cardActions}
       title={
         <div>
+          <span style={{ fontSize: props.fontSize || 16, marginRight: 8 }}>#{props.asset.id}</span>
           {props.asset.name}{" "}
-          <a
-            style={{ cursor: "pointer", opacity: 0.33 }}
-            href={props.asset.external_url}
-            target="_blank"
-            rel="noreferrer"
-          >
-            <LinkOutlined />
-          </a>
+          {props.external_url && (
+            <a
+              style={{ cursor: "pointer", opacity: 0.33 }}
+              href={props.asset.external_url}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <LinkOutlined />
+            </a>
+          )}
         </div>
       }
     >
-      <img style={{ maxWidth: 130 }} src={props.asset.image} alt="" />
+      <img style={{ maxWidth: 130 }} src={formatUri(props.asset.image)} alt="" />
       <div style={{ opacity: 0.77 }}>{props.asset.description}</div>
+      <div style={{ padding: 3, fontWeight: "bold" }}>Price: {props.asset.price} BCH</div>
     </Card>
   );
 }

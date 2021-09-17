@@ -14,37 +14,41 @@ contract AwesomeAssets is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burn
     using Strings for uint256;
 
     Counters.Counter private _tokenIdCounter;
-    
-    mapping(string => uint256) hashes;
-    mapping(uint256 => uint256) forSale;
 
-    event Action(address sender, uint256 tokenId, string action);
+    mapping(string => uint256) private hashes;
+    mapping(uint256 => uint256) public forSale;
+
+    event Action(address sender, uint256 tokenId, string action, uint256 price);
 
     constructor() ERC721("Awesome Assets", "AWEA") {}
 
-    function sellItem(uint256 tokenId, uint256 sellPrice) public onlyOwner {
+    function sellItem(uint256 tokenId, uint256 sellPrice) public {
         require(forSale[tokenId] == 0, "ALREADY FOR SELL"); // only items not already for sale
         require(sellPrice > 0, "ZERO PRICE");
+        require(msg.sender == ownerOf(tokenId), "NOT OWNER");
         forSale[tokenId] = sellPrice;
         console.log("for sell: %s", tokenId);
-        emit Action(msg.sender, tokenId, "sell");
+        emit Action(msg.sender, tokenId, "sell", sellPrice);
     }
 
-    function cancelSellItem(uint256 tokenId) public onlyOwner {
+    function cancelSellItem(uint256 tokenId) public {
         require(forSale[tokenId] > 0, "NOT FOR SELL"); // only items already for sale
+        require(msg.sender == ownerOf(tokenId), "NOT OWNER");
         forSale[tokenId] = 0;
         console.log("cancel sell: %s", tokenId);
-        emit Action(msg.sender, tokenId, "cancel sell");
+        emit Action(msg.sender, tokenId, "cancel", forSale[tokenId]);
     }
 
     function buyItem(uint256 tokenId) public payable {
         require(forSale[tokenId] > 0, "NOT FOR SELL"); // only items already for sale
-        require(msg.value >= forSale[tokenId], "PAY IS NOT ENOUGH");
+        require(forSale[tokenId] == msg.value, "WRONG PRICE");
         forSale[tokenId] = 0;
         console.log("buy: %s for %s -> %s", tokenId, msg.value, msg.sender);
         address payable itemOwner = payable(ownerOf(tokenId));
         _transfer(itemOwner, msg.sender, tokenId);
-        itemOwner.transfer(msg.value);
+        (bool sent, bytes memory _data) = itemOwner.call{value: msg.value}("");
+        require(sent, "Failed to send Ether");
+        emit Action(msg.sender, tokenId, "buy", msg.value);
     }
 
     function price(uint256 tokenId) public view returns (uint256) {

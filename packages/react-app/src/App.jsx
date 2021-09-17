@@ -4,6 +4,7 @@ import { Col, List, Menu, Row } from "antd";
 import "antd/dist/antd.css";
 import React, { useCallback, useEffect, useState } from "react";
 import { HashRouter, Link, Route, Switch } from "react-router-dom";
+import StackGrid from "react-stack-grid";
 import Web3Modal from "web3modal";
 import "./App.css";
 import {
@@ -18,7 +19,8 @@ import {
   Ramp,
   ThemeSwitch,
 } from "./components";
-import { FIAT_PRICE, INFURA_ID, NETWORKS } from "./constants";
+import { FIAT_PRICE, INFURA_ID, NETWORKS, OWNER_ADDR } from "./constants";
+import { Transactor } from "./helpers";
 import {
   useBalance,
   useContractLoader,
@@ -27,6 +29,7 @@ import {
   useEventListener,
   useExchangePrice,
 } from "./hooks";
+import { Mint } from "./views";
 
 const { BufferList } = require("bl");
 // https://www.npmjs.com/package/ipfs-http-client
@@ -55,9 +58,27 @@ const getFromIPFS = async hashToGet => {
     for await (const chunk of file.content) {
       content.append(chunk);
     }
-    if (DEBUG) console.log(content);
+    if (DEBUG) console.log("Content: ", content);
     return content;
   }
+};
+
+const getMetadata = async (id, uri, owner) => {
+  const ipfsHash = uri.replace("ipfs://", "");
+  const jsonManifestBuffer = await getFromIPFS(ipfsHash);
+  try {
+    const jsonManifest = JSON.parse(jsonManifestBuffer.toString());
+    if (DEBUG) console.log("🤗 jsonManifest: ", jsonManifest);
+    if (DEBUG) {
+      console.log("🤗 tokenId: ", id);
+      console.log("🤗 tokenURI: ", uri);
+      console.log("🤗 ipfsHash: ", ipfsHash);
+    }
+    return { id, uri, owner, ...jsonManifest };
+  } catch (e) {
+    console.log(e);
+  }
+  return null;
 };
 
 // 🛰 providers
@@ -130,7 +151,8 @@ function App(props) {
   const selectedChainId =
     userSigner && userSigner.provider && userSigner.provider._network && userSigner.provider._network.chainId;
 
-  // For more hooks, check out 🔗eth-hooks at: https://www.npmjs.com/package/eth-hooks
+  // The transactor wraps transactions and provides notificiations
+  const tx = Transactor(userSigner, gasPrice);
 
   // 🏗 scaffold-eth is full of handy hooks like this one to get your balance:
   const yourLocalBalance = useBalance(localProvider, address);
@@ -198,39 +220,29 @@ function App(props) {
 
   // keep track of a variable from the contract in the local React state:
   const _tokenBalance = useContractReader(readContracts, tokenName, "balanceOf", [address]);
-  const tokenCount = _tokenBalance && _tokenBalance.toNumber && _tokenBalance.toNumber();
-  if (DEBUG) console.log("🤗 Token count: ", tokenCount);
+  const yourCount = _tokenBalance && _tokenBalance.toNumber && _tokenBalance.toNumber();
+  if (DEBUG) console.log("🤗 Token count: ", yourCount);
 
   // 📟 Listen for broadcast events
   const transferEvents = useEventListener(readContracts, tokenName, "Transfer", localProvider, 1);
   if (DEBUG) console.log("📟 Transfer events: ", transferEvents);
 
+  const actionEvents = useEventListener(readContracts, tokenName, "Action", localProvider, 1);
+
   // Loading Collectibles
   const [yourCollectibles, setYourCollectibles] = useState();
-
   useEffect(() => {
     const updateYourCollectibles = async () => {
       const collectibleUpdate = [];
-      for (let tokenIndex = 0; tokenIndex < tokenCount; tokenIndex++) {
+      for (let idx = 0; idx < yourCount; idx++) {
         try {
-          const tokenId = await readContracts[tokenName].tokenOfOwnerByIndex(address, tokenIndex);
+          const tokenId = await readContracts[tokenName].tokenOfOwnerByIndex(address, idx);
           const tokenURI = await readContracts[tokenName].tokenURI(tokenId);
 
-          const ipfsHash = tokenURI.replace("ipfs://", "");
-          const jsonManifestBuffer = await getFromIPFS(ipfsHash);
-          try {
-            const jsonManifest = JSON.parse(jsonManifestBuffer.toString());
-            if (DEBUG) console.log("🤗 jsonManifest: ", jsonManifest);
-            collectibleUpdate.push({ id: tokenId, uri: tokenURI, owner: address, ...jsonManifest });
-          } catch (e) {
-            console.log(e);
-          }
-          if (DEBUG) {
-            console.log("🤗 Getting token index: ", tokenIndex);
-            console.log("🤗 tokenId: ", tokenId);
-            console.log("🤗 tokenURI: ", tokenURI);
-            console.log("🤗 ipfsHash: ", ipfsHash);
-          }
+          const metadata = await getMetadata(tokenId, tokenURI, address);
+          const price = await readContracts[tokenName].price(tokenId);
+          metadata.price = ethers.utils.formatEther(price);
+          if (metadata) collectibleUpdate.push(metadata);
         } catch (e) {
           console.log(e);
         }
@@ -238,7 +250,41 @@ function App(props) {
       setYourCollectibles(collectibleUpdate);
     };
     updateYourCollectibles();
-  }, [address, tokenCount]);
+  }, [address, yourCount, transferEvents, actionEvents]);
+
+  // assets
+  const [loadedAssets, setLoadedAssets] = useState();
+  const _assetSupply = useContractReader(readContracts, tokenName, "totalSupply");
+  const assetCount = _assetSupply && _assetSupply.toNumber && _assetSupply.toNumber();
+  useEffect(() => {
+    const updateYourAssets = async () => {
+      let assetUpdate = [];
+      for (let idx = 1; idx <= assetCount; idx++) {
+        const _forSale = await readContracts[tokenName].forSale(idx);
+        const price = ethers.utils.formatEther(_forSale);
+        if (price != 0) {
+          const tokenURI = await readContracts[tokenName].tokenURI(idx);
+          const owner = await readContracts[tokenName].ownerOf(idx);
+          const metadata = await getMetadata(idx, tokenURI, owner);
+          assetUpdate.push({ id: idx, ...metadata, price });
+        }
+      }
+      setLoadedAssets(assetUpdate);
+    };
+    if (readContracts && readContracts[tokenName]) updateYourAssets();
+  }, [assetCount, readContracts, transferEvents, actionEvents]);
+
+  const galleryList = [];
+  for (let a in loadedAssets) {
+    galleryList.push(
+      <NftCard
+        address={address}
+        asset={loadedAssets[a]}
+        contract={writeContracts[tokenName]}
+        blockExplorer={blockExplorer}
+      />,
+    );
+  }
 
   return (
     <div className="App">
@@ -257,42 +303,58 @@ function App(props) {
               Assets Gallery
             </Link>
           </Menu.Item>
-          <Menu.Item key="/yourcollectibles">
+          <Menu.Item key="/owner">
             <Link
               onClick={() => {
-                setRoute("/yourcollectibles");
+                setRoute("/owner");
               }}
-              to="/yourcollectibles"
+              to="/owner"
             >
               Your NFTs
             </Link>
           </Menu.Item>
-          <Menu.Item key="/transfers">
+          <Menu.Item key="/mint">
             <Link
               onClick={() => {
-                setRoute("/transfers");
+                setRoute("/mint");
               }}
-              to="/transfers"
+              to="/mint"
             >
-              Transfers
+              Mint
             </Link>
           </Menu.Item>
-          <Menu.Item key="/debugcontracts">
-            <Link
-              onClick={() => {
-                setRoute("/debugcontracts");
-              }}
-              to="/debugcontracts"
-            >
-              Debug Contracts
-            </Link>
-          </Menu.Item>
+          {address && OWNER_ADDR === address && (
+            <>
+              <Menu.Item key="/events">
+                <Link
+                  onClick={() => {
+                    setRoute("/events");
+                  }}
+                  to="/events"
+                >
+                  Events
+                </Link>
+              </Menu.Item>
+              <Menu.Item key="/debug">
+                <Link
+                  onClick={() => {
+                    setRoute("/debug");
+                  }}
+                  to="/debug"
+                >
+                  Debug Contracts
+                </Link>
+              </Menu.Item>
+            </>
+          )}
         </Menu>
         <Switch>
           <Route exact path="/">
-            Your components here
+            <StackGrid columnWidth={200} gutterWidth={16} gutterHeight={16}>
+              {galleryList}
+            </StackGrid>
           </Route>
-          <Route path="/yourcollectibles">
+          <Route path="/owner">
             <div style={{ width: 640, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
               <List
                 bordered
@@ -304,12 +366,11 @@ function App(props) {
                       <OwnerNftCard
                         address={address}
                         item={item}
-                        signer={userSigner}
+                        tx={tx}
                         contractName={tokenName}
                         writeContracts={writeContracts}
                         blockExplorer={blockExplorer}
                         price={price}
-                        gasPrice={gasPrice}
                         fontSize={16}
                       />
                     </List.Item>
@@ -318,34 +379,61 @@ function App(props) {
               />
             </div>
           </Route>
-          <Route path="/transfers">
-            <div style={{ width: 600, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
-              <List
-                bordered
-                dataSource={transferEvents}
-                renderItem={item => {
-                  return (
-                    <List.Item key={item[0] + "_" + item[1] + "_" + item.blockNumber + "_" + item[2].toNumber()}>
-                      <span style={{ fontSize: 16, marginRight: 8 }}>#{item[2].toNumber()}</span>
-                      <Address address={item[0]} fontSize={16} /> =&gt;
-                      <Address address={item[1]} fontSize={16} />
-                    </List.Item>
-                  );
-                }}
-              />
-            </div>
+          <Route path="/mint">
+            <Mint address={address} tx={tx} contractName={tokenName} writeContracts={writeContracts} />
           </Route>
-          <Route path="/debugcontracts">
-            <Contract
-              name={tokenName}
-              address={address}
-              signer={userSigner}
-              provider={localProvider}
-              blockExplorer={blockExplorer}
-              gasPrice={gasPrice}
-              chainId={localChainId}
-            />
-          </Route>
+          {address && OWNER_ADDR === address && (
+            <>
+              <Route path="/events">
+                <div style={{ width: 600, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
+                  <List
+                    bordered
+                    dataSource={transferEvents}
+                    renderItem={item => {
+                      return (
+                        <List.Item key={item[0] + "_" + item[1] + "_" + item.blockNumber + "_" + item[2].toNumber()}>
+                          <span style={{ fontSize: 16, marginRight: 8 }}>#{item[2].toNumber()}</span>
+                          <Address address={item[0]} fontSize={16} /> =&gt;
+                          <Address address={item[1]} fontSize={16} />
+                        </List.Item>
+                      );
+                    }}
+                  />
+                </div>
+                <div style={{ width: 600, margin: "auto", marginTop: 8, paddingBottom: 32 }}>
+                  <List
+                    bordered
+                    dataSource={actionEvents}
+                    renderItem={item => {
+                      return (
+                        <List.Item
+                          key={item[0] + "_" + item.action + "_" + item.blockNumber + "_" + item[1].toNumber()}
+                        >
+                          <span style={{ fontSize: 16, marginRight: 8, textAlign: "right" }}>
+                            #{item[1].toNumber()}
+                          </span>
+                          <Address address={item[0]} fontSize={16} />
+                          <span style={{ fontSize: 16 }}>{item.action}</span>
+                          <span style={{ fontSize: 16 }}>{ethers.utils.formatEther(item[3])}</span>
+                        </List.Item>
+                      );
+                    }}
+                  />
+                </div>
+              </Route>
+              <Route path="/debug">
+                <Contract
+                  name={tokenName}
+                  address={address}
+                  signer={userSigner}
+                  provider={localProvider}
+                  blockExplorer={blockExplorer}
+                  gasPrice={gasPrice}
+                  chainId={localChainId}
+                />
+              </Route>
+            </>
+          )}
         </Switch>
       </HashRouter>
 
