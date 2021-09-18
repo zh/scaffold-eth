@@ -27,7 +27,6 @@ contract AwesomeAssets is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burn
         require(sellPrice > 0, "ZERO PRICE");
         require(msg.sender == ownerOf(tokenId), "NOT OWNER");
         forSale[tokenId] = sellPrice;
-        console.log("for sell: %s", tokenId);
         emit Action(msg.sender, tokenId, "sell", sellPrice);
     }
 
@@ -35,7 +34,6 @@ contract AwesomeAssets is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burn
         require(forSale[tokenId] > 0, "NOT FOR SELL"); // only items already for sale
         require(msg.sender == ownerOf(tokenId), "NOT OWNER");
         forSale[tokenId] = 0;
-        console.log("cancel sell: %s", tokenId);
         emit Action(msg.sender, tokenId, "cancel", forSale[tokenId]);
     }
 
@@ -43,7 +41,6 @@ contract AwesomeAssets is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burn
         require(forSale[tokenId] > 0, "NOT FOR SELL"); // only items already for sale
         require(forSale[tokenId] == msg.value, "WRONG PRICE");
         forSale[tokenId] = 0;
-        console.log("buy: %s for %s -> %s", tokenId, msg.value, msg.sender);
         address payable itemOwner = payable(ownerOf(tokenId));
         _transfer(itemOwner, msg.sender, tokenId);
         (bool sent, bytes memory _data) = itemOwner.call{value: msg.value}("");
@@ -55,13 +52,16 @@ contract AwesomeAssets is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burn
         return forSale[tokenId];
     }
 
+    function lastId() public view returns (uint256) {
+        return _tokenIdCounter.current();
+    }
+
     function mintItem(address to, string memory cid, string memory metadata) public {
         require(hashes[cid] == 0, "ALREADY MINTED");
         _tokenIdCounter.increment();
         uint256 newId = _tokenIdCounter.current();
         hashes[cid] = newId;
         forSale[newId] = 0;
-        console.log("%s minted #%d with cid=%s", to, newId, cid);
         _safeMint(to, newId);
         super._setTokenURI(newId, metadata);
     }

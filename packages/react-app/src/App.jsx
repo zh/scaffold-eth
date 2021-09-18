@@ -254,8 +254,8 @@ function App(props) {
 
   // assets
   const [loadedAssets, setLoadedAssets] = useState();
-  const _assetSupply = useContractReader(readContracts, tokenName, "totalSupply");
-  const assetCount = _assetSupply && _assetSupply.toNumber && _assetSupply.toNumber();
+  const _lastId = useContractReader(readContracts, tokenName, "lastId");
+  const assetCount = _lastId && _lastId.toNumber && _lastId.toNumber();
   useEffect(() => {
     const updateYourAssets = async () => {
       let assetUpdate = [];
