@@ -4,6 +4,8 @@ import { Button, Card, Spin, Input, Row, Col, Typography } from "antd";
 const { BufferList } = require("bl");
 const { Text } = Typography;
 
+const IPFS_GATEWAY = "https://ipfs.io/ipfs/";
+
 export default function Mint({ address, tx, contractName, writeContracts }) {
   const ipfsAPI = require("ipfs-http-client");
   const ipfs = ipfsAPI({ host: "ipfs.infura.io", port: "5001", protocol: "https" });
@@ -66,7 +68,7 @@ export default function Mint({ address, tx, contractName, writeContracts }) {
     } else {
       ipfsDisplay = (
         <div style={{ textAlign: "center" }}>
-          <img src={"https://ipfs.io/ipfs/" + ipfsHash} style={{ width: "300px" }} />;
+          <img src={IPFS_GATEWAY + ipfsHash} style={{ width: "300px" }} />;
         </div>
       );
     }
@@ -79,7 +81,6 @@ export default function Mint({ address, tx, contractName, writeContracts }) {
     reader.readAsArrayBuffer(file);
     reader.onloadend = () => {
       setBuffer(Buffer(reader.result));
-      console.log("buffer: ", buffer);
     };
     setIsSelected(true);
   };
@@ -109,7 +110,7 @@ export default function Mint({ address, tx, contractName, writeContracts }) {
               shape="round"
               type="primary"
               onClick={async () => {
-                console.log("UPLOADING...");
+                console.log("UPLOADING MEDIA...");
                 setSending(true);
                 setIpfsHash();
                 setIpfsContents();
