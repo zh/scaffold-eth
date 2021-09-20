@@ -5,10 +5,10 @@ import React from "react";
 
 export default function Header() {
   return (
-    <a href="https://github.com/zh/scaffold-eth/tree/ava" target="_blank" rel="noopener noreferrer">
+    <a href="https://github.com/zh/scaffold-eth/tree/ava-nfts" target="_blank" rel="noopener noreferrer">
       <PageHeader
-        title="scaffold-ava"
-        subTitle="forkable Avalanche dev stack"
+        title="Awesome Assets"
+        subTitle="Avalanche NFTs"
         style={{ cursor: "pointer" }}
         avatar={{
           src: "https://wallet.avax.network/img/avax_icon_circle.png",
