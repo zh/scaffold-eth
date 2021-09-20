@@ -185,8 +185,6 @@ export default function Mint({ address, tx, contractName, writeContracts }) {
 
             <Button
               onClick={async () => {
-                console.log(ipfsHash);
-                console.log(address);
                 const asset = {
                   name,
                   description,
