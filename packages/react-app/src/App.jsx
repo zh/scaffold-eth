@@ -6,9 +6,16 @@ import React, { useCallback, useEffect, useState } from "react";
 import { HashRouter, Link, Route, Switch } from "react-router-dom";
 import Web3Modal from "web3modal";
 import "./App.css";
+<<<<<<< HEAD
 import { Account, Faucet, Contract, Header, Ramp, NetworkSelect, ThemeSwitch, TokenWallet } from "./components";
 import { GAS_PRICE, FIAT_PRICE, INFURA_ID, NETWORKS } from "./constants";
 import { useBalance, useContractLoader, useUserSigner, useExchangePrice } from "./hooks";
+=======
+import { Account, Faucet, Contract, Header, Ramp, NetworkSelect, ThemeSwitch, TokenBalance } from "./components";
+import { FIAT_PRICE, INFURA_ID, NETWORKS } from "./constants";
+import { useBalance, useContractLoader, useContractReader, useUserSigner, useExchangePrice } from "./hooks";
+import DEX from "./DEX";
+>>>>>>> ab4920d9 (Simple AMM - DEX for Scaffold Tokens)
 
 const { ethers } = require("ethers");
 /*
@@ -36,6 +43,7 @@ const DEBUG = false;
 
 const coinName = targetNetwork.coin || "ETH";
 const tokenName = "ScaffoldToken";
+const contractName = "DEX";
 
 // 🛰 providers
 // 🏠 Your local provider is usually pointed at your local blockchain
@@ -116,9 +124,24 @@ function App(props) {
 
   // Load in your local 📝 contract and read a value from it:
   const readContracts = useContractLoader(localProvider);
+  // console.log("read: ", readContracts);
+
+  const liquidity = useContractReader(readContracts, contractName, "liquidity", [address]);
+  const [tokenBalance, setTokenBalance] = useState();
+  useEffect(() => {
+    async function getTokenBalance() {
+      if (readContracts && readContracts[contractName]) {
+        const contractAddress = readContracts[contractName].address;
+        const newBalance = await readContracts[tokenName].balanceOf(contractAddress);
+        setTokenBalance(parseFloat(ethers.utils.formatEther(newBalance)));
+      }
+    }
+    getTokenBalance();
+  }, [readContracts, liquidity]);
 
   // If you want to make 🔐 write transactions to your contracts, use the userSigner:
   const writeContracts = useContractLoader(userSigner, { chainId: localChainId });
+  // console.log("write: ", writeContracts);
 
   //
   // 🧫 DEBUG 👨🏻‍🔬
@@ -173,7 +196,7 @@ function App(props) {
 
   const faucetAvailable = localProvider && localProvider.connection && targetNetwork.name.indexOf("local") !== -1;
 
-  const { currentTheme } = useThemeSwitcher();
+  useThemeSwitcher();
 
   return (
     <div className="App">
@@ -189,7 +212,7 @@ function App(props) {
               }}
               to="/"
             >
-              SEP-20 Token
+              AMM
             </Link>
           </Menu.Item>
           <Menu.Item key="/debugcontracts">
@@ -205,21 +228,31 @@ function App(props) {
         </Menu>
         <Switch>
           <Route exact path="/">
-            <div style={{ width: 480, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
-              <TokenWallet
-                name={tokenName}
+            {readContracts && readContracts["DEX"] && (
+              <DEX
+                contractName={contractName}
+                tokenName={tokenName}
                 address={address}
                 signer={userSigner}
                 provider={localProvider}
                 readContracts={readContracts}
+                writeContracts={writeContracts}
+                liquidity={liquidity}
+                tokenBalance={tokenBalance}
                 gasPrice={gasPrice}
-                chainId={localChainId}
-                showQR={true}
-                color={currentTheme === "light" ? "#1890ff" : "#2caad9"}
               />
-            </div>
+            )}
           </Route>
           <Route path="/debugcontracts">
+            <Contract
+              name={contractName}
+              address={address}
+              signer={userSigner}
+              provider={localProvider}
+              blockExplorer={blockExplorer}
+              gasPrice={gasPrice}
+              chainId={localChainId}
+            />
             <Contract
               name={tokenName}
               address={address}
@@ -248,6 +281,7 @@ function App(props) {
           logoutOfWeb3Modal={logoutOfWeb3Modal}
           blockExplorer={blockExplorer}
         />
+        <TokenBalance name={tokenName} img={"💰"} address={address} contracts={readContracts} />
       </div>
 
       {/* 🗺 Extra UI like gas price, eth price, faucet, and support: */}
