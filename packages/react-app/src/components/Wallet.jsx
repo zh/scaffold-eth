@@ -10,13 +10,13 @@ import Balance from "./Balance";
 import EtherInput from "./EtherInput";
 
 const { Text, Paragraph } = Typography;
-const logoURI = "https://www.marketcap.cash/bch.svg";
+const logoURI = "https://wallet.avax.network/img/avax_icon_circle.png";
 
 /*
   ~ What it does? ~
 
-  Displays a wallet where you can specify address and send USD/ETH, with options to
-  scan address, to convert between USD and ETH, to see and generate private keys,
+  Displays a wallet where you can specify address and send USD/AVAX, with options to
+  scan address, to convert between USD and AVAX, to see and generate private keys,
   to send, receive and extract the burner wallet
 
   ~ How can I use? ~
@@ -33,7 +33,7 @@ const logoURI = "https://www.marketcap.cash/bch.svg";
   - Provide provider={userProvider} to display a wallet
   - Provide address={address} if you want to specify address, otherwise
     your default address will be used
-  - Provide price={price} of ether and easily convert between USD and ETH
+  - Provide price={price} of ether and easily convert between USD and AVAX
   - Provide color to specify the color of wallet icon
 */
 
@@ -92,7 +92,7 @@ export default function Wallet(props) {
           level="H"
           includeMargin
           renderAs="svg"
-          imageSettings={{ src: logoURI, excavate: false, height: 32, width: 32 }}
+          imageSettings={{ src: logoURI, excavate: true, height: 48, width: 48 }}
         />
       </div>
     );

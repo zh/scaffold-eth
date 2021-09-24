@@ -14,24 +14,20 @@ const { utils } = require("ethers");
 /*
   ~ What it does? ~
 
-  Displays a local faucet to send ETH to given address, also wallet is provided
+  Displays a local faucet to send AVAX to given address, also wallet is provided
 
   ~ How can I use? ~
 
   <Faucet
     price={price}
     localProvider={localProvider}
-    ensProvider={mainnetProvider}
     placeholder={"Send local faucet"}
   />
 
   ~ Features ~
 
-  - Provide price={price} of ether and convert between USD and ETH in a wallet
-  - Provide localProvider={localProvider} to be able to send ETH to given address
-  - Provide ensProvider={mainnetProvider} and your address will be replaced by ENS name
-              (ex. "0xa870" => "user.eth") or you can enter directly ENS name instead of address
-              works both in input field & wallet
+  - Provide price={price} of ether and convert between USD and AVAX in a wallet
+  - Provide localProvider={localProvider} to be able to send AVAX to given address
   - Provide placeholder="Send local faucet" value for the input
 */
 

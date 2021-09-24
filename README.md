@@ -1,26 +1,25 @@
-# 🏗 Scaffold-BCH
+# 🏗 Scaffold-AVA
 
-> everything you need to build on SmartBCH! 🚀
+> everything you need to build on Avalanche! 🚀
 
 🧪 Quickly experiment with Solidity using a frontend that adapts to your smart contract:
 
 ![image](https://user-images.githubusercontent.com/2653167/124158108-c14ca380-da56-11eb-967e-69cde37ca8eb.png)
 
-
 # 🏄‍♂️ Quick Start
 
 Prerequisites: [Node](https://nodejs.org/en/download/) plus [Yarn](https://classic.yarnpkg.com/en/docs/install/) and [Git](https://git-scm.com/downloads)
 
-> clone/fork 🏗 scaffold-eth:
+> clone/fork 🏗 scaffold-ava:
 
 ```bash
-git clone -b smartbch https://github.com/zh/scaffold-eth.git smartbch
+git clone -b ava https://github.com/zh/scaffold-eth.git scaffold-ava
 ```
 
 > install and start your 👷‍ Hardhat chain:
 
 ```bash
-cd scaffold-bch
+cd scaffold-ava
 yarn install
 yarn chain
 ```
@@ -28,18 +27,18 @@ yarn chain
 > in a second terminal window, start your 📱 frontend:
 
 ```bash
-cd scaffold-bch
+cd scaffold-ava
 yarn start
 ```
 
 > in a third terminal window, 🛰 deploy your contract:
 
 ```bash
-cd scaffold-bch
+cd scaffold-ava
 yarn deploy
 
 // deploy on testnet
-yarn deploy --network testnetSmartBCH
+yarn deploy --network fuji
 ```
 
 🔏 Edit your smart contract `YourContract.sol` in `packages/hardhat/contracts`
@@ -81,20 +80,18 @@ Documentation, tutorials, challenges, and many more resources, visit: [docs.scaf
 
 Check out all the [active branches](https://github.com/austintgriffith/scaffold-eth/branches/active), [open issues](https://github.com/austintgriffith/scaffold-eth/issues), and join/fund the 🏰 [BuidlGuidl](https://BuidlGuidl.com)!
 
+- 🚤 [Follow the full Ethereum Speed Run](https://medium.com/@austin_48503/%EF%B8%8Fethereum-dev-speed-run-bd72bcba6a4c)
 
- - 🚤  [Follow the full Ethereum Speed Run](https://medium.com/@austin_48503/%EF%B8%8Fethereum-dev-speed-run-bd72bcba6a4c)
-
-
- - 🎟  [Create your first NFT](https://github.com/austintgriffith/scaffold-eth/tree/simple-nft-example)
- - 🥩  [Build a staking smart contract](https://github.com/austintgriffith/scaffold-eth/tree/challenge-1-decentralized-staking)
- - 🏵  [Deploy a token and vendor](https://github.com/austintgriffith/scaffold-eth/tree/challenge-2-token-vendor)
- - 🎫  [Extend the NFT example to make a "buyer mints" marketplace](https://github.com/austintgriffith/scaffold-eth/tree/buyer-mints-nft)
- - 🎲  [Learn about commit/reveal](https://github.com/austintgriffith/scaffold-eth/tree/commit-reveal-with-frontend)
- - ✍️  [Learn how ecrecover works](https://github.com/austintgriffith/scaffold-eth/tree/signature-recover)
- - 👩‍👩‍👧‍👧  [Build a multi-sig that uses off-chain signatures](https://github.com/austintgriffith/scaffold-eth/tree/meta-multi-sig)
- - ⏳  [Extend the multi-sig to stream ETH](https://github.com/austintgriffith/scaffold-eth/tree/streaming-meta-multi-sig)
- - ⚖️  [Learn how a simple DEX works](https://medium.com/@austin_48503/%EF%B8%8F-minimum-viable-exchange-d84f30bd0c90)
- - 🦍  [Ape into learning!](https://github.com/austintgriffith/scaffold-eth/tree/aave-ape)
+- 🎟 [Create your first NFT](https://github.com/austintgriffith/scaffold-eth/tree/simple-nft-example)
+- 🥩 [Build a staking smart contract](https://github.com/austintgriffith/scaffold-eth/tree/challenge-1-decentralized-staking)
+- 🏵 [Deploy a token and vendor](https://github.com/austintgriffith/scaffold-eth/tree/challenge-2-token-vendor)
+- 🎫 [Extend the NFT example to make a "buyer mints" marketplace](https://github.com/austintgriffith/scaffold-eth/tree/buyer-mints-nft)
+- 🎲 [Learn about commit/reveal](https://github.com/austintgriffith/scaffold-eth/tree/commit-reveal-with-frontend)
+- ✍️ [Learn how ecrecover works](https://github.com/austintgriffith/scaffold-eth/tree/signature-recover)
+- 👩‍👩‍👧‍👧 [Build a multi-sig that uses off-chain signatures](https://github.com/austintgriffith/scaffold-eth/tree/meta-multi-sig)
+- ⏳ [Extend the multi-sig to stream ETH](https://github.com/austintgriffith/scaffold-eth/tree/streaming-meta-multi-sig)
+- ⚖️ [Learn how a simple DEX works](https://medium.com/@austin_48503/%EF%B8%8F-minimum-viable-exchange-d84f30bd0c90)
+- 🦍 [Ape into learning!](https://github.com/austintgriffith/scaffold-eth/tree/aave-ape)
 
 # 💬 Support Chat
 

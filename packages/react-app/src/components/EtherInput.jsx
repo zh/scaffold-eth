@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 /*
   ~ What it does? ~
 
-  Displays input field for ETH/USD amount, with an option to convert between ETH and USD
+  Displays input field for AVAX/USD amount, with an option to convert between AVAX and USD
 
   ~ How can I use? ~
 
@@ -22,14 +22,14 @@ import React, { useEffect, useState } from "react";
 
   ~ Features ~
 
-  - Provide price={price} of ether and easily convert between USD and ETH
+  - Provide price={price} of ether and easily convert between USD and AVAX
   - Provide value={value} to specify initial amount of ether
   - Provide placeholder="Enter amount" value for the input
   - Control input change by onChange={value => { setAmount(value);}}
 */
 
 export default function EtherInput(props) {
-  const [mode, setMode] = useState(props.price ? "USD" : "ETH");
+  const [mode, setMode] = useState(props.price ? "USD" : "AVAX");
   const [display, setDisplay] = useState();
   const [value, setValue] = useState();
 
@@ -42,7 +42,7 @@ export default function EtherInput(props) {
         style={{ cursor: "pointer" }}
         onClick={() => {
           if (mode === "USD") {
-            setMode("ETH");
+            setMode("AVAX");
             setDisplay(currentValue);
           } else {
             setMode("USD");
@@ -67,7 +67,7 @@ export default function EtherInput(props) {
     addonAfter = option("USD 🔀");
   } else {
     prefix = "Ξ";
-    addonAfter = option("ETH 🔀");
+    addonAfter = option("AVAX 🔀");
   }
 
   useEffect(() => {

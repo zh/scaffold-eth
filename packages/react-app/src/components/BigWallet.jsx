@@ -8,7 +8,7 @@ import Balance from "./Balance";
 import AddressInput from "./AddressInput";
 import EtherInput from "./EtherInput";
 
-const logoURI = "https://www.marketcap.cash/bch.svg";
+const logoURI = "https://wallet.avax.network/img/avax_icon_circle.png";
 
 export default function BigWallet(props) {
   const [amount, setAmount] = useState();
@@ -30,7 +30,7 @@ export default function BigWallet(props) {
   return (
     <Card>
       <div style={{ textAlign: "center" }}>
-        <Balance suffix="BCH" size={48} address={selectedAddress} provider={props.provider} price={props.price} />
+        <Balance suffix="AVAX" size={48} address={selectedAddress} provider={props.provider} price={props.price} />
       </div>
       <div>
         {selectedAddress && (
@@ -40,7 +40,7 @@ export default function BigWallet(props) {
             level="H"
             includeMargin
             renderAs="svg"
-            imageSettings={{ src: logoURI, excavate: false, height: 48, width: 48 }}
+            imageSettings={{ src: logoURI, excavate: true, height: 48, width: 48 }}
           />
         )}
       </div>

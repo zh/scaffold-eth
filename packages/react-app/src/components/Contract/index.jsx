@@ -66,7 +66,7 @@ export default function Contract({
 
   const address = contract ? contract.address : "";
   const contractIsDeployed = useContractExistsAtAddress(provider, address);
-  const canAddLogo = chainId === 10000 || chainId === 10001; // SmartBCH
+  const canAddLogo = chainId === 43113 || chainId === 43114; // Avalanche
 
   const displayedContractFunctions = useMemo(
     () =>

@@ -21,9 +21,9 @@ import { ExampleUI, Hints } from "./views";
 
 const { ethers } = require("ethers");
 /*
-    Welcome to 🏗 scaffold-bch !
+    Welcome to 🏗 scaffold-ava !
 
-    Code: https://github.com/zh/scaffold-eth , Branch: avax
+    Code: https://github.com/zh/scaffold-eth , Branch: ava
 */
 
 /// 📡 What chain are your contracts deployed to?
@@ -84,7 +84,7 @@ function App(props) {
     }, 1);
   };
 
-  /* 💵 This hook will get the price of BCH */
+  /* 💵 This hook will get the price of AVAX */
   const price = FIAT_PRICE ? useExchangePrice(targetNetwork) : 0;
 
   /* 🔥 This hook will get the price of Gas from ⛽️ EtherGasStation */

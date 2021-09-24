@@ -39,12 +39,12 @@ import { utils } from "ethers";
   - Provide address={address} if you want to specify address, otherwise
     your default address will be used
   - Provide showQR={true} to show wallet address QR code
-  - Provide price={price} of ether and easily convert between USD and ETH
+  - Provide price={price} of ether and easily convert between USD and AVAX
   - Provide color to specify the color of wallet icon
 */
 
 const DEBUG = true;
-const logoURI = "https://via.placeholder.com/32.png";
+const logoURI = "https://wallet.avax.network/img/avax_icon_circle.png";
 
 export default function TokenWallet(props) {
   const { name, provider, chainId } = props;
@@ -151,7 +151,7 @@ export default function TokenWallet(props) {
               level="H"
               includeMargin
               renderAs="svg"
-              imageSettings={{ src: logoURI, excavate: false, height: 32, width: 32 }}
+              imageSettings={{ src: logoURI, excavate: true, height: 48, width: 48 }}
             />
           )}
         </div>
