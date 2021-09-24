@@ -68,7 +68,7 @@ export default function Mint({ address, tx, contractName, writeContracts }) {
     } else {
       ipfsDisplay = (
         <div style={{ textAlign: "center" }}>
-          <img src={IPFS_GATEWAY + ipfsHash} style={{ width: "300px" }} />;
+          <img src={IPFS_GATEWAY + ipfsHash} style={{ width: "300px" }} />
         </div>
       );
     }
