@@ -13,11 +13,11 @@ export default function useExchangePrice(targetNetwork, pollTime) {
         const options = {
           method: "GET",
           headers: { "content-type": "application/json" },
-          url: "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin-cash&vs_currencies=usd",
+          url: `https://api.coingecko.com/api/v3/simple/price?ids=avalanche-2&vs_currencies=usd`,
         };
         const result = await axios(options);
         if (result && result.data) {
-          setPrice(parseFloat(result.data["bitcoin-cash"]["usd"]));
+          setPrice(parseFloat(result.data["avalanche-2"]["usd"]));
         }
       }
     }

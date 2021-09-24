@@ -85,7 +85,7 @@ export default function OwnerNftCard(props) {
           <img src={formatUri(item.image)} style={{ maxWidth: 150 }} alt="" />
         </div>
         <div>{item.description}</div>
-        <div>Price {item.price} BCH</div>
+        <div>Price {item.price} AVAX</div>
       </Card>
 
       <div>

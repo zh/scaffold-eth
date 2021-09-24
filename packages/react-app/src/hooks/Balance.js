@@ -5,7 +5,7 @@ import usePoller from "./Poller";
 /*
   ~ What it does? ~
 
-  Gets your balance in ETH from given address and provider
+  Gets your balance in AVAX from given address and provider
 
   ~ How can I use? ~
 

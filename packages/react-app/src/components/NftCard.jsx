@@ -92,7 +92,7 @@ export default function NftCard(props) {
     >
       <img style={{ maxWidth: 130 }} src={formatUri(props.asset.image)} alt="" />
       <div style={{ opacity: 0.77 }}>{props.asset.description}</div>
-      <div style={{ padding: 3, fontWeight: "bold" }}>Price: {props.asset.price} BCH</div>
+      <div style={{ padding: 3, fontWeight: "bold" }}>Price: {props.asset.price} AVAX</div>
     </Card>
   );
 }
