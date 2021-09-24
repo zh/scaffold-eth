@@ -121,13 +121,7 @@ export default function TokenWallet(props) {
               Balance:
             </Col>
             <Col span={12}>
-              <TokenBalance
-                name={name}
-                img={"💰"}
-                suffix={"tokens"}
-                address={props.address}
-                contracts={props.readContracts}
-              />
+              <TokenBalance name={name} img={"💰"} address={props.address} contracts={props.readContracts} />
             </Col>
             <Col
               span={4}
