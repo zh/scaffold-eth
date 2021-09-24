@@ -19,7 +19,7 @@ git clone -b ava-nfts https://github.com/zh/scaffold-eth.git ava-nfts
 > (optional) install and start your 👷‍ Hardhat chain:
 
 ```bash
-cd scaffold-ava
+cd ava-nfts
 yarn install
 yarn chain
 ```
@@ -27,14 +27,14 @@ yarn chain
 > in a second terminal window, start your 📱 frontend:
 
 ```bash
-cd scaffold-ava
+cd ava-nfts
 yarn start
 ```
 
 > in a third terminal window, 🛰 deploy your contract:
 
 ```bash
-cd scaffold-ava
+cd ava-nfts
 yarn deploy
 
 // deploy on local network (avash etc.)
