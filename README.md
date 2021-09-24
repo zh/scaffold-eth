@@ -19,7 +19,7 @@ git clone -b ava-20 https://github.com/zh/scaffold-eth.git ava-20
 > (optional) install and start your 👷‍ Hardhat chain:
 
 ```bash
-cd scaffold-ava
+cd ava-20
 yarn install
 yarn chain
 ```
@@ -27,14 +27,14 @@ yarn chain
 > in a second terminal window, start your 📱 frontend:
 
 ```bash
-cd scaffold-ava
+cd ava-20
 yarn start
 ```
 
 > in a third terminal window, 🛰 deploy your contract:
 
 ```bash
-cd scaffold-ava
+cd ava-20
 yarn deploy
 
 // deploy on local network (avash etc.)
