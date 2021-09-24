@@ -16,7 +16,7 @@ Prerequisites: [Node](https://nodejs.org/en/download/) plus [Yarn](https://class
 git clone -b ava https://github.com/zh/scaffold-eth.git scaffold-ava
 ```
 
-> install and start your 👷‍ Hardhat chain:
+> (optional) install and start your 👷‍ Hardhat chain:
 
 ```bash
 cd scaffold-ava
@@ -37,6 +37,9 @@ yarn start
 cd scaffold-ava
 yarn deploy
 
+// deploy on local network (avash etc.)
+yarn deploy --network local
+
 // deploy on testnet
 yarn deploy --network fuji
 ```
@@ -45,10 +48,10 @@ yarn deploy --network fuji
 
 📝 Edit your frontend `App.jsx` in `packages/react-app/src`
 
-For using with SmartBCH testnet change target network:
+For using with Fuji testnet change target network:
 
 ```js
-const targetNetwork = NETWORKS.testnetSmartBCH;
+const targetNetwork = NETWORKS.fuji; // .local or .mainnet
 ```
 
 💼 Edit your deployment scripts in `packages/hardhat/deploy`
