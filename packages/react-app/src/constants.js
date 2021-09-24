@@ -10,28 +10,28 @@ export const ETHERSCAN_KEY = process.env.REACT_APP_ETHERSCAN_KEY;
 export const BLOCKNATIVE_DAPPID = "0b58206a-f3c0-4701-a62f-73c7243e8c77";
 
 export const NETWORKS = {
-  localhost: {
+  local: {
     name: "localhost",
     color: "#666666",
-    chainId: 31337,
+    chainId: 44112,
     blockExplorer: "",
-    rpcUrl: "http://" + window.location.hostname + ":8545",
+    rpcUrl: "http://" + window.location.hostname + ":9650/ext/bc/C/rpc",
   },
-  testnetSmartBCH: {
-    name: "SmartBCH-T",
+  fuji: {
+    name: "Fuji",
     color: "#7003DD",
-    chainId: 10001,
-    rpcUrl: "https://moeing.tech:9545", // "http://35.220.203.194:8545",
-    blockExplorer: "https://smartscan.cash/",
-    gasPrice: 1050000000,
+    chainId: 43113,
+    rpcUrl: "https://api.avax-test.network/ext/bc/C/rpc",
+    blockExplorer: "https://cchain.explorer.avax-test.network",
+    gasPrice: 225000000000,
   },
-  mainnetSmartBCH: {
-    name: "SmartBCH",
+  mainnet: {
+    name: "Mainnet",
     color: "#ff8b9e",
-    chainId: 10000,
-    rpcUrl: "https://global.uat.cash", // https://smartbch.greyh.at
-    blockExplorer: "https://smartscan.cash/",
-    gasPrice: 1050000000,
+    chainId: 43114,
+    rpcUrl: "https://api.avax.network/ext/bc/C/rpc",
+    blockExplorer: "https://cchain.explorer.avax.network",
+    gasPrice: 225000000000,
   },
 };
 

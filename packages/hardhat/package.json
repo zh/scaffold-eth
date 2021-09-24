@@ -16,6 +16,7 @@
     "@nomiclabs/hardhat-waffle": "^2.0.0",
     "@openzeppelin/contracts": "^4.3.1",
     "@tenderly/hardhat-tenderly": "^1.0.10",
+    "avalanche": "^3.9.0",
     "chai": "^4.2.0",
     "chalk": "^4.1.0",
     "dotenv": "^10.0.0",
@@ -23,6 +24,7 @@
     "ethers": "^5.4.4",
     "hardhat": "2.6.0",
     "hardhat-deploy": "^0.9.0",
+    "isomorphic-dompurify": "^0.15.0",
     "node-watch": "^0.7.0",
     "qrcode-terminal": "^0.12.0",
     "ramda": "^0.27.1"
@@ -36,11 +38,12 @@
     "postdeploy": "hardhat run scripts/publish.js",
     "watch": "node scripts/watch.js",
     "accounts": "hardhat accounts",
-    "balance": "hardhat balance",
+    "balances": "hardhat balances",
     "send": "hardhat send",
     "fund": "hardhat fund",
     "generate": "hardhat generate",
     "account": "hardhat account",
-    "etherscan-verify": "hardhat etherscan-verify --api-key PSW8C433Q667DVEX5BCRMGNAH9FSGFZ7Q8"
+    "etherscan-verify": "hardhat etherscan-verify --api-key PSW8C433Q667DVEX5BCRMGNAH9FSGFZ7Q8",
+    "fund-cchain-addresses": "hardhat run scripts/fund-cchain-addresses.js"
   }
 }
