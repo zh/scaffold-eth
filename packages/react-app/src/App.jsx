@@ -181,15 +181,15 @@ function App(props) {
               }}
               to="/"
             >
-              SEP-20 Token
+              ERC-20 Token
             </Link>
           </Menu.Item>
-          <Menu.Item key="/debugcontracts">
+          <Menu.Item key="/debug">
             <Link
               onClick={() => {
-                setRoute("/debugcontracts");
+                setRoute("/debug");
               }}
-              to="/debugcontracts"
+              to="/debug"
             >
               Debug Contracts
             </Link>
@@ -211,7 +211,7 @@ function App(props) {
               />
             </div>
           </Route>
-          <Route path="/debugcontracts">
+          <Route path="/debug">
             <Contract
               name={tokenName}
               address={address}
