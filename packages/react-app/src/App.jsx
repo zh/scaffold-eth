@@ -64,7 +64,7 @@ const getFromIPFS = async hashToGet => {
 };
 
 const getMetadata = async (id, uri, owner) => {
-  const ipfsHash = uri.replace("ipfs://", "");
+  const ipfsHash = uri.split("/").pop();
   const jsonManifestBuffer = await getFromIPFS(ipfsHash);
   try {
     const jsonManifest = JSON.parse(jsonManifestBuffer.toString());

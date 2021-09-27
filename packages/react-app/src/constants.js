@@ -40,5 +40,7 @@ export const NETWORK = chainId => {
   }
 };
 
+export const IPFS_GATEWAY = "https://ipfs.io/ipfs/";
+
 export const FIAT_PRICE = process.env.REACT_APP_FIAT_PRICE === "NO";
 export const OWNER_ADDR = process.env.REACT_APP_OWNER_ADDRESS;

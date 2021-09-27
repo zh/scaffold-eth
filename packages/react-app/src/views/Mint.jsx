@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Button, Card, Spin, Input, Row, Col, Typography } from "antd";
+import { IPFS_GATEWAY } from "../constants";
 
 const { BufferList } = require("bl");
 const { Text } = Typography;
-
-const IPFS_GATEWAY = "https://ipfs.io/ipfs/";
 
 export default function Mint({ address, tx, contractName, writeContracts }) {
   const ipfsAPI = require("ipfs-http-client");
@@ -40,11 +39,12 @@ export default function Mint({ address, tx, contractName, writeContracts }) {
     return new Promise(resolve => setTimeout(resolve, ms));
   };
 
-  const uploadToIPFS = async asset => {
+  const mintIPFSAsset = async asset => {
     const upload = await ipfs.add(JSON.stringify(asset));
-    console.log("Data CID: ", upload.path);
+    console.log("Media CID: ", ipfsHash);
+    console.log("Metadata CID: ", upload.path);
     await sleep(1000);
-    tx(writeContracts[contractName].mintItem(address, upload.path, `ipfs://${upload.path}`));
+    tx(writeContracts[contractName].mintItem(address, ipfsHash, upload.path));
   };
 
   const addToIPFS = async fileToUpload => {
@@ -188,7 +188,7 @@ export default function Mint({ address, tx, contractName, writeContracts }) {
                 const asset = {
                   name,
                   description,
-                  image: `ipfs://${ipfsHash}`,
+                  image: `${IPFS_GATEWAY}${ipfsHash}`,
                   attributes: [
                     {
                       trait_type: "Area",
@@ -200,7 +200,7 @@ export default function Mint({ address, tx, contractName, writeContracts }) {
                     },
                   ],
                 };
-                await uploadToIPFS(asset);
+                await mintIPFSAsset(asset);
               }}
               disabled={!name || !description || !unixDate}
               size="large"

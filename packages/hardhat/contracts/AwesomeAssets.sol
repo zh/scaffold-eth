@@ -8,18 +8,35 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
-contract AwesomeAssets is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnable, Ownable {
+contract AwesomeAssets is
+    ERC721,
+    ERC721Enumerable,
+    ERC721URIStorage,
+    ERC721Burnable,
+    Ownable
+{
     using Counters for Counters.Counter;
     using Strings for uint256;
 
     Counters.Counter private _tokenIdCounter;
+    string baseURI;
 
     mapping(string => uint256) private hashes;
     mapping(uint256 => uint256) public forSale;
 
     event Action(address sender, uint256 tokenId, string action, uint256 price);
 
-    constructor() ERC721("Awesome Assets", "AWEA") {}
+    constructor() ERC721("Awesome Assets", "AWEA") {
+        baseURI = "https://ipfs.io/ipfs/";
+    }
+
+    function _baseURI() internal view override returns (string memory) {
+        return baseURI;
+    }
+
+    function setBaseURI(string memory newURI) public onlyOwner {
+        baseURI = newURI;
+    }
 
     function sellItem(uint256 tokenId, uint256 sellPrice) public {
         require(forSale[tokenId] == 0, "ALREADY FOR SELL"); // only items not already for sale
@@ -55,7 +72,11 @@ contract AwesomeAssets is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burn
         return _tokenIdCounter.current();
     }
 
-    function mintItem(address to, string memory cid, string memory metadata) public {
+    function mintItem(
+        address to,
+        string memory cid, // media CID - uniqness check
+        string memory metadata // JSON metadata hash
+    ) public {
         require(hashes[cid] == 0, "ALREADY MINTED");
         _tokenIdCounter.increment();
         uint256 newId = _tokenIdCounter.current();
@@ -67,14 +88,18 @@ contract AwesomeAssets is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burn
 
     // The following functions are overrides required by Solidity.
 
-    function _beforeTokenTransfer(address from, address to, uint256 tokenId)
-        internal
-        override(ERC721, ERC721Enumerable)
-    {
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 tokenId
+    ) internal override(ERC721, ERC721Enumerable) {
         super._beforeTokenTransfer(from, to, tokenId);
     }
 
-    function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
+    function _burn(uint256 tokenId)
+        internal
+        override(ERC721, ERC721URIStorage)
+    {
         super._burn(tokenId);
     }
 
