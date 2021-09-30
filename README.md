@@ -33,7 +33,7 @@ yarn start
 
 📝 Edit your frontend `App.jsx` in `packages/react-app/src`
 
-For using with other blockchains change target network:
+For using with different blockchains change target network:
 
 ```js
 const targetNetwork = NETWORKS.testnetSmartBCH;
