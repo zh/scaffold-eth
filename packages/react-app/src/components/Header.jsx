@@ -5,8 +5,15 @@ import React from "react";
 
 export default function Header() {
   return (
-    <a href="https://github.com/zh/scaffold-eth/tree/multi-wallet" target="_blank" rel="noopener noreferrer">
-      <PageHeader title="SPA Wallet" style={{ cursor: "pointer" }} />
+    <a href="https://github.com/zh/scaffold-eth/tree/fantom-wallet" target="_blank" rel="noopener noreferrer">
+      <PageHeader
+        title="FTM Wallet"
+        style={{ cursor: "pointer" }}
+        avatar={{
+          src: "https://assets.coingecko.com/coins/images/4001/small/Fantom.png",
+          shape: "square",
+        }}
+      />
     </a>
   );
 }

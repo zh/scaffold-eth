@@ -8,7 +8,7 @@ import Balance from "./Balance";
 import AddressInput from "./AddressInput";
 import EtherInput from "./EtherInput";
 
-const logoURI = "https://i.postimg.cc/BQFCcgdz/eth-logo.png";
+const logoURI = "https://assets.coingecko.com/coins/images/4001/small/Fantom.png";
 
 export default function BigWallet(props) {
   const [amount, setAmount] = useState();
@@ -30,7 +30,7 @@ export default function BigWallet(props) {
   return (
     <Card>
       <div style={{ textAlign: "center" }}>
-        <Balance suffix="ETH" size={48} address={selectedAddress} provider={props.provider} price={props.price} />
+        <Balance suffix="FTM" size={48} address={selectedAddress} provider={props.provider} price={props.price} />
       </div>
       <div>
         {selectedAddress && (

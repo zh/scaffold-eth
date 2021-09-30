@@ -10,7 +10,7 @@ import Balance from "./Balance";
 import EtherInput from "./EtherInput";
 
 const { Text, Paragraph } = Typography;
-const logoURI = "https://i.postimg.cc/BQFCcgdz/eth-logo.png";
+const logoURI = "https://assets.coingecko.com/coins/images/4001/small/Fantom.png";
 
 /*
   ~ What it does? ~

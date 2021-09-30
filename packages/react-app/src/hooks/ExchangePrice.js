@@ -2,7 +2,7 @@ import axios from "axios";
 import { usePoller } from "eth-hooks";
 import { useState } from "react";
 
-const tokenId = "edit-this"; // example: bitcoin-cash, fantom etc.
+const tokenId = "fantom"; // example: bitcoin-cash, fantom etc.
 
 export default function useExchangePrice(targetNetwork, pollTime) {
   const [price, setPrice] = useState(0);
