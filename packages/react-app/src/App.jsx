@@ -7,7 +7,7 @@ import { HashRouter, Link, Route, Switch } from "react-router-dom";
 import Web3Modal from "web3modal";
 import "./App.css";
 import { Account, Faucet, Contract, Header, NetworkSelect, Ramp, ThemeSwitch, TokenBalance } from "./components";
-import { FIAT_PRICE, INFURA_ID, NETWORKS } from "./constants";
+import { GAS_PRICE, FIAT_PRICE, INFURA_ID, NETWORKS } from "./constants";
 import { Transactor } from "./helpers";
 import {
   useBalance,
@@ -21,18 +21,18 @@ import { ExampleUI, Hints } from "./views";
 
 const { ethers } = require("ethers");
 /*
-    Welcome to 🏗 scaffold-bch !
+    Welcome to 🏗 scaffold-multi !
 
     Code: https://github.com/zh/scaffold-eth , Branch: multi-evm
 */
 
 // 📡 What chain are your contracts deployed to?
-// const targetNetwork = NETWORKS.localhost;
+const targetNetwork = NETWORKS.localhost;
 // const targetNetwork = NETWORKS.testnetSmartBCH;
 // const targetNetwork = NETWORKS.mainnetSmartBCH;
 // const targetNetwork = NETWORKS.fujiAva;
 // const targetNetwork = NETWORKS.mainnetAva;
-const targetNetwork = NETWORKS.testnetFantom;
+// const targetNetwork = NETWORKS.testnetFantom;
 // const targetNetwork = NETWORKS.fantomOpera;
 
 // 😬 Sorry for all the console logging
@@ -87,11 +87,10 @@ function App(props) {
     }, 1);
   };
 
-  /* 💵 This hook will get the price of BCH */
+  /* 💵 This hook will get the price in fiat */
   const price = FIAT_PRICE ? useExchangePrice(targetNetwork) : 0;
 
-  /* 🔥 This hook will get the price of Gas from ⛽️ EtherGasStation */
-  const gasPrice = targetNetwork.gasPrice || 1800000000; // Fantom minimal fee
+  const gasPrice = targetNetwork.gasPrice || GAS_PRICE;
   // if (DEBUG) console.log("⛽️ Gas price:", gasPrice);
   // Use your injected provider from 🦊 Metamask or if you don't have it then instantly generate a 🔥 burner wallet.
   const userSigner = useUserSigner(injectedProvider, localProvider);

@@ -1,10 +1,11 @@
 import { notification } from "antd";
+import { GAS_PRICE } from "../constants";
 
 const { ethers } = require("ethers");
 const callbacks = {};
 const DEBUG = true;
 
-export default function CustomTransactor(providerOrSigner, gasPrice = 1800000000) {
+export default function CustomTransactor(providerOrSigner, gasPrice = GAS_PRICE) {
   if (typeof providerOrSigner !== "undefined") {
     // eslint-disable-next-line consistent-return
     return async (tx, callback) => {

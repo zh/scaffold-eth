@@ -7,7 +7,7 @@ import React, { useState } from "react";
 /*
   ~ What it does? ~
 
-  Displays current BCH price and lik to faucets (TODO)
+  Displays current coin price and link to faucets (TODO)
 
   ~ How can I use? ~
 
@@ -19,14 +19,12 @@ import React, { useState } from "react";
   ~ Features ~
 
   - Ramp opens directly in the application, component uses RampInstantSDK
-  - Provide price={price} and current BCH price will be displayed
+  - Provide price={price} and current coin price will be displayed
   - Provide address={address} and your address will be pasted into Wyre/Ramp instantly
 */
 
 export default function Ramp(props) {
   const [modalUp, setModalUp] = useState("down");
-
-  const type = "default";
 
   return (
     <div>
@@ -41,7 +39,7 @@ export default function Ramp(props) {
         {typeof props.price === "undefined" ? 0 : props.price.toFixed(2)}
       </Button>
       <Modal
-        title="Get SmartBCH"
+        title="Faucets (TODO)"
         visible={modalUp === "up"}
         onCancel={() => {
           setModalUp("down");
