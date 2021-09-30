@@ -197,7 +197,7 @@ function App(props) {
               }}
               to="/"
             >
-              SEP-20 Token
+              ERC-20 Token
             </Link>
           </Menu.Item>
           <Menu.Item key="/debugcontracts">

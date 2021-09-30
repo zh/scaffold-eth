@@ -1,4 +1,4 @@
-# Scaffold-Multi, ERC-20 Token on Fantom blockchain
+# Scaffold-Multi, ERC-20 Token example
 
 > everything you need to build on EVM-compatible blockchains! 🚀
 
@@ -13,13 +13,13 @@ Prerequisites: [Node](https://nodejs.org/en/download/) plus [Yarn](https://class
 > clone/fork 🏗 scaffold-eth:
 
 ```bash
-git clone -b ftm-20 https://github.com/zh/scaffold-eth.git ftm-20
+git clone -b multi-20 https://github.com/zh/scaffold-eth.git multi-20
 ```
 
 > install and start your 👷‍ Hardhat chain:
 
 ```bash
-cd ftm-20
+cd multi-20
 yarn install
 yarn chain
 ```
@@ -27,14 +27,14 @@ yarn chain
 > in a second terminal window, start your 📱 frontend:
 
 ```bash
-cd ftm-20
+cd multi-20
 yarn start
 ```
 
 > in a third terminal window, 🛰 deploy your contract:
 
 ```bash
-cd ftm-20
+cd multi-20
 yarn deploy
 
 // deploy on another blockchains
