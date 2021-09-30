@@ -7,7 +7,7 @@ import { HashRouter, Route, Switch } from "react-router-dom";
 import Web3Modal from "web3modal";
 import "./App.css";
 import { Account, BigWallet, Faucet, Header, NetworkSelect, Ramp, ThemeSwitch } from "./components";
-import { FIAT_PRICE, INFURA_ID, NETWORKS } from "./constants";
+import { GAS_PRICE, FIAT_PRICE, INFURA_ID, NETWORKS } from "./constants";
 import { useBalance, useContractLoader, useUserSigner, useExchangePrice } from "./hooks";
 
 const { ethers } = require("ethers");
@@ -17,12 +17,12 @@ const { ethers } = require("ethers");
 */
 
 // 📡 What chain are your contracts deployed to?
-// const targetNetwork = NETWORKS.localhost;
+const targetNetwork = NETWORKS.localhost;
 // const targetNetwork = NETWORKS.testnetSmartBCH;
 // const targetNetwork = NETWORKS.mainnetSmartBCH;
 // const targetNetwork = NETWORKS.fujiAva;
 // const targetNetwork = NETWORKS.mainnetAva;
-const targetNetwork = NETWORKS.testnetFantom;
+// const targetNetwork = NETWORKS.testnetFantom;
 // const targetNetwork = NETWORKS.fantomOpera;
 
 // 😬 Sorry for all the console logging
