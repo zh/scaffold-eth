@@ -59,6 +59,20 @@ module.exports = {
         mnemonic: mnemonic(),
       },
     },
+    xdai: {
+      url: "https://rpc.xdaichain.com/",
+      gasPrice: 1000000000,
+      accounts: {
+        mnemonic: mnemonic(),
+      },
+    },
+    matic: {
+      url: "https://rpc-mainnet.maticvigil.com/",
+      gasPrice: 1000000000,
+      accounts: {
+        mnemonic: mnemonic(),
+      },
+    },
     testnetSmartBCH: {
       url: "http://35.220.203.194:8545", // "https://moeing.tech:9545",
       chainId: 10001,
@@ -75,7 +89,15 @@ module.exports = {
         mnemonic: mnemonic(),
       },
     },
-    fujiAva: {
+    localAvalanche: {
+      url: "http://localhost:9650/ext/bc/C/rpc",
+      gasPrice: 225000000000,
+      chainId: 43112,
+      accounts: {
+        mnemonic: mnemonic(),
+      },
+    },
+    fujiAvalanche: {
       url: "https://api.avax-test.network/ext/bc/C/rpc",
       gasPrice: 225000000000,
       chainId: 43113,
@@ -83,7 +105,7 @@ module.exports = {
         mnemonic: mnemonic("testnet"),
       },
     },
-    mainnetAva: {
+    mainnetAvalanche: {
       url: "https://api.avax.network/ext/bc/C/rpc",
       gasPrice: 225000000000,
       chainId: 43114,
@@ -103,6 +125,22 @@ module.exports = {
       url: "https://rpc.ftm.tools/",
       chainId: 250,
       gasPrice: 1600000000,
+      accounts: {
+        mnemonic: mnemonic(),
+      },
+    },
+    testnetHarmony: {
+      url: "https://api.s0.b.hmny.io",
+      gasPrice: 1000000000,
+      chainId: 1666700000,
+      accounts: {
+        mnemonic: mnemonic("testnet"),
+      },
+    },
+    mainnetHarmony: {
+      url: "https://api.harmony.one",
+      gasPrice: 1000000000,
+      chainId: 1666600000,
       accounts: {
         mnemonic: mnemonic(),
       },
