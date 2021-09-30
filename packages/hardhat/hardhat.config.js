@@ -15,6 +15,7 @@ require("dotenv").config();
 const { isAddress, getAddress, formatUnits, parseUnits } = utils;
 
 const defaultNetwork = process.env.NETWORK || "localhost";
+const infuraKey = process.env.INFURA_KEY;
 const deployerAddress = process.env.DEPLOYER;
 const walletURL = process.env.WALLET_URL || "http://localhost:3000";
 const tokensContract = "YourToken";
@@ -31,15 +32,15 @@ const tokensContract = "YourToken";
 //
 // Select the network you want to deploy to here:
 //
-const smartbchFee = 1050000000;
 
-function mnemonic() {
+function mnemonic(network = "mainnet") {
   try {
-    return fs.readFileSync("./mnemonic.txt").toString().trim();
+    const fileName = network === "mainnet" ? "mnemonic" : `mnemonic_${network}`;
+    return fs.readFileSync(`./${fileName}.txt`).toString().trim();
   } catch (e) {
     if (defaultNetwork !== "localhost") {
       console.log(
-        "☢️ WARNING: No mnemonic file created for a deploy account. Try `yarn run generate` and then `yarn run account`."
+        "☢️ WARNING: No mnemonic file created for a deploy account. Try `npm run generate` and th  en `npm run account`."
       );
     }
   }
@@ -48,28 +49,60 @@ function mnemonic() {
 
 module.exports = {
   defaultNetwork,
-
-  // don't forget to set your provider like:
-  // REACT_APP_PROVIDER=https://dai.poa.network in packages/react-app/.env
-  // (then your frontend will talk to your contracts on the live network!)
-  // (you will need to restart the `yarn run start` dev server after editing the .env)
-
   networks: {
     localhost: {
       url: "http://localhost:8545",
     },
-    testnetSmartBCH: {
-      url: "https://moeing.tech:9545", // "http://35.220.203.194:8545",
-      chainId: 10001,
-      gasPrice: smartbchFee,
+    kovan: {
+      url: "https://kovan.infura.io/v3/" + infuraKey,
       accounts: {
         mnemonic: mnemonic(),
+      },
+    },
+    testnetSmartBCH: {
+      url: "http://35.220.203.194:8545", // "https://moeing.tech:9545",
+      chainId: 10001,
+      gasPrice: 1050000000,
+      accounts: {
+        mnemonic: mnemonic("testnet"),
       },
     },
     mainnetSmartBCH: {
       url: "https://smartbch.greyh.at", // "https://global.uat.cash",
       chainId: 10000,
-      gasPrice: smartbchFee,
+      gasPrice: 1050000000,
+      accounts: {
+        mnemonic: mnemonic(),
+      },
+    },
+    fujiAva: {
+      url: "https://api.avax-test.network/ext/bc/C/rpc",
+      gasPrice: 225000000000,
+      chainId: 43113,
+      accounts: {
+        mnemonic: mnemonic("testnet"),
+      },
+    },
+    mainnetAva: {
+      url: "https://api.avax.network/ext/bc/C/rpc",
+      gasPrice: 225000000000,
+      chainId: 43114,
+      accounts: {
+        mnemonic: mnemonic(),
+      },
+    },
+    testnetFantom: {
+      url: "https://rpc.testnet.fantom.network/",
+      chainId: 4002,
+      gasPrice: 1800000000,
+      accounts: {
+        mnemonic: mnemonic("testnet"),
+      },
+    },
+    fantomOpera: {
+      url: "https://rpc.ftm.tools/",
+      chainId: 250,
+      gasPrice: 1600000000,
       accounts: {
         mnemonic: mnemonic(),
       },
@@ -113,8 +146,12 @@ module.exports = {
     deployer: {
       default: 0, // here this will by default take the first account as deployer
     },
-    "mainnetSmartBCH": deployerAddress,
-    "testnetSmartBCH": deployerAddress,
+    mainnetSmartBCH: deployerAddress,
+    testnetSmartBCH: deployerAddress,
+    fujiAva: deployerAddress,
+    mainnetAva: deployerAddress,
+    testnetFantom: deployerAddress,
+    fantomOpera: deployerAddress,
   },
 };
 

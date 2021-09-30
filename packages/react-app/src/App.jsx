@@ -23,13 +23,17 @@ const { ethers } = require("ethers");
 /*
     Welcome to 🏗 scaffold-bch !
 
-    Code: https://github.com/zh/scaffold-eth , Branch: smartbch
+    Code: https://github.com/zh/scaffold-eth , Branch: multi-evm
 */
 
-/// 📡 What chain are your contracts deployed to?
-const targetNetwork = NETWORKS.localhost;
+// 📡 What chain are your contracts deployed to?
+// const targetNetwork = NETWORKS.localhost;
 // const targetNetwork = NETWORKS.testnetSmartBCH;
 // const targetNetwork = NETWORKS.mainnetSmartBCH;
+// const targetNetwork = NETWORKS.fujiAva;
+// const targetNetwork = NETWORKS.mainnetAva;
+const targetNetwork = NETWORKS.testnetFantom;
+// const targetNetwork = NETWORKS.fantomOpera;
 
 // 😬 Sorry for all the console logging
 const DEBUG = false;
@@ -87,7 +91,7 @@ function App(props) {
   const price = FIAT_PRICE ? useExchangePrice(targetNetwork) : 0;
 
   /* 🔥 This hook will get the price of Gas from ⛽️ EtherGasStation */
-  const gasPrice = targetNetwork.gasPrice || 1050000000; // SmartBCH minimal fee
+  const gasPrice = targetNetwork.gasPrice || 1800000000; // Fantom minimal fee
   // if (DEBUG) console.log("⛽️ Gas price:", gasPrice);
   // Use your injected provider from 🦊 Metamask or if you don't have it then instantly generate a 🔥 burner wallet.
   const userSigner = useUserSigner(injectedProvider, localProvider);

@@ -4,7 +4,7 @@ const { ethers } = require("ethers");
 const callbacks = {};
 const DEBUG = true;
 
-export default function BchTransactor(providerOrSigner, gasPrice = 1050000000) {
+export default function CustomTransactor(providerOrSigner, gasPrice = 1800000000) {
   if (typeof providerOrSigner !== "undefined") {
     // eslint-disable-next-line consistent-return
     return async (tx, callback) => {

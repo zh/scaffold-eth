@@ -33,6 +33,38 @@ export const NETWORKS = {
     blockExplorer: "https://smartscan.cash/",
     gasPrice: 1050000000,
   },
+  fujiAva: {
+    name: "Fuji",
+    color: "#7003DD",
+    chainId: 43113,
+    rpcUrl: "https://api.avax-test.network/ext/bc/C/rpc",
+    blockExplorer: "https://cchain.explorer.avax-test.network",
+    gasPrice: 225000000000,
+  },
+  mainnetAva: {
+    name: "Mainnet",
+    color: "#ff8b9e",
+    chainId: 43114,
+    rpcUrl: "https://api.avax.network/ext/bc/C/rpc",
+    blockExplorer: "https://cchain.explorer.avax.network",
+    gasPrice: 225000000000,
+  },
+  testnetFantom: {
+    name: "Fantom Testnet",
+    color: "#7003DD",
+    chainId: 4002,
+    rpcUrl: "https://rpc.testnet.fantom.network/",
+    blockExplorer: "https://testnet.ftmscan.com/",
+    gasPrice: 1800000000,
+  },
+  fantomOpera: {
+    name: "Fantom Opera",
+    color: "#ff8b9e",
+    chainId: 250,
+    rpcUrl: "https://rpc.fmt.tools/",
+    blockExplorer: "https://ftmscan.com/",
+    gasPrice: 1600000000,
+  },
 };
 
 export const NETWORK = chainId => {
@@ -43,4 +75,6 @@ export const NETWORK = chainId => {
   }
 };
 
-export const FIAT_PRICE = process.env.REACT_APP_FIAT_PRICE === "YES";
+export const FIAT_PRICE = process.env.REACT_APP_FIAT_PRICE === "NO";
+export const IPFS_GATEWAY = "https://ipfs.io/ipfs/";
+export const OWNER_ADDR = process.env.REACT_APP_OWNER_ADDRESS;
