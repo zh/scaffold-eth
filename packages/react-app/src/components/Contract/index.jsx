@@ -66,7 +66,7 @@ export default function Contract({
 
   const address = contract ? contract.address : "";
   const contractIsDeployed = useContractExistsAtAddress(provider, address);
-  const canAddLogo = chainId === 10000 || chainId === 10001; // SmartBCH
+  const canAddLogo = chainId === 4002 || chainId === 250; // Fantom
 
   const displayedContractFunctions = useMemo(
     () =>
