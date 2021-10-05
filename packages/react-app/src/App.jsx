@@ -181,7 +181,13 @@ function App(props) {
         <Switch>
           <Route exact path="/:pk?">
             <div style={{ width: 480, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
-              <BigWallet signer={userSigner} provider={localProvider} price={price} gasPrice={gasPrice} />
+              <BigWallet
+                signer={userSigner}
+                provider={localProvider}
+                price={price}
+                coin={coinName}
+                gasPrice={gasPrice}
+              />
             </div>
           </Route>
         </Switch>
