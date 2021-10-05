@@ -9,7 +9,7 @@ contract Vendor is Ownable {
     using SafeMath for uint256;
     ScaffoldToken scfToken;
 
-    uint256 public constant tokensPerETH = 100;
+    uint256 public tokensPerETH = 100;
 
     event BuyTokens(address buyer, uint256 amountOfETH, uint256 amountOfTokens);
     event SellTokens(
@@ -65,5 +65,10 @@ contract Vendor is Ownable {
         require(ownerBalance >= amount, "Vendor does not own enough ETH");
         (bool sent, ) = payable(msg.sender).call{value: amount}("");
         require(sent, "ETH transfer failed");
+    }
+
+    function setPrice(uint256 newPrice) external onlyOwner {
+        require(newPrice > 0, "price must be > 0");
+        tokensPerETH = newPrice;
     }
 }

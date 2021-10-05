@@ -55,7 +55,7 @@ const targetNetwork = NETWORKS.localhost;
 // const targetNetwork = NETWORKS.kaleido;
 
 // 😬 Sorry for all the console logging
-const DEBUG = true;
+const DEBUG = false;
 
 const tokenName = "ScaffoldToken";
 const coinName = targetNetwork.coin || "ETH";
@@ -159,13 +159,13 @@ function App(props) {
   if (DEBUG) console.log("💵 vendorETHBalance", vendorETHBalance ? formatEther(vendorETHBalance) : "...");
 
   const vendorTokenBalance = useContractReader(readContracts, tokenName, "balanceOf", [vendorAddress]);
-  console.log("🏵 vendorTokenBalance:", vendorTokenBalance ? formatEther(vendorTokenBalance) : "...");
+  if (DEBUG) console.log("🏵 vendorTokenBalance:", vendorTokenBalance ? formatEther(vendorTokenBalance) : "...");
 
   const yourTokenBalance = useContractReader(readContracts, tokenName, "balanceOf", [address]);
-  console.log("🏵 yourTokenBalance:", yourTokenBalance ? formatEther(yourTokenBalance) : "...");
+  if (DEBUG) console.log("🏵 yourTokenBalance:", yourTokenBalance ? formatEther(yourTokenBalance) : "...");
 
   const tokensPerEth = useContractReader(readContracts, "Vendor", "tokensPerETH");
-  console.log("🏦 tokensPerEth:", tokensPerEth ? tokensPerEth.toString() : "...");
+  if (DEBUG) console.log("🏦 tokensPerEth:", tokensPerEth ? tokensPerEth.toString() : "...");
 
   //
   // 🧫 DEBUG 👨🏻‍🔬
@@ -223,9 +223,9 @@ function App(props) {
   const { currentTheme } = useThemeSwitcher();
 
   const buyTokensEvents = useEventListener(readContracts, "Vendor", "BuyTokens", localProvider, 1);
-  console.log("📟 buyTokensEvents:", buyTokensEvents);
+  if (DEBUG) console.log("📟 buyTokensEvents:", buyTokensEvents);
   const sellTokensEvents = useEventListener(readContracts, "Vendor", "SellTokens", localProvider, 1);
-  console.log("📟 sellTokensEvents:", sellTokensEvents);
+  if (DEBUG) console.log("📟 sellTokensEvents:", sellTokensEvents);
 
   const [tokenBuyAmount, setTokenBuyAmount] = useState();
   const [tokenApproveAmount, setTokenApproveAmount] = useState();
@@ -233,7 +233,7 @@ function App(props) {
 
   const ethCostToPurchaseTokens =
     tokenBuyAmount && tokensPerEth && parseEther("" + tokenBuyAmount / parseFloat(tokensPerEth));
-  console.log("ethCostToPurchaseTokens:", ethCostToPurchaseTokens);
+  if (DEBUG) console.log("ethCostToPurchaseTokens:", ethCostToPurchaseTokens);
 
   const ethCostToApproveTokens =
     tokenApproveAmount && tokensPerEth && parseEther("" + tokenApproveAmount / parseFloat(tokensPerEth));
@@ -253,7 +253,7 @@ function App(props) {
     ownerDisplay = (
       <>
         <div style={{ padding: 8, marginTop: 32 }}>
-          <div>Owner Token Balance:</div>
+          <div>Owner Tokens Balance:</div>
           <TokenBalance name={tokenName} img={"💰"} address={address} contracts={readContracts} fontSize={32} />
         </div>
         <div style={{ padding: 8, marginTop: 32, width: 420, margin: "auto" }}>
@@ -370,7 +370,7 @@ function App(props) {
         <Switch>
           <Route exact path="/">
             <div style={{ padding: 8, marginTop: 32 }}>
-              <div>Vendor Token Balance:</div>
+              <div>Vendor 💰 Tokens Balance:</div>
               <Balance balance={vendorTokenBalance} fontSize={64} />
             </div>
 
@@ -380,8 +380,8 @@ function App(props) {
             </div>
             <Divider />
             <div style={{ padding: 8, marginTop: 32, width: 480, margin: "auto" }}>
-              <Card title="Buy Tokens">
-                <div style={{ padding: 8 }}>{tokensPerEth && tokensPerEth.toNumber()} tokens per ETH</div>
+              <Card title="Buy 💰 Tokens">
+                <div style={{ padding: 8 }}>{tokensPerEth && formatEther(tokensPerEth)} tokens per ETH</div>
 
                 <div style={{ padding: 8 }}>
                   <Input
@@ -409,7 +409,7 @@ function App(props) {
                   </Button>
                 </div>
               </Card>
-              <Card title="Approve Tokens">
+              <Card title="Approve 💰 Tokens">
                 <div style={{ padding: 8 }}>
                   <Input
                     style={{ textAlign: "center" }}
@@ -436,7 +436,7 @@ function App(props) {
                   </Button>
                 </div>
               </Card>
-              <Card title="Sell Tokens">
+              <Card title="Sell 💰 Tokens">
                 <div style={{ padding: 8 }}>
                   <Input
                     style={{ textAlign: "center" }}
