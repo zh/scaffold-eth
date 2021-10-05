@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "hardhat/console.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./ScaffoldToken.sol";
@@ -48,11 +47,6 @@ contract Vendor is Ownable {
         require(
             vendorBalance >= ethToTransfer,
             "vendor does not own enough ETH"
-        );
-        // allow vendor to sell tokens
-        console.log(
-            "allowance: %s",
-            scfToken.allowance(msg.sender, address(this))
         );
         emit SellTokens(msg.sender, tokensAmount, ethToTransfer);
         bool sent = scfToken.transferFrom(
