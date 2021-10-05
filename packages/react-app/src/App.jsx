@@ -231,6 +231,38 @@ function App(props) {
 
   useThemeSwitcher();
 
+  const fundButton = amount => (
+    <div style={{ padding: 8 }}>
+      <Button
+        type={balanceStaked ? "success" : "primary"}
+        onClick={() => {
+          tx(writeContracts.Staker.stake({ value: ethers.utils.parseEther(amount) }));
+        }}
+      >
+        {`🥩 Stake ${amount} ${coinName}`}
+      </Button>
+    </div>
+  );
+
+  const statusDisplay = (
+    <>
+      <div style={{ padding: 8, marginTop: 32 }}>
+        <div>Timeleft:</div>
+        {timeLeft && moment.duration(timeLeft.toNumber() * 1000).humanize()}
+      </div>
+      <div style={{ padding: 8 }}>
+        <div>Total staked:</div>
+        <Balance balance={stakerContractBalance} fontSize={64} />
+        /
+        <Balance balance={threshold} fontSize={64} />
+      </div>
+      <div style={{ padding: 8 }}>
+        <div>You staked:</div>
+        <Balance balance={balanceStaked} fontSize={64} />
+      </div>
+    </>
+  );
+
   return (
     <div className="App">
       {/* ✏️ Edit the header and change the title to your project name */}
@@ -272,20 +304,7 @@ function App(props) {
         <Switch>
           <Route exact path="/">
             {completeDisplay}
-            <div style={{ padding: 8, marginTop: 32 }}>
-              <div>Timeleft:</div>
-              {timeLeft && moment.duration(timeLeft.toNumber() * 1000).humanize()}
-            </div>
-            <div style={{ padding: 8 }}>
-              <div>Total staked:</div>
-              <Balance balance={stakerContractBalance} fontSize={64} />
-              /
-              <Balance balance={threshold} fontSize={64} />
-            </div>
-            <div style={{ padding: 8 }}>
-              <div>You staked:</div>
-              <Balance balance={balanceStaked} fontSize={64} />
-            </div>
+            {statusDisplay}
             <Divider />
             <div style={{ padding: 8 }}>
               <Button
@@ -307,16 +326,7 @@ function App(props) {
                 {"🏧  Withdraw"}
               </Button>
             </div>
-            <div style={{ padding: 8 }}>
-              <Button
-                type={balanceStaked ? "success" : "primary"}
-                onClick={() => {
-                  tx(writeContracts.Staker.stake({ value: ethers.utils.parseEther("0.5") }));
-                }}
-              >
-                {"🥩 Stake 0.5 " + coinName}
-              </Button>
-            </div>
+            {fundButton("0.5")}
           </Route>
           <Route path="/events">
             <div style={{ width: 500, margin: "auto", marginTop: 64 }}>
