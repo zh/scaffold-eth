@@ -30,8 +30,8 @@ const { ethers } = require("ethers");
 const targetNetwork = NETWORKS.localhost;
 // const targetNetwork = NETWORKS.testnetSmartBCH;
 // const targetNetwork = NETWORKS.mainnetSmartBCH;
-// const targetNetwork = NETWORKS.fujiAva;
-// const targetNetwork = NETWORKS.mainnetAva;
+// const targetNetwork = NETWORKS.fujiAvalanche;
+// const targetNetwork = NETWORKS.mainnetAvalanche;
 // const targetNetwork = NETWORKS.testnetFantom;
 // const targetNetwork = NETWORKS.fantomOpera;
 
