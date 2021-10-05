@@ -18,7 +18,7 @@ import {
   NetworkSelect,
   Ramp,
   ThemeSwitch,
-  TokenBalance,
+  TokenWallet,
 } from "./components";
 import { GAS_PRICE, FIAT_PRICE, INFURA_ID, NETWORKS, OWNER_ADDR } from "./constants";
 import {
@@ -241,8 +241,6 @@ function App(props) {
   const ethCostToSellTokens =
     tokenSellAmount && tokensPerEth && parseEther("" + tokenSellAmount / parseFloat(tokensPerEth));
 
-  const [tokenSendToAddress, setTokenSendToAddress] = useState();
-  const [tokenSendAmount, setTokenSendAmount] = useState();
   const [ethWithdrawAmount, setEthWithdrawAmount] = useState();
 
   const [buying, setBuying] = useState(false);
@@ -252,45 +250,25 @@ function App(props) {
   if (yourTokenBalance) {
     ownerDisplay = (
       <>
-        <div style={{ padding: 8, marginTop: 32 }}>
-          <div>Owner Tokens Balance:</div>
-          <TokenBalance name={tokenName} img={"💰"} address={address} contracts={readContracts} fontSize={32} />
-        </div>
-        <div style={{ padding: 8, marginTop: 32, width: 420, margin: "auto" }}>
-          <Card title="Transfer tokens">
-            <div>
-              <div style={{ padding: 8 }}>
-                <AddressInput placeholder="to address" value={tokenSendToAddress} onChange={setTokenSendToAddress} />
-              </div>
-              <div style={{ padding: 8 }}>
-                <Input
-                  style={{ textAlign: "center" }}
-                  placeholder={"amount of tokens to send"}
-                  value={tokenSendAmount}
-                  onChange={e => {
-                    setTokenSendAmount(e.target.value);
-                  }}
-                />
-              </div>
-            </div>
-            <div style={{ padding: 8 }}>
-              <Button
-                type={"primary"}
-                onClick={() => {
-                  tx(writeContracts[tokenName].transfer(tokenSendToAddress, parseEther("" + tokenSendAmount)));
-                }}
-              >
-                Send Tokens
-              </Button>
-            </div>
-          </Card>
+        <div style={{ padding: 8, marginTop: 32, width: 480, margin: "auto" }}>
+          <TokenWallet
+            name={tokenName}
+            address={address}
+            signer={userSigner}
+            provider={localProvider}
+            readContracts={readContracts}
+            gasPrice={gasPrice}
+            chainId={localChainId}
+            showQR={true}
+            color={currentTheme === "light" ? "#1890ff" : "#2caad9"}
+          />
           {OWNER_ADDR && OWNER_ADDR === address && (
             <>
-              <Card title="Withdraw ETH">
+              <Card title={`Withdraw ${coinName}`}>
                 <div style={{ padding: 8 }}>
                   <EtherInput
                     style={{ textAlign: "center" }}
-                    placeholder={"amount of ETH to withdraw"}
+                    placeholder={`amount of ${coinName} to withdraw`}
                     value={ethWithdrawAmount}
                     onChange={value => {
                       setEthWithdrawAmount(value);
@@ -308,7 +286,7 @@ function App(props) {
                       setWithdrawing(false);
                     }}
                   >
-                    Withdraw ETH
+                    Withdraw {coinName}
                   </Button>
                 </div>
               </Card>
@@ -375,14 +353,15 @@ function App(props) {
             </div>
 
             <div style={{ padding: 8 }}>
-              <div>Vendor ETH Balance:</div>
-              <Balance balance={vendorETHBalance} fontSize={64} /> ETH
+              <div>Vendor {coinName} Balance:</div>
+              <Balance balance={vendorETHBalance} fontSize={64} /> {coinName}
             </div>
             <Divider />
             <div style={{ padding: 8, marginTop: 32, width: 480, margin: "auto" }}>
               <Card title="Buy 💰 Tokens">
-                <div style={{ padding: 8 }}>{tokensPerEth && formatEther(tokensPerEth)} tokens per ETH</div>
-
+                <div style={{ padding: 8 }}>
+                  {tokensPerEth && tokensPerEth.toNumber()} tokens per {coinName}
+                </div>
                 <div style={{ padding: 8 }}>
                   <Input
                     style={{ textAlign: "center" }}
@@ -476,7 +455,7 @@ function App(props) {
                     <List.Item key={item[0] + item[1] + item.blockNumber}>
                       <Address value={item[0]} fontSize={16} /> paid
                       <Balance balance={item[1]} />
-                      ETH to get
+                      {coinName} to get
                       <Balance balance={item[2]} />
                       Tokens
                     </List.Item>
@@ -495,7 +474,7 @@ function App(props) {
                       <Balance balance={item[1]} />
                       tokens to get
                       <Balance balance={item[2]} />
-                      ETH
+                      {coinName}
                     </List.Item>
                   );
                 }}
@@ -533,6 +512,7 @@ function App(props) {
           address={address}
           localProvider={localProvider}
           userSigner={userSigner}
+          coin={coinName}
           price={price}
           coin={coinName}
           web3Modal={web3Modal}
