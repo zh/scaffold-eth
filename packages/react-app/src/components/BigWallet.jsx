@@ -11,7 +11,7 @@ import EtherInput from "./EtherInput";
 const logoURI = "https://i.postimg.cc/BQFCcgdz/eth-logo.png";
 
 export default function BigWallet(props) {
-  const coinName = props.coin || "ETH"
+  const coinName = props.coin || "ETH";
   const [amount, setAmount] = useState();
   const [toAddress, setToAddress] = useState();
 
