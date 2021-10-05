@@ -1,6 +1,6 @@
-# Scaffold-Multi, ERC-20 Token example
+# Scaffold-Multi, ERC-20 Token Vendor example
 
-> everything you need to build on EVM-compatible blockchains! 🚀
+> buy/sell ERC-20 tokens! 🚀
 
 🧪 Quickly experiment with Solidity using a frontend that adapts to your smart contract:
 
@@ -13,13 +13,13 @@ Prerequisites: [Node](https://nodejs.org/en/download/) plus [Yarn](https://class
 > clone/fork 🏗 scaffold-eth:
 
 ```bash
-git clone -b multi-20 https://github.com/zh/scaffold-eth.git multi-20
+git clone -b token-vendor https://github.com/zh/scaffold-eth.git token-vendor
 ```
 
 > install and start your 👷‍ Hardhat chain:
 
 ```bash
-cd multi-20
+cd token-vendor
 yarn install
 yarn chain
 ```
@@ -27,14 +27,14 @@ yarn chain
 > in a second terminal window, start your 📱 frontend:
 
 ```bash
-cd multi-20
+cd token-vendor
 yarn start
 ```
 
 > in a third terminal window, 🛰 deploy your contract:
 
 ```bash
-cd multi-20
+cd token-vendor
 yarn deploy
 
 // deploy on another blockchains
