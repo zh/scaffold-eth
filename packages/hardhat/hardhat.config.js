@@ -523,6 +523,20 @@ function send(signer, txparams) {
 }
 
 task("fund", "Fund account")
+  .addParam("account", "The account's address")
+  .addOptionalParam("amount", "Amount of tokens to send")
+  .setAction(async (taskArgs, { ethers }) => {
+    console.log("\n\n 🎫 Minting to " + taskArgs.account + "...\n");
+
+    const { deployer } = await getNamedAccounts();
+    const contract = await ethers.getContract(tokensContract, deployer);
+    const amount = taskArgs.amount ? parseInt(taskArgs.amount, 10) : 10;
+    const decimals = await contract.decimals();
+    await contract.transfer(taskArgs.account, "0x" + (amount * 10 ** decimals).toString(16));
+  });
+
+task("send", "Send BCH")
+>>>>>>> bd0fab33 (Simple token-vendor example - scaffold-eth chanlenge-2)
   .addParam("from", "From address or account index")
   .addOptionalParam("to", "To address or account index")
   .addOptionalParam("amount", "Amount to send in ether")

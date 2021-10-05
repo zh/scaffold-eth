@@ -1,14 +1,36 @@
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { useThemeSwitcher } from "react-css-theme-switcher";
-import { Button, Menu, Col, Row } from "antd";
+import { Button, Card, Col, Divider, Input, List, Menu, Row } from "antd";
 import "antd/dist/antd.css";
 import React, { useCallback, useEffect, useState } from "react";
 import { HashRouter, Link, Route, Switch } from "react-router-dom";
 import Web3Modal from "web3modal";
 import "./App.css";
-import { Account, Faucet, Contract, Header, Ramp, NetworkSelect, ThemeSwitch, TokenWallet } from "./components";
-import { GAS_PRICE, FIAT_PRICE, INFURA_ID, NETWORKS } from "./constants";
-import { useBalance, useContractLoader, useUserSigner, useExchangePrice } from "./hooks";
+import {
+  AddressInput,
+  Address,
+  Account,
+  Balance,
+  Contract,
+  Faucet,
+  EtherInput,
+  Header,
+  NetworkSelect,
+  Ramp,
+  ThemeSwitch,
+  TokenBalance,
+} from "./components";
+import { GAS_PRICE, FIAT_PRICE, INFURA_ID, NETWORKS, OWNER_ADDR } from "./constants";
+import {
+  useBalance,
+  useContractLoader,
+  useContractReader,
+  useEventListener,
+  useUserSigner,
+  useExchangePrice,
+} from "./hooks";
+import { Transactor } from "./helpers";
+import { formatEther, parseEther } from "@ethersproject/units";
 
 const { ethers } = require("ethers");
 /*
@@ -33,7 +55,7 @@ const targetNetwork = NETWORKS.localhost;
 // const targetNetwork = NETWORKS.kaleido;
 
 // 😬 Sorry for all the console logging
-const DEBUG = false;
+const DEBUG = true;
 
 const tokenName = "ScaffoldToken";
 const coinName = targetNetwork.coin || "ETH";
@@ -116,6 +138,9 @@ function App(props) {
 
   // For more hooks, check out 🔗eth-hooks at: https://www.npmjs.com/package/eth-hooks
 
+  // The transactor wraps transactions and provides notificiations
+  const tx = Transactor(userSigner, gasPrice);
+
   // 🏗 scaffold-eth is full of handy hooks like this one to get your balance:
   const yourLocalBalance = useBalance(localProvider, address);
 
@@ -127,6 +152,20 @@ function App(props) {
 
   // If you want to make 🔐 write transactions to your contracts, use the userSigner:
   const writeContracts = useContractLoader(userSigner, { chainId: localChainId });
+
+  const vendorAddress = readContracts && readContracts.Vendor && readContracts.Vendor.address;
+
+  const vendorETHBalance = useBalance(localProvider, vendorAddress);
+  if (DEBUG) console.log("💵 vendorETHBalance", vendorETHBalance ? formatEther(vendorETHBalance) : "...");
+
+  const vendorTokenBalance = useContractReader(readContracts, tokenName, "balanceOf", [vendorAddress]);
+  console.log("🏵 vendorTokenBalance:", vendorTokenBalance ? formatEther(vendorTokenBalance) : "...");
+
+  const yourTokenBalance = useContractReader(readContracts, tokenName, "balanceOf", [address]);
+  console.log("🏵 yourTokenBalance:", yourTokenBalance ? formatEther(yourTokenBalance) : "...");
+
+  const tokensPerEth = useContractReader(readContracts, "Vendor", "tokensPerETH");
+  console.log("🏦 tokensPerEth:", tokensPerEth ? tokensPerEth.toString() : "...");
 
   //
   // 🧫 DEBUG 👨🏻‍🔬
@@ -183,6 +222,103 @@ function App(props) {
 
   const { currentTheme } = useThemeSwitcher();
 
+  const buyTokensEvents = useEventListener(readContracts, "Vendor", "BuyTokens", localProvider, 1);
+  console.log("📟 buyTokensEvents:", buyTokensEvents);
+  const sellTokensEvents = useEventListener(readContracts, "Vendor", "SellTokens", localProvider, 1);
+  console.log("📟 sellTokensEvents:", sellTokensEvents);
+
+  const [tokenBuyAmount, setTokenBuyAmount] = useState();
+  const [tokenApproveAmount, setTokenApproveAmount] = useState();
+  const [tokenSellAmount, setTokenSellAmount] = useState();
+
+  const ethCostToPurchaseTokens =
+    tokenBuyAmount && tokensPerEth && parseEther("" + tokenBuyAmount / parseFloat(tokensPerEth));
+  console.log("ethCostToPurchaseTokens:", ethCostToPurchaseTokens);
+
+  const ethCostToApproveTokens =
+    tokenApproveAmount && tokensPerEth && parseEther("" + tokenApproveAmount / parseFloat(tokensPerEth));
+
+  const ethCostToSellTokens =
+    tokenSellAmount && tokensPerEth && parseEther("" + tokenSellAmount / parseFloat(tokensPerEth));
+
+  const [tokenSendToAddress, setTokenSendToAddress] = useState();
+  const [tokenSendAmount, setTokenSendAmount] = useState();
+  const [ethWithdrawAmount, setEthWithdrawAmount] = useState();
+
+  const [buying, setBuying] = useState(false);
+  const [withdrawing, setWithdrawing] = useState(false);
+
+  let ownerDisplay = "";
+  if (yourTokenBalance) {
+    ownerDisplay = (
+      <>
+        <div style={{ padding: 8, marginTop: 32 }}>
+          <div>Owner Token Balance:</div>
+          <TokenBalance name={tokenName} img={"💰"} address={address} contracts={readContracts} fontSize={32} />
+        </div>
+        <div style={{ padding: 8, marginTop: 32, width: 420, margin: "auto" }}>
+          <Card title="Transfer tokens">
+            <div>
+              <div style={{ padding: 8 }}>
+                <AddressInput placeholder="to address" value={tokenSendToAddress} onChange={setTokenSendToAddress} />
+              </div>
+              <div style={{ padding: 8 }}>
+                <Input
+                  style={{ textAlign: "center" }}
+                  placeholder={"amount of tokens to send"}
+                  value={tokenSendAmount}
+                  onChange={e => {
+                    setTokenSendAmount(e.target.value);
+                  }}
+                />
+              </div>
+            </div>
+            <div style={{ padding: 8 }}>
+              <Button
+                type={"primary"}
+                onClick={() => {
+                  tx(writeContracts[tokenName].transfer(tokenSendToAddress, parseEther("" + tokenSendAmount)));
+                }}
+              >
+                Send Tokens
+              </Button>
+            </div>
+          </Card>
+          {OWNER_ADDR && OWNER_ADDR === address && (
+            <>
+              <Card title="Withdraw ETH">
+                <div style={{ padding: 8 }}>
+                  <EtherInput
+                    style={{ textAlign: "center" }}
+                    placeholder={"amount of ETH to withdraw"}
+                    value={ethWithdrawAmount}
+                    onChange={value => {
+                      setEthWithdrawAmount(value);
+                    }}
+                  />
+                </div>
+
+                <div style={{ padding: 8 }}>
+                  <Button
+                    type={"primary"}
+                    loading={withdrawing}
+                    onClick={async () => {
+                      setWithdrawing(true);
+                      await tx(writeContracts.Vendor.withdraw(parseEther("" + ethWithdrawAmount)));
+                      setWithdrawing(false);
+                    }}
+                  >
+                    Withdraw ETH
+                  </Button>
+                </div>
+              </Card>
+            </>
+          )}
+        </div>
+      </>
+    );
+  }
+
   return (
     <div className="App">
       {/* ✏️ Edit the header and change the title to your project name */}
@@ -197,15 +333,35 @@ function App(props) {
               }}
               to="/"
             >
-              ERC-20 Token
+              Vendor
             </Link>
           </Menu.Item>
-          <Menu.Item key="/debugcontracts">
+          <Menu.Item key="/token">
             <Link
               onClick={() => {
-                setRoute("/debugcontracts");
+                setRoute("/token");
               }}
-              to="/debugcontracts"
+              to="/token"
+            >
+              Owner
+            </Link>
+          </Menu.Item>
+          <Menu.Item key="/events">
+            <Link
+              onClick={() => {
+                setRoute("/events");
+              }}
+              to="/events"
+            >
+              Events
+            </Link>
+          </Menu.Item>
+          <Menu.Item key="/debug">
+            <Link
+              onClick={() => {
+                setRoute("/debug");
+              }}
+              to="/debug"
             >
               Debug Contracts
             </Link>
@@ -213,21 +369,149 @@ function App(props) {
         </Menu>
         <Switch>
           <Route exact path="/">
-            <div style={{ width: 480, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
-              <TokenWallet
-                name={tokenName}
-                address={address}
-                signer={userSigner}
-                provider={localProvider}
-                readContracts={readContracts}
-                gasPrice={gasPrice}
-                chainId={localChainId}
-                showQR={true}
-                color={currentTheme === "light" ? "#1890ff" : "#2caad9"}
+            <div style={{ padding: 8, marginTop: 32 }}>
+              <div>Vendor Token Balance:</div>
+              <Balance balance={vendorTokenBalance} fontSize={64} />
+            </div>
+
+            <div style={{ padding: 8 }}>
+              <div>Vendor ETH Balance:</div>
+              <Balance balance={vendorETHBalance} fontSize={64} /> ETH
+            </div>
+            <Divider />
+            <div style={{ padding: 8, marginTop: 32, width: 480, margin: "auto" }}>
+              <Card title="Buy Tokens">
+                <div style={{ padding: 8 }}>{tokensPerEth && tokensPerEth.toNumber()} tokens per ETH</div>
+
+                <div style={{ padding: 8 }}>
+                  <Input
+                    style={{ textAlign: "center" }}
+                    placeholder={"amount of tokens to buy"}
+                    value={tokenBuyAmount}
+                    onChange={e => {
+                      setTokenBuyAmount(e.target.value);
+                    }}
+                  />
+                  <Balance balance={ethCostToPurchaseTokens} dollarMultiplier={price} />
+                </div>
+
+                <div style={{ padding: 8 }}>
+                  <Button
+                    type={"primary"}
+                    loading={buying}
+                    onClick={async () => {
+                      setBuying(true);
+                      await tx(writeContracts.Vendor.buyTokens({ value: ethCostToPurchaseTokens }));
+                      setBuying(false);
+                    }}
+                  >
+                    Buy Tokens
+                  </Button>
+                </div>
+              </Card>
+              <Card title="Approve Tokens">
+                <div style={{ padding: 8 }}>
+                  <Input
+                    style={{ textAlign: "center" }}
+                    placeholder={"amount of tokens to approve"}
+                    value={tokenApproveAmount}
+                    onChange={e => {
+                      setTokenApproveAmount(e.target.value);
+                    }}
+                  />
+                  <Balance balance={ethCostToApproveTokens} dollarMultiplier={price} />
+                </div>
+
+                <div style={{ padding: 8 }}>
+                  <Button
+                    type={"primary"}
+                    loading={buying}
+                    onClick={async () => {
+                      setBuying(true);
+                      await tx(writeContracts[tokenName].approve(vendorAddress, parseEther("" + tokenApproveAmount)));
+                      setBuying(false);
+                    }}
+                  >
+                    Approve Tokens
+                  </Button>
+                </div>
+              </Card>
+              <Card title="Sell Tokens">
+                <div style={{ padding: 8 }}>
+                  <Input
+                    style={{ textAlign: "center" }}
+                    placeholder={"amount of tokens to sell"}
+                    value={tokenSellAmount}
+                    onChange={e => {
+                      setTokenSellAmount(e.target.value);
+                    }}
+                  />
+                  <Balance balance={ethCostToSellTokens} dollarMultiplier={price} />
+                </div>
+
+                <div style={{ padding: 8 }}>
+                  <Button
+                    type={"primary"}
+                    loading={buying}
+                    onClick={async () => {
+                      setBuying(true);
+                      await tx(writeContracts.Vendor.sellTokens(parseEther("" + tokenSellAmount)));
+                      setBuying(false);
+                    }}
+                  >
+                    Sell Tokens
+                  </Button>
+                </div>
+              </Card>
+            </div>
+          </Route>
+          <Route path="/token">{ownerDisplay}</Route>
+          <Route path="/events">
+            <div style={{ width: 500, margin: "auto", marginTop: 64 }}>
+              <div>Buy Token Events:</div>
+              <List
+                dataSource={buyTokensEvents}
+                renderItem={item => {
+                  return (
+                    <List.Item key={item[0] + item[1] + item.blockNumber}>
+                      <Address value={item[0]} fontSize={16} /> paid
+                      <Balance balance={item[1]} />
+                      ETH to get
+                      <Balance balance={item[2]} />
+                      Tokens
+                    </List.Item>
+                  );
+                }}
+              />
+            </div>
+            <div style={{ width: 500, margin: "auto", marginTop: 64 }}>
+              <div>Sell Token Events:</div>
+              <List
+                dataSource={sellTokensEvents}
+                renderItem={item => {
+                  return (
+                    <List.Item key={item[0] + item[1] + item.blockNumber}>
+                      <Address value={item[0]} fontSize={16} /> sold
+                      <Balance balance={item[1]} />
+                      tokens to get
+                      <Balance balance={item[2]} />
+                      ETH
+                    </List.Item>
+                  );
+                }}
               />
             </div>
           </Route>
-          <Route path="/debugcontracts">
+          <Route path="/debug">
+            <Contract
+              name={"Vendor"}
+              address={address}
+              signer={userSigner}
+              provider={localProvider}
+              blockExplorer={blockExplorer}
+              gasPrice={gasPrice}
+              chainId={localChainId}
+            />
             <Contract
               name={tokenName}
               address={address}
