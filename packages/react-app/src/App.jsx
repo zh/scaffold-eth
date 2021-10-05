@@ -1,6 +1,6 @@
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { useThemeSwitcher } from "react-css-theme-switcher";
-import { Button, List, Menu, Col, Row } from "antd";
+import { Button, Divider, List, Menu, Col, Row } from "antd";
 import "antd/dist/antd.css";
 import React, { useCallback, useEffect, useState } from "react";
 import { HashRouter, Link, Route, Switch } from "react-router-dom";
@@ -248,12 +248,22 @@ function App(props) {
               Main Page
             </Link>
           </Menu.Item>
-          <Menu.Item key="/debugcontracts">
+          <Menu.Item key="/events">
             <Link
               onClick={() => {
-                setRoute("/debugcontracts");
+                setRoute("/events");
               }}
-              to="/debugcontracts"
+              to="/events"
+            >
+              Events
+            </Link>
+          </Menu.Item>
+          <Menu.Item key="/debug">
+            <Link
+              onClick={() => {
+                setRoute("/debug");
+              }}
+              to="/debug"
             >
               Debug Contracts
             </Link>
@@ -276,6 +286,7 @@ function App(props) {
               <div>You staked:</div>
               <Balance balance={balanceStaked} fontSize={64} />
             </div>
+            <Divider />
             <div style={{ padding: 8 }}>
               <Button
                 type={"default"}
@@ -303,9 +314,11 @@ function App(props) {
                   tx(writeContracts.Staker.stake({ value: ethers.utils.parseEther("0.5") }));
                 }}
               >
-                {"🥩 Stake 0.5 ether!"}
+                {"🥩 Stake 0.5 " + coinName}
               </Button>
             </div>
+          </Route>
+          <Route path="/events">
             <div style={{ width: 500, margin: "auto", marginTop: 64 }}>
               <div>Stake Events:</div>
               <List
@@ -321,7 +334,7 @@ function App(props) {
               />
             </div>
           </Route>
-          <Route path="/debugcontracts">
+          <Route path="/debug">
             <Contract
               name={contractName}
               address={address}

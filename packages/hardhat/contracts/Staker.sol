@@ -6,16 +6,18 @@ import "./ExampleExternalContract.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
-* @title Stacker Contract
-* @author scaffold-eth
-* @notice A contract that allow users to stack ETH
-*/
+ * @title Stacker Contract
+ * @author scaffold-eth
+ * @notice A contract that allow users to stack ETH
+ */
 contract Staker is Ownable {
     // External contract that will old stacked funds
     ExampleExternalContract public externalContract;
 
     // Staking threshold
     uint256 public constant threshold = 1 ether;
+    uint256 public constant period = 1 days;
+
     // deadline = now + period parameter
     uint256 public deadline;
     // total amount staked
@@ -24,6 +26,7 @@ contract Staker is Ownable {
     mapping(address => uint256) public balances;
 
     event Stake(address indexed sender, uint256 amount);
+    event Execute(uint256 amount);
 
     /**
      * @notice Contract Constructor
@@ -31,7 +34,7 @@ contract Staker is Ownable {
      */
     constructor(address externalContractAddress) {
         externalContract = ExampleExternalContract(externalContractAddress);
-        deadline = block.timestamp + 1 days;
+        deadline = block.timestamp + period;
         totalAmount = 0 ether;
     }
 
@@ -72,8 +75,11 @@ contract Staker is Ownable {
      */
     function execute() public {
         require(block.timestamp >= deadline, "Not at deadline yet");
-        if (address(this).balance >= threshold) {// silent, no require
+        if (address(this).balance >= threshold) {
+            // silent, no require
+            emit Execute(address(this).balance);
             externalContract.complete{value: address(this).balance}();
+            deadline = block.timestamp + period;
         }
     }
 
