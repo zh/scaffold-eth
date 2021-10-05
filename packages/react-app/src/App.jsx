@@ -40,6 +40,7 @@ const DEBUG = false;
 
 const contractName = "YourContract";
 const tokenName = "YourToken";
+const coinName = targetNetwork.coin || "ETH";
 
 // 🛰 providers
 // 🏠 Your local provider is usually pointed at your local blockchain
@@ -311,6 +312,7 @@ function App(props) {
           localProvider={localProvider}
           userSigner={userSigner}
           price={price}
+          coin={coinName}
           web3Modal={web3Modal}
           loadWeb3Modal={loadWeb3Modal}
           logoutOfWeb3Modal={logoutOfWeb3Modal}
@@ -340,7 +342,11 @@ function App(props) {
           <Col span={24}>
             {
               /*  if the local provider has a signer, let's show the faucet:  */
-              faucetAvailable ? <Faucet signer={userSigner} localProvider={localProvider} price={price} /> : ""
+              faucetAvailable ? (
+                <Faucet signer={userSigner} localProvider={localProvider} price={price} coin={coinName} />
+              ) : (
+                ""
+              )
             }
           </Col>
         </Row>

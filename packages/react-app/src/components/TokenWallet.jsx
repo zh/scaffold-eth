@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { SendOutlined } from "@ant-design/icons";
-import { Button, Col, Row, Tooltip, Card } from "antd";
+import { Button, Tooltip, Card } from "antd";
 import QR from "qrcode.react";
 import { useContractLoader } from "../hooks";
 import { Transactor } from "../helpers";
@@ -78,76 +78,23 @@ export default function TokenWallet(props) {
     }
   };
 
-  const addLogo = async () => {
-    if (!contract) return;
-    try {
-      const symbol = await contract.symbol();
-      const info = tokenList.filter(t => t.symbol === symbol)[0];
-      const methodParams = {
-        type: "ERC20",
-        options: {
-          address: contract.address,
-          symbol,
-          decimals: await contract.decimals(),
-          image: info ? info.logoURI : "",
-        },
-      };
-      web3.currentProvider.sendAsync(
-        {
-          method: "metamask_watchAsset",
-          params: methodParams,
-        },
-        console.log,
-      );
-    } catch (e) {
-      console.log("ADD LOGO: ", e);
-    }
-  };
-
   return (
     <Card>
       <Tooltip title="Send ERC-20 tokens">
         <div>
-          <Row>
-            <Col
-              span={8}
-              style={{
-                textAlign: "left",
-                opacity: 0.333,
-                paddingRight: 8,
-                fontSize: 24,
-              }}
-            >
-              Balance:
-            </Col>
-            <Col span={12}>
-              <TokenBalance
-                name={name}
-                img={"💰"}
-                suffix={"tokens"}
-                address={props.address}
-                contracts={props.readContracts}
-              />
-            </Col>
-            <Col
-              span={4}
-              style={{
-                textAlign: "right",
-                paddingLeft: 32,
-                fontSize: 24,
-              }}
-            >
-              <a href="#" title="Add to Metamask" onClick={() => addLogo()}>
-                🦊
-              </a>
-            </Col>
-          </Row>
+          <TokenBalance
+            name={name}
+            img={"💰"}
+            suffix={"tokens"}
+            address={props.address}
+            contracts={props.readContracts}
+          />
         </div>
         <div>
           {props.address && props.showQR && (
             <QR
               value={props.address}
-              size={450}
+              size={420}
               level="H"
               includeMargin
               renderAs="svg"

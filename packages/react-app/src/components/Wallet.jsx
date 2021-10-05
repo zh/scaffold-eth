@@ -24,6 +24,7 @@ const logoURI = "https://i.postimg.cc/BQFCcgdz/eth-logo.png";
   <Wallet
     provider={userProvider}
     address={address}
+    coin={coin}
     price={price}
     color='red'
   />
@@ -33,6 +34,7 @@ const logoURI = "https://i.postimg.cc/BQFCcgdz/eth-logo.png";
   - Provide provider={userProvider} to display a wallet
   - Provide address={address} if you want to specify address, otherwise
     your default address will be used
+  - Provide coin={coin} blockchain main coin name - ETH, BCH, FTM etc.
   - Provide price={price} of ether and easily convert between USD and ETH
   - Provide color to specify the color of wallet icon
 */
@@ -254,6 +256,7 @@ export default function Wallet(props) {
         <div style={inputStyle} key="ether">
           <EtherInput
             price={props.price}
+            coin={props.coin || "ETH"}
             value={amount}
             onChange={value => {
               setAmount(value);

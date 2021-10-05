@@ -20,6 +20,7 @@ const { utils } = require("ethers");
 
   <Faucet
     price={price}
+    coin={coin}
     localProvider={localProvider}
     placeholder={"Send local faucet"}
   />
@@ -27,11 +28,13 @@ const { utils } = require("ethers");
   ~ Features ~
 
   - Provide price={price} of ether and convert between USD and ETH in a wallet
+  - Provide coin={coin} blockchain main coin name - ETH, BCH, FTM etc.
   - Provide localProvider={localProvider} to be able to send ETH to given address
   - Provide placeholder="Send local faucet" value for the input
 */
 
 export default function Faucet(props) {
+  const coinName = props.coin || "ETH";
   const [address, setAddress] = useState();
   const [faucetAddress, setFaucetAddress] = useState();
 
@@ -92,7 +95,13 @@ export default function Faucet(props) {
               shape="circle"
               icon={<SendOutlined />}
             />
-            <Wallet color="#888888" provider={props.localProvider} price={props.price} address={faucetAddress} />
+            <Wallet
+              color="#888888"
+              provider={props.localProvider}
+              coin={coinName}
+              price={props.price}
+              address={faucetAddress}
+            />
           </Tooltip>
         }
       />

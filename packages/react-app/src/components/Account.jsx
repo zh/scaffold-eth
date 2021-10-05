@@ -18,6 +18,7 @@ import Wallet from "./Wallet";
     localProvider={localProvider}
     userProvider={userProvider}
     mainnetProvider={mainnetProvider}
+    coin={coinName}
     price={price}
     web3Modal={web3Modal}
     loadWeb3Modal={loadWeb3Modal}
@@ -36,6 +37,7 @@ import Wallet from "./Wallet";
   - Provide showWallet={true/false} to show/hide wallet (example: hide for contracts)
   - Provide mainnetProvider={mainnetProvider} and your address will be replaced by ENS name
               (ex. "0xa870" => "user.eth")
+  - Provide coin={coinName} blockchain main coin name - ETH, BCH, FTM etc.
   - Provide price={price} of ether and get your balance converted to dollars
   - Provide web3Modal={web3Modal}, loadWeb3Modal={loadWeb3Modal}, logoutOfWeb3Modal={logoutOfWeb3Modal}
               to be able to log in/log out to/from existing accounts
@@ -48,6 +50,7 @@ export default function Account({
   userSigner,
   localProvider,
   mainnetProvider,
+  coin,
   price,
   minimized,
   web3Modal,
@@ -105,6 +108,7 @@ export default function Account({
           provider={localProvider}
           signer={userSigner}
           ensProvider={mainnetProvider}
+          coin={coin || "ETH"}
           price={price}
           color={currentTheme === "light" ? "#1890ff" : "#2caad9"}
         />

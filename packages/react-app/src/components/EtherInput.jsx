@@ -13,6 +13,7 @@ import React, { useEffect, useState } from "react";
   <EtherInput
     autofocus
     price={price}
+    coin={coin}
     value=100
     placeholder="Enter amount"
     onChange={value => {
@@ -23,13 +24,15 @@ import React, { useEffect, useState } from "react";
   ~ Features ~
 
   - Provide price={price} of ether and easily convert between USD and ETH
+  - Provide coin={coin} blockchain main coin name - ETH, BCH, FTM etc.
   - Provide value={value} to specify initial amount of ether
   - Provide placeholder="Enter amount" value for the input
   - Control input change by onChange={value => { setAmount(value);}}
 */
 
 export default function EtherInput(props) {
-  const [mode, setMode] = useState(props.price ? "USD" : "ETH");
+  const coinName = props.coin || "ETH";
+  const [mode, setMode] = useState(props.price ? "USD" : coinName);
   const [display, setDisplay] = useState();
   const [value, setValue] = useState();
 
@@ -42,7 +45,7 @@ export default function EtherInput(props) {
         style={{ cursor: "pointer" }}
         onClick={() => {
           if (mode === "USD") {
-            setMode("ETH");
+            setMode(coinName);
             setDisplay(currentValue);
           } else {
             setMode("USD");
@@ -67,7 +70,7 @@ export default function EtherInput(props) {
     addonAfter = option("USD 🔀");
   } else {
     prefix = "Ξ";
-    addonAfter = option("ETH 🔀");
+    addonAfter = option(coinName + " 🔀");
   }
 
   useEffect(() => {

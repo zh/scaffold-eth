@@ -11,6 +11,7 @@ import EtherInput from "./EtherInput";
 const logoURI = "https://i.postimg.cc/BQFCcgdz/eth-logo.png";
 
 export default function BigWallet(props) {
+  const coinName = props.coin || "ETH"
   const [amount, setAmount] = useState();
   const [toAddress, setToAddress] = useState();
 
@@ -30,7 +31,7 @@ export default function BigWallet(props) {
   return (
     <Card>
       <div style={{ textAlign: "center" }}>
-        <Balance suffix="ETH" size={48} address={selectedAddress} provider={props.provider} price={props.price} />
+        <Balance suffix={coinName} size={48} address={selectedAddress} provider={props.provider} price={props.price} />
       </div>
       <div>
         {selectedAddress && (
@@ -57,6 +58,7 @@ export default function BigWallet(props) {
         <div style={{ padding: 10 }} key="ether">
           <EtherInput
             price={props.price}
+            coin={coinName}
             value={amount}
             onChange={value => {
               setAmount(value);
