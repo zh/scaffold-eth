@@ -9,18 +9,18 @@ const Curve = props => {
     const width = canvas.width;
     const height = canvas.height;
 
-    if (canvas.getContext && props.bchReserve && props.tokenReserve) {
-      const k = props.bchReserve * props.tokenReserve;
+    if (canvas.getContext && props.dexReserve && props.tokenReserve) {
+      const k = props.dexReserve * props.tokenReserve;
       const ctx = canvas.getContext("2d");
       ctx.clearRect(0, 0, width, height);
 
-      let maxX = k / (props.bchReserve / 4);
+      let maxX = k / (props.dexReserve / 4);
       let minX = 0;
 
-      if (props.addingBch || props.addingToken) {
-        maxX = k / (props.bchReserve * 0.2);
-        //maxX = k/(props.bchReserve*0.8)
-        minX = k / Math.max(0, 500 - props.bchReserve);
+      if (props.removingToken || props.addingToken) {
+        maxX = k / (props.dexReserve * 0.2);
+        //maxX = k/(props.dexReserve*0.8)
+        minX = k / Math.max(0, 500 - props.dexReserve);
       }
 
       const maxY = (maxX * height) / width;
@@ -65,40 +65,36 @@ const Curve = props => {
 
       ctx.lineWidth = 1;
 
-      if (props.addingBch) {
-        let newbchReserve = props.bchReserve + parseFloat(props.addingBch);
+      if (props.removingToken) {
+        let newReserve = props.dexReserve + parseFloat(props.removingToken);
 
         ctx.fillStyle = "#bbbbbb";
         ctx.beginPath();
-        ctx.arc(plotX(newbchReserve), plotY(k / newbchReserve), 5, 0, 2 * Math.PI);
+        ctx.arc(plotX(newReserve), plotY(k / newReserve), 5, 0, 2 * Math.PI);
         ctx.fill();
 
         ctx.strokeStyle = "#009900";
         drawArrow(
           ctx,
-          plotX(props.bchReserve),
+          plotX(props.dexReserve),
           plotY(props.tokenReserve),
-          plotX(newbchReserve),
+          plotX(newReserve),
           plotY(props.tokenReserve),
         );
 
         ctx.fillStyle = "#000000";
         ctx.fillText(
-          "" + props.addingBch + " BCH input",
-          plotX(props.bchReserve) + textSize,
+          "" + props.removingToken + ` ${props.coinName} input`,
+          plotX(props.dexReserve) + textSize,
           plotY(props.tokenReserve) - textSize,
         );
 
         ctx.strokeStyle = "#990000";
-        drawArrow(ctx, plotX(newbchReserve), plotY(props.tokenReserve), plotX(newbchReserve), plotY(k / newbchReserve));
+        drawArrow(ctx, plotX(newReserve), plotY(props.tokenReserve), plotX(newReserve), plotY(k / newReserve));
 
-        let amountGained = Math.round((10000 * (props.addingBch * props.tokenReserve)) / newbchReserve) / 10000;
+        let amountGained = Math.round((10000 * (props.removingToken * props.tokenReserve)) / newReserve) / 10000;
         ctx.fillStyle = "#000000";
-        ctx.fillText(
-          "" + amountGained + " 💰 output (-0.3% fee)",
-          plotX(newbchReserve) + textSize,
-          plotY(k / newbchReserve),
-        );
+        ctx.fillText("" + amountGained + " 💰 output (-0.3% fee)", plotX(newReserve) + textSize, plotY(k / newReserve));
       } else if (props.addingToken) {
         let newTokenReserve = props.tokenReserve + parseFloat(props.addingToken);
 
@@ -111,33 +107,33 @@ const Curve = props => {
         ctx.strokeStyle = "#990000";
         drawArrow(
           ctx,
-          plotX(props.bchReserve),
+          plotX(props.dexReserve),
           plotY(props.tokenReserve),
-          plotX(props.bchReserve),
+          plotX(props.dexReserve),
           plotY(newTokenReserve),
         );
 
         ctx.fillStyle = "#000000";
         ctx.fillText(
           "" + props.addingToken + " 💰 input",
-          plotX(props.bchReserve) + textSize,
+          plotX(props.dexReserve) + textSize,
           plotY(props.tokenReserve),
         );
 
         ctx.strokeStyle = "#009900";
         drawArrow(
           ctx,
-          plotX(props.bchReserve),
+          plotX(props.dexReserve),
           plotY(newTokenReserve),
           plotX(k / newTokenReserve),
           plotY(newTokenReserve),
         );
 
-        let amountGained = Math.round((10000 * (props.addingToken * props.bchReserve)) / newTokenReserve) / 10000;
+        let amountGained = Math.round((10000 * (props.addingToken * props.dexReserve)) / newTokenReserve) / 10000;
         //console.log("amountGained",amountGained)
         ctx.fillStyle = "#000000";
         ctx.fillText(
-          "" + amountGained + " BCH output (-0.3% fee)",
+          "" + amountGained + ` ${props.coinName} output (-0.3% fee)`,
           plotX(k / newTokenReserve) + textSize,
           plotY(newTokenReserve) - textSize,
         );
@@ -145,7 +141,7 @@ const Curve = props => {
 
       ctx.fillStyle = "#0000FF";
       ctx.beginPath();
-      ctx.arc(plotX(props.bchReserve), plotY(props.tokenReserve), 5, 0, 2 * Math.PI);
+      ctx.arc(plotX(props.dexReserve), plotY(props.tokenReserve), 5, 0, 2 * Math.PI);
       ctx.fill();
     }
   }, [props]);
@@ -153,7 +149,7 @@ const Curve = props => {
   return (
     <div style={{ margin: 32, position: "relative", width: props.width, height: props.height }}>
       <canvas style={{ position: "absolute", left: 0, top: 0 }} ref={ref} {...props} />
-      <div style={{ position: "absolute", left: "20%", bottom: -20 }}>-- BCH Reserve --&gt;</div>
+      <div style={{ position: "absolute", left: "20%", bottom: -20 }}>-- {props.coinName} Reserve --&gt;</div>
       <div
         style={{ position: "absolute", left: -20, bottom: "20%", transform: "rotate(-90deg)", transformOrigin: "0 0" }}
       >

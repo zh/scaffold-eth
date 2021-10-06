@@ -20,7 +20,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   );
   console.log("Approve DEX to use tokens");
   await tokenContract.approve(dex.address, ethers.utils.parseEther("100"));
-  console.log("INIT the exchange with 5 tokens and BCH");
+  console.log("INIT the exchange with 5 token pairs");
   const dexContract = await ethers.getContract("DEX", deployer);
   await dexContract.init(ethers.utils.parseEther("5"), {
     value: ethers.utils.parseEther("5"),

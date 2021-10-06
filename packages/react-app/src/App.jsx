@@ -6,22 +6,16 @@ import React, { useCallback, useEffect, useState } from "react";
 import { HashRouter, Link, Route, Switch } from "react-router-dom";
 import Web3Modal from "web3modal";
 import "./App.css";
-<<<<<<< HEAD
-import { Account, Faucet, Contract, Header, Ramp, NetworkSelect, ThemeSwitch, TokenWallet } from "./components";
-import { GAS_PRICE, FIAT_PRICE, INFURA_ID, NETWORKS } from "./constants";
-import { useBalance, useContractLoader, useUserSigner, useExchangePrice } from "./hooks";
-=======
 import { Account, Faucet, Contract, Header, Ramp, NetworkSelect, ThemeSwitch, TokenBalance } from "./components";
-import { FIAT_PRICE, INFURA_ID, NETWORKS } from "./constants";
+import { GAS_PRICE, FIAT_PRICE, INFURA_ID, NETWORKS } from "./constants";
 import { useBalance, useContractLoader, useContractReader, useUserSigner, useExchangePrice } from "./hooks";
 import DEX from "./DEX";
->>>>>>> ab4920d9 (Simple AMM - DEX for Scaffold Tokens)
 
 const { ethers } = require("ethers");
 /*
     Welcome to 🏗 scaffold-multi !
 
-    Code: https://github.com/zh/scaffold-eth , Branch: multi-evm
+    Code: https://github.com/zh/scaffold-eth , Branch: simple-dex
 */
 
 // 📡 What chain are your contracts deployed to?
@@ -232,6 +226,7 @@ function App(props) {
               <DEX
                 contractName={contractName}
                 tokenName={tokenName}
+                coinName={coinName}
                 address={address}
                 signer={userSigner}
                 provider={localProvider}

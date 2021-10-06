@@ -12,7 +12,7 @@ export default function DEX(props) {
   const contractAddress = props.readContracts[props.contractName].address;
   const contractBalance = useBalance(props.provider, contractAddress);
   if (!contractBalance || !props.liquidity || !props.tokenBalance) return null;
-  const bchBalanceFloat = parseFloat(ethers.utils.formatEther(contractBalance));
+  const dexBalanceFloat = parseFloat(ethers.utils.formatEther(contractBalance));
 
   const rowForm = (title, icon, onClick) => {
     return (
@@ -52,11 +52,11 @@ export default function DEX(props) {
   let display = [];
   display.push(
     <div>
-      {rowForm("bchToToken", "💸", async value => {
+      {rowForm("buyToken", "💸", async value => {
         const valueInEther = ethers.utils.parseEther("" + value);
         const contract = props.writeContracts[props.contractName];
         try {
-          const result = await contract.bchToToken({
+          const result = await contract.buyToken({
             value: valueInEther,
           });
           notification.info({
@@ -66,14 +66,14 @@ export default function DEX(props) {
           });
         } catch (e) {
           const message = parseJsonMessage(e);
-          console.log("bch -> token error: ", message);
+          console.log("buy token error: ", message);
           notification.error({
             message: "Transaction Error",
             description: message,
           });
         }
       })}
-      {rowForm("tokenToBch", "🔏", async value => {
+      {rowForm("sellToken", "🔏", async value => {
         const valueInEther = ethers.utils.parseEther("" + value);
         const contract = props.writeContracts[props.contractName];
         const token = props.writeContracts[props.tokenName];
@@ -84,7 +84,7 @@ export default function DEX(props) {
             await token.approve(contract.address, valueInEther);
           }
           allowance = await token.allowance(props.address, contract.address);
-          const result = await contract.tokenToBch(valueInEther);
+          const result = await contract.sellToken(valueInEther);
           notification.info({
             message: "Transaction Sent",
             description: result.hash,
@@ -92,7 +92,7 @@ export default function DEX(props) {
           });
         } catch (e) {
           const message = parseJsonMessage(e);
-          console.log("bch -> token error: ", message);
+          console.log("sell token error: ", message);
           notification.error({
             message: "Transaction Error",
             description: message,
@@ -120,7 +120,7 @@ export default function DEX(props) {
           });
         } catch (e) {
           const message = parseJsonMessage(e);
-          console.log("bch -> token error: ", message);
+          console.log("deposit error: ", message);
           notification.error({
             message: "Transaction Error",
             description: message,
@@ -139,7 +139,7 @@ export default function DEX(props) {
           });
         } catch (e) {
           const message = parseJsonMessage(e);
-          console.log("bch -> token error: ", message);
+          console.log("withdraw error: ", message);
           notification.error({
             message: "Transaction Error",
             description: message,
@@ -151,14 +151,15 @@ export default function DEX(props) {
 
   return (
     <div style={{ padding: 10 }}>
-      <div style={{ position: "fixed", right: 0, top: 100, padding: 10 }}>
+      <div style={{ position: "fixed", right: 0, top: 110, padding: 10 }}>
         <Curve
-          addingBch={values && (values["bchToToken"] || 0)}
-          addingToken={values && (values["tokenToBch"] || 0)}
-          bchReserve={bchBalanceFloat}
+          coinName={props.coinName}
+          removingToken={values && (values["buyToken"] || 0)}
+          addingToken={values && (values["sellToken"] || 0)}
+          dexReserve={dexBalanceFloat}
           tokenReserve={props.tokenBalance}
-          width={500}
-          height={500}
+          width={540}
+          height={540}
         />
       </div>
       <Card
@@ -166,7 +167,7 @@ export default function DEX(props) {
           <div>
             <Address value={contractAddress} />
             <div style={{ float: "right", fontSize: 24 }}>
-              {parseFloat(ethers.utils.formatEther(contractBalance)).toFixed(4)} BCH ⚖️
+              {parseFloat(ethers.utils.formatEther(contractBalance)).toFixed(4)} {props.coinName} ⚖️
               <TokenBalance
                 name={props.tokenName}
                 img={"💰"}
