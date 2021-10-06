@@ -14,11 +14,11 @@ export default function DEX(props) {
   if (!contractBalance || !props.liquidity || !props.tokenBalance) return null;
   const dexBalanceFloat = parseFloat(ethers.utils.formatEther(contractBalance));
 
-  const rowForm = (title, icon, onClick) => {
+  const rowForm = (label, title, icon, onClick) => {
     return (
       <Row>
         <Col span={8} style={{ textAlign: "right", opacity: 0.333, paddingRight: 6, fontSize: 24 }}>
-          {title}
+          {label}
         </Col>
         <Col span={16}>
           <div style={{ cursor: "pointer", margin: 2 }}>
@@ -52,7 +52,7 @@ export default function DEX(props) {
   let display = [];
   display.push(
     <div>
-      {rowForm("buyToken", "💸", async value => {
+      {rowForm(`Buy (${props.coinName})`, "buyToken", "💸", async value => {
         const valueInEther = ethers.utils.parseEther("" + value);
         const contract = props.writeContracts[props.contractName];
         try {
@@ -73,7 +73,7 @@ export default function DEX(props) {
           });
         }
       })}
-      {rowForm("sellToken", "🔏", async value => {
+      {rowForm("Sell (amount)", "sellToken", "🔏", async value => {
         const valueInEther = ethers.utils.parseEther("" + value);
         const contract = props.writeContracts[props.contractName];
         const token = props.writeContracts[props.tokenName];
@@ -99,8 +99,10 @@ export default function DEX(props) {
           });
         }
       })}
-      <Divider> Liquidity shares: ({props.liquidity ? ethers.utils.formatEther(props.liquidity) : "none"})</Divider>
-      {rowForm("deposit", "📥", async value => {
+      <Divider>
+        Your Liquidity: ({props.liquidity ? ethers.utils.formatEther(props.liquidity) : "none"} {props.coinName})
+      </Divider>
+      {rowForm(`Deposit (${props.coinName})`, "deposit", "📥", async value => {
         const valueInEther = ethers.utils.parseEther("" + value);
         const valuePlusExtra = ethers.utils.parseEther("" + value * 1.03);
         const contract = props.writeContracts[props.contractName];
@@ -127,7 +129,7 @@ export default function DEX(props) {
           });
         }
       })}
-      {rowForm("withdraw", "📤", async value => {
+      {rowForm(`Withdraw (${props.coinName})`, "withdraw", "📤", async value => {
         const valueInEther = ethers.utils.parseEther("" + value);
         const contract = props.writeContracts[props.contractName];
         try {

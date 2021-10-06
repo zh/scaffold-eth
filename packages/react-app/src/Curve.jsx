@@ -9,21 +9,24 @@ const Curve = props => {
     const width = canvas.width;
     const height = canvas.height;
     const arcRadius = 5;
+    const scaleFactor = 0.8;
 
     if (canvas.getContext && props.dexReserve && props.tokenReserve) {
       const k = props.dexReserve * props.tokenReserve;
       const ctx = canvas.getContext("2d");
       ctx.clearRect(0, 0, width, height);
 
-      let maxX = k / (props.dexReserve * 0.8);
+      let maxX = k / (props.dexReserve * scaleFactor);
       let minX = 0;
 
       if (props.removingToken || props.addingToken) {
-        maxX = k / (props.dexReserve * 0.8);
+        maxX = k / (props.dexReserve * scaleFactor);
         // maxX = k / (props.dexReserve * 0.8);
+        // minX = k / Math.max(0, 2 * scaleFactor * 540 - props.dexReserve);
         minX = k / Math.max(0, 540 - props.dexReserve);
       }
 
+      // const maxY = (2 * scaleFactor * maxX * height) / width;
       const maxY = (maxX * height) / width;
       const minY = (minX * height) / width;
 
