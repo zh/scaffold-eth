@@ -8,19 +8,20 @@ const Curve = props => {
     const textSize = 16;
     const width = canvas.width;
     const height = canvas.height;
+    const arcRadius = 5;
 
     if (canvas.getContext && props.dexReserve && props.tokenReserve) {
       const k = props.dexReserve * props.tokenReserve;
       const ctx = canvas.getContext("2d");
       ctx.clearRect(0, 0, width, height);
 
-      let maxX = k / (props.dexReserve / 4);
+      let maxX = k / (props.dexReserve * 0.8);
       let minX = 0;
 
       if (props.removingToken || props.addingToken) {
-        maxX = k / (props.dexReserve * 0.2);
-        //maxX = k/(props.dexReserve*0.8)
-        minX = k / Math.max(0, 500 - props.dexReserve);
+        maxX = k / (props.dexReserve * 0.8);
+        // maxX = k / (props.dexReserve * 0.8);
+        minX = k / Math.max(0, 540 - props.dexReserve);
       }
 
       const maxY = (maxX * height) / width;
@@ -70,7 +71,7 @@ const Curve = props => {
 
         ctx.fillStyle = "#bbbbbb";
         ctx.beginPath();
-        ctx.arc(plotX(newReserve), plotY(k / newReserve), 5, 0, 2 * Math.PI);
+        ctx.arc(plotX(newReserve), plotY(k / newReserve), arcRadius, 0, 2 * Math.PI);
         ctx.fill();
 
         ctx.strokeStyle = "#009900";
@@ -100,7 +101,7 @@ const Curve = props => {
 
         ctx.fillStyle = "#bbbbbb";
         ctx.beginPath();
-        ctx.arc(plotX(k / newTokenReserve), plotY(newTokenReserve), 5, 0, 2 * Math.PI);
+        ctx.arc(plotX(k / newTokenReserve), plotY(newTokenReserve), arcRadius, 0, 2 * Math.PI);
         ctx.fill();
 
         //console.log("newTokenReserve",newTokenReserve)
@@ -141,7 +142,7 @@ const Curve = props => {
 
       ctx.fillStyle = "#0000FF";
       ctx.beginPath();
-      ctx.arc(plotX(props.dexReserve), plotY(props.tokenReserve), 5, 0, 2 * Math.PI);
+      ctx.arc(plotX(props.dexReserve), plotY(props.tokenReserve), arcRadius, 0, 2 * Math.PI);
       ctx.fill();
     }
   }, [props]);

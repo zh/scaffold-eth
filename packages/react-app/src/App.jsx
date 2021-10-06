@@ -36,7 +36,7 @@ const targetNetwork = NETWORKS.localhost;
 const DEBUG = false;
 
 const coinName = targetNetwork.coin || "ETH";
-const tokenName = "ScaffoldToken";
+const tokenName = "AmmToken";
 const contractName = "DEX";
 
 // 🛰 providers
