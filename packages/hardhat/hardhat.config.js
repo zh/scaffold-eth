@@ -145,6 +145,28 @@ module.exports = {
         mnemonic: mnemonic(),
       },
     },
+    moondev: {
+      url: "http://127.0.0.1:9933",
+      chainId: 1281,
+      accounts: {
+        mnemonic: mnemonic("moon"),
+      },
+    },
+    moonbase: {
+      url: "https://rpc.testnet.moonbeam.network",
+      gasPrice: 1000000000,
+      chainId: 1287,
+      accounts: {
+        mnemonic: mnemonic("testnet"),
+      },
+    },
+    moonriver: {
+      url: "https://rpc.moonriver.moonbeam.network",
+      chainId: 1285,
+      accounts: {
+        mnemonic: mnemonic(),
+      },
+    },
   },
   solidity: {
     compilers: [
@@ -209,10 +231,10 @@ task("wallet", "Create a wallet (pk) link")
     const randomWallet = ethers.Wallet.createRandom();
     const privateKey = randomWallet._signingKey().privateKey;
     const address = `${url}/#/${privateKey}`;
-    qrcode.generate(address, {small: true});
+    qrcode.generate(address, { small: true });
     console.log("🔐 WALLET Generated as " + randomWallet.address + "");
     console.log(`🔗 ${address}`);
-});
+  });
 
 task("fundedwallet", "Create a wallet (pk) link and fund it with deployer?")
   .addOptionalParam(
@@ -468,7 +490,7 @@ task("fund", "Send ERC-20 tokens")
 
     const { deployer } = await getNamedAccounts();
     const contract = await ethers.getContract(tokensContract, deployer);
-    const amount = taskArgs.amount ? parseInt(taskArgs.amount, 10) : 10
+    const amount = taskArgs.amount ? parseInt(taskArgs.amount, 10) : 10;
     await contract.transfer(taskArgs.account, "" + amount * 10 ** 18);
   });
 
