@@ -82,7 +82,7 @@ export const NETWORKS = {
     coin: "AVAX",
     rpcUrl: "https://api.avax-test.network/ext/bc/C/rpc",
     blockExplorer: "https://cchain.explorer.avax-test.network",
-    gasPrice: 225000000000,
+    gasPrice: 250000000000,
   },
   mainnetAvalanche: {
     name: "Mainnet",
@@ -91,7 +91,7 @@ export const NETWORKS = {
     coin: "AVAX",
     rpcUrl: "https://api.avax.network/ext/bc/C/rpc",
     blockExplorer: "https://cchain.explorer.avax.network",
-    gasPrice: 225000000000,
+    gasPrice: 250000000000,
   },
   testnetFantom: {
     name: "Fantom Testnet",

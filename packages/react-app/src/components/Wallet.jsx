@@ -10,7 +10,7 @@ import Balance from "./Balance";
 import EtherInput from "./EtherInput";
 
 const { Text, Paragraph } = Typography;
-const logoURI = "https://i.postimg.cc/BQFCcgdz/eth-logo.png";
+const logoURI = "https://docs.moonbeam.network/assets/images/Moonbeam-Favicon-50.png";
 
 /*
   ~ What it does? ~
