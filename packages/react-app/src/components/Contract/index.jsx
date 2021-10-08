@@ -66,7 +66,6 @@ export default function Contract({
 
   const address = contract ? contract.address : "";
   const contractIsDeployed = useContractExistsAtAddress(provider, address);
-  const canAddLogo = chainId === 10000 || chainId === 10001; // SmartBCH
 
   const displayedContractFunctions = useMemo(
     () =>
@@ -111,7 +110,6 @@ export default function Contract({
 
   return (
     <div style={{ margin: "auto", width: "70vw" }}>
-      {canAddLogo && <AddTokenLogo contract={contract} provider={provider} />}
       <Card
         title={
           <div>

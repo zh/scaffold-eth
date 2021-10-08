@@ -91,7 +91,7 @@ module.exports = {
     },
     localAvalanche: {
       url: "http://localhost:9650/ext/bc/C/rpc",
-      gasPrice: 225000000000,
+      gasPrice: 250000000000,
       chainId: 43112,
       accounts: {
         mnemonic: mnemonic(),
@@ -99,7 +99,7 @@ module.exports = {
     },
     fujiAvalanche: {
       url: "https://api.avax-test.network/ext/bc/C/rpc",
-      gasPrice: 225000000000,
+      gasPrice: 250000000000,
       chainId: 43113,
       accounts: {
         mnemonic: mnemonic("testnet"),
@@ -107,7 +107,7 @@ module.exports = {
     },
     mainnetAvalanche: {
       url: "https://api.avax.network/ext/bc/C/rpc",
-      gasPrice: 225000000000,
+      gasPrice: 250000000000,
       chainId: 43114,
       accounts: {
         mnemonic: mnemonic(),
@@ -163,8 +163,25 @@ module.exports = {
     moonriver: {
       url: "https://rpc.moonriver.moonbeam.network",
       chainId: 1285,
+      gasPrice: 1000000000,
       accounts: {
         mnemonic: mnemonic(),
+      },
+    },
+    testnetTomo: {
+      url: "https://rpc.testnet.tomochain.com",
+      chainId: 89,
+      gasPrice: 1000000000,
+      accounts: {
+        mnemonic: mnemonic("testnet"),
+      },
+    },
+    mainnetTomo: {
+      url: "https://rpc.tomochain.com",
+      chainId: 88,
+      gasPrice: 1000000000,
+      accounts: {
+        mnemonic: mnemonic("testnet"),
       },
     },
   },

@@ -154,6 +154,24 @@ export const NETWORKS = {
     rpcUrl: "https://rpc.moonriver.moonbeam.network",
     gasPrice: 1000000000,
   },
+  testnetTomo: {
+    name: "TomoChain Testnet",
+    color: "#00b0ef",
+    chainId: 89,
+    coin: "TOMO",
+    blockExplorer: "https://scan.testnet.tomochain.com/",
+    rpcUrl: "https://rpc.testnet.tomochain.com",
+    gasPrice: 1000000000,
+  },
+  mainnetTomo: {
+    name: "TomoChain Mainnet",
+    color: "#00b0ef",
+    chainId: 88,
+    coin: "TOMO",
+    blockExplorer: "https://scan.tomochain.com/",
+    rpcUrl: "https://rpc.tomochain.com",
+    gasPrice: 1000000000,
+  },
 };
 
 export const NETWORK = chainId => {
