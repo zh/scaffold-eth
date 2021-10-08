@@ -184,6 +184,14 @@ module.exports = {
         mnemonic: mnemonic("testnet"),
       },
     },
+    kaleido: {
+      url: "https://k0bas2dknc:4lVvql6yEoB4PbcvWv5wPCdDy6yr_iWQSnNzkuK2Gyg@k0or9rwvda-k0xgoqb5h8-rpc.kr0-aws.kaleido.io/",
+      chainId: 1613143670,
+      gasPrice: 1000000000,
+      accounts: {
+        mnemonic: mnemonic("testnet"),
+      },
+    },
   },
   solidity: {
     compilers: [
