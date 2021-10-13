@@ -1,6 +1,6 @@
-# Scaffold-Multi, SPA Wallet for Moonriver
+# Scaffold-Multi, SPA Wallet for Moon* eco-system
 
-> One time burner wallet on Moonriver blockchain 🚀
+> One time address burner wallets on Moon(base | river) blockchain 🚀
 
 # 🏄‍♂️ Quick Start
 
