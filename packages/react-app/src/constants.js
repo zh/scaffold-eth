@@ -13,7 +13,7 @@ export const NETWORKS = {
     name: "localhost",
     color: "#666666",
     chainId: 31337,
-    coin: "ETH",
+    coin: "DEV",
     blockExplorer: "",
     rpcUrl: "http://" + window.location.hostname + ":8545",
   },

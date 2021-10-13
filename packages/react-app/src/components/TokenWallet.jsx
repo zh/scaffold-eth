@@ -29,6 +29,7 @@ import { utils } from "ethers";
     gasPrice={gasPrice}
     chainId={localChainId}
     showQR={true}
+    suffix={suffix}
     color={currentTheme === "light" ? "#1890ff" : "#2caad9"}
   />
 
@@ -39,12 +40,13 @@ import { utils } from "ethers";
   - Provide address={address} if you want to specify address, otherwise
     your default address will be used
   - Provide showQR={true} to show wallet address QR code
+  - Provide suffix={suffix} to specify the text after balance
   - Provide price={price} of ether and easily convert between USD and ETH
   - Provide color to specify the color of wallet icon
 */
 
 const DEBUG = true;
-const logoURI = "https://via.placeholder.com/32.png";
+const logoURI = "https://via.placeholder.com/32.png?text=MET";
 
 export default function TokenWallet(props) {
   const { name, provider, chainId } = props;
@@ -52,7 +54,6 @@ export default function TokenWallet(props) {
   const [amount, setAmount] = useState();
   const [toAddress, setToAddress] = useState();
 
-  const tokenList = useTokenList();
   const contracts = useContractLoader(provider, { chainId });
   const contract = contracts && contracts[name] ? contracts[name] : null;
 
@@ -85,9 +86,10 @@ export default function TokenWallet(props) {
           <TokenBalance
             name={name}
             img={"💰"}
-            suffix={"tokens"}
+            suffix={props.suffix || "tokens"}
             address={props.address}
             contracts={props.readContracts}
+            fontSize={30}
           />
         </div>
         <div>
@@ -98,7 +100,7 @@ export default function TokenWallet(props) {
               level="H"
               includeMargin
               renderAs="svg"
-              imageSettings={{ src: logoURI, excavate: false, height: 32, width: 32 }}
+              imageSettings={{ src: logoURI, excavate: true, height: 32, width: 32 }}
             />
           )}
         </div>

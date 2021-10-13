@@ -12,7 +12,7 @@ Prerequisites: [Node](https://nodejs.org/en/download/) plus [Yarn](https://class
 git clone -b polka-wallet https://github.com/zh/scaffold-eth.git polka-wallet
 ```
 
-> install and start your 👷‍ Hardhat chain:
+> install and start your Hardhat chain:
 
 ```bash
 cd polka-wallet
@@ -25,6 +25,26 @@ yarn chain
 ```bash
 cd polka-wallet
 yarn start
+```
+
+> in a third terminal window, deploy your contract:
+
+```bash
+cd polka-wallet
+yarn deploy
+```
+
+This will deploy your ERC-20 contract to the local blockchain.
+For deploying on different network use `--network ...` parameter:
+
+```bash
+yarn deploy --network moonriver
+```
+
+For deploying only a specified contract, use `--tags` parameter:
+
+```bash
+yarn deploy --network moonbase --tags MET
 ```
 
 📝 Edit your frontend `App.jsx` in `packages/react-app/src`

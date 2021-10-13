@@ -31,7 +31,7 @@ export default function BigWallet(props) {
   return (
     <Card>
       <div style={{ textAlign: "center" }}>
-        <Balance suffix={coinName} size={48} address={selectedAddress} provider={props.provider} price={props.price} />
+        <Balance suffix={coinName} size={40} address={selectedAddress} provider={props.provider} price={props.price} />
       </div>
       <div>
         {selectedAddress && (

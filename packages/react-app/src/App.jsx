@@ -1,19 +1,29 @@
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { useThemeSwitcher } from "react-css-theme-switcher";
-import { Button, Col, Row } from "antd";
+import { Col, Menu, Row } from "antd";
 import "antd/dist/antd.css";
 import React, { useCallback, useEffect, useState } from "react";
-import { HashRouter, Route, Switch } from "react-router-dom";
+import { HashRouter, Link, Route, Switch } from "react-router-dom";
 import Web3Modal from "web3modal";
 import "./App.css";
-import { Account, BigWallet, Faucet, Header, NetworkSelect, Ramp, ThemeSwitch } from "./components";
+import {
+  Account,
+  BigWallet,
+  Contract,
+  Faucet,
+  Header,
+  NetworkSelect,
+  ThemeSwitch,
+  TokenWallet,
+  TokenBalance,
+} from "./components";
 import { GAS_PRICE, FIAT_PRICE, INFURA_ID, NETWORKS } from "./constants";
 import { useBalance, useContractLoader, useUserSigner, useExchangePrice } from "./hooks";
 
 const { ethers } = require("ethers");
 /*
     Welcome to 🏗 scaffold-eth !
-    Code: https://github.com/zh/scaffold-eth , Branch: multi-wallet
+    Code: https://github.com/zh/scaffold-eth , Branch: polka-wallet
 */
 
 // 📡 What chain are your contracts deployed to?
@@ -25,12 +35,13 @@ const { ethers } = require("ethers");
 // const targetNetwork = NETWORKS.testnetFantom;
 // const targetNetwork = NETWORKS.fantomOpera;
 // const targetNetwork = NETWORKS.moondev;
-// const targetNetwork = NETWORKS.moonbase;
-const targetNetwork = NETWORKS.moonriver;
+const targetNetwork = NETWORKS.moonbase;
+// const targetNetwork = NETWORKS.moonriver;
 
 // 😬 Sorry for all the console logging
 const DEBUG = false;
 const coinName = targetNetwork.coin || "ETH";
+const tokenName = "MoonbeamExampleToken";
 
 // 🛰 providers
 // 🏠 Your local provider is usually pointed at your local blockchain
@@ -168,7 +179,7 @@ function App(props) {
 
   const faucetAvailable = localProvider && localProvider.connection && targetNetwork.name.indexOf("local") !== -1;
 
-  useThemeSwitcher();
+  const { currentTheme } = useThemeSwitcher();
 
   return (
     <div className="App">
@@ -176,7 +187,66 @@ function App(props) {
       <Header />
       <NetworkSelect targetNetwork={targetNetwork} localChainId={localChainId} selectedChainId={selectedChainId} />
       <HashRouter>
+        <Menu style={{ textAlign: "center" }} selectedKeys={[route]} mode="horizontal">
+        <Menu.Item key="/">
+            <Link
+              onClick={() => {
+                setRoute("/");
+              }}
+              to="/"
+            >
+              Wallet
+            </Link>
+          </Menu.Item>
+          <Menu.Item key="/token">
+            <Link
+              onClick={() => {
+                setRoute("/token");
+              }}
+              to="/token"
+            >
+              Tokens
+            </Link>
+          </Menu.Item>
+          <Menu.Item key="/debug">
+            <Link
+              onClick={() => {
+                setRoute("/debug");
+              }}
+              to="/debug"
+            >
+              Debug
+            </Link>
+          </Menu.Item>
+        </Menu>
         <Switch>
+          <Route exact path="/token">
+            <div style={{ width: 480, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
+              <TokenWallet
+                name={tokenName}
+                address={address}
+                signer={userSigner}
+                provider={localProvider}
+                readContracts={readContracts}
+                gasPrice={gasPrice}
+                chainId={localChainId}
+                showQR={true}
+                suffix="MET"
+                color={currentTheme === "light" ? "#1890ff" : "#2caad9"}
+              />
+            </div>
+          </Route>
+          <Route path="/debug">
+            <Contract
+              name={tokenName}
+              address={address}
+              signer={userSigner}
+              provider={localProvider}
+              blockExplorer={blockExplorer}
+              gasPrice={gasPrice}
+              chainId={localChainId}
+            />
+-          </Route>
           <Route exact path="/:pk?">
             <div style={{ width: 480, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
               <BigWallet
@@ -201,23 +271,16 @@ function App(props) {
           userSigner={userSigner}
           price={price}
           coin={coinName}
-          showBalance={false}
           web3Modal={web3Modal}
           loadWeb3Modal={loadWeb3Modal}
           logoutOfWeb3Modal={logoutOfWeb3Modal}
           blockExplorer={blockExplorer}
         />
+        <TokenBalance name={tokenName} img={"💰"} address={address} contracts={readContracts} />
       </div>
 
       {/* 🗺 Extra UI like gas price, eth price, faucet, and support: */}
       <div style={{ position: "fixed", textAlign: "left", left: 0, bottom: 20, padding: 10 }}>
-        {FIAT_PRICE && (
-          <Row align="middle" gutter={[4, 4]}>
-            <Col span={8}>
-              <Ramp price={price} address={address} networks={NETWORKS} />
-            </Col>
-          </Row>
-        )}
         <Row align="middle" gutter={[4, 4]}>
           <Col span={24}>
             {
