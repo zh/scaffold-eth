@@ -1,10 +1,6 @@
-# Scaffold-Multi, SPA Wallet
+# Scaffold-Multi, SPA Wallet for Moonriver
 
-> everything you need to build on EVM-compatible blockchains! 🚀
-
-🧪 Quickly experiment with Solidity using a frontend that adapts to your smart contract:
-
-![image](https://user-images.githubusercontent.com/2653167/124158108-c14ca380-da56-11eb-967e-69cde37ca8eb.png)
+> One time burner wallet on Moonriver blockchain 🚀
 
 # 🏄‍♂️ Quick Start
 
@@ -13,13 +9,13 @@ Prerequisites: [Node](https://nodejs.org/en/download/) plus [Yarn](https://class
 > clone/fork 🏗 scaffold-eth:
 
 ```bash
-git clone -b multi-wallet https://github.com/zh/scaffold-eth.git multi-wallet
+git clone -b polka-wallet https://github.com/zh/scaffold-eth.git polka-wallet
 ```
 
 > install and start your 👷‍ Hardhat chain:
 
 ```bash
-cd multi-wallet
+cd polka-wallet
 yarn install
 yarn chain
 ```
@@ -27,7 +23,7 @@ yarn chain
 > in a second terminal window, start your 📱 frontend:
 
 ```bash
-cd multi-wallet
+cd polka-wallet
 yarn start
 ```
 
@@ -36,8 +32,8 @@ yarn start
 For using with different blockchains change target network:
 
 ```js
-const targetNetwork = NETWORKS.testnetSmartBCH;
-const targetNetwork = NETWORKS.testnetFantom;
+// const targetNetwork = NETWORKS.moonriver;
+const targetNetwork = NETWORKS.moonbase;
 ```
 
 💼 Edit your deployment scripts in `packages/hardhat/deploy`
