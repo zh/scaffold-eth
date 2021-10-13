@@ -25,8 +25,8 @@ const { ethers } = require("ethers");
 // const targetNetwork = NETWORKS.testnetFantom;
 // const targetNetwork = NETWORKS.fantomOpera;
 // const targetNetwork = NETWORKS.moondev;
-const targetNetwork = NETWORKS.moonbase;
-// const targetNetwork = NETWORKS.moonriver;
+// const targetNetwork = NETWORKS.moonbase;
+const targetNetwork = NETWORKS.moonriver;
 
 // 😬 Sorry for all the console logging
 const DEBUG = false;
