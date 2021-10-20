@@ -489,6 +489,18 @@ task("balance", "Prints an account's balance")
     console.log(formatUnits(balance, "ether"), "ETH");
   });
 
+task("mint", "Send ERC-20 tokens")
+  .addParam("account", "The account's address")
+  .addOptionalParam("amount", "Amount of tokens to send")
+  .setAction(async (taskArgs, { ethers }) => {
+    console.log("\n\n 🎫 Minting to " + taskArgs.account + "...\n");
+
+    const { deployer } = await getNamedAccounts();
+    const contract = await ethers.getContract(tokensContract, deployer);
+    const amount = taskArgs.amount ? parseInt(taskArgs.amount, 10) : 10;
+    await contract.transfer(taskArgs.account, ethers.utils.parseEther("" + amount));
+  });
+
 function send(signer, txparams) {
   return signer.sendTransaction(txparams, (error, transactionHash) => {
     if (error) {
@@ -499,19 +511,7 @@ function send(signer, txparams) {
   });
 }
 
-task("fund", "Send ERC-20 tokens")
-  .addParam("account", "The account's address")
-  .addOptionalParam("amount", "Amount of tokens to send")
-  .setAction(async (taskArgs, { ethers }) => {
-    console.log("\n\n 🎫 Minting to " + taskArgs.account + "...\n");
-
-    const { deployer } = await getNamedAccounts();
-    const contract = await ethers.getContract(tokensContract, deployer);
-    const amount = taskArgs.amount ? parseInt(taskArgs.amount, 10) : 10;
-    await contract.transfer(taskArgs.account, "" + amount * 10 ** 18);
-  });
-
-task("send", "Send BCH")
+task("fund", "Fund account")
   .addParam("from", "From address or account index")
   .addOptionalParam("to", "To address or account index")
   .addOptionalParam("amount", "Amount to send in ether")

@@ -37,7 +37,7 @@
     "watch": "node scripts/watch.js",
     "accounts": "hardhat accounts",
     "balance": "hardhat balance",
-    "send": "hardhat send",
+    "mint": "hardhat mint",
     "fund": "hardhat fund",
     "generate": "hardhat generate",
     "account": "hardhat account",
