@@ -1,12 +1,12 @@
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { useThemeSwitcher } from "react-css-theme-switcher";
-import { Button, Menu, Col, Row } from "antd";
+import { Menu, Col, Row } from "antd";
 import "antd/dist/antd.css";
 import React, { useCallback, useEffect, useState } from "react";
 import { HashRouter, Link, Route, Switch } from "react-router-dom";
 import Web3Modal from "web3modal";
 import "./App.css";
-import { Account, Faucet, Contract, Header, NetworkSelect, Ramp, ThemeSwitch, TokenBalance } from "./components";
+import { Account, Faucet, Contract, Header, NetworkSelect, ThemeSwitch } from "./components";
 import { GAS_PRICE, FIAT_PRICE, INFURA_ID, NETWORKS } from "./constants";
 import { Transactor } from "./helpers";
 import {
@@ -17,7 +17,6 @@ import {
   useEventListener,
   useExchangePrice,
 } from "./hooks";
-import { ExampleUI, Hints } from "./views";
 
 const { ethers } = require("ethers");
 /*
@@ -43,8 +42,7 @@ const targetNetwork = NETWORKS.localhost;
 // 😬 Sorry for all the console logging
 const DEBUG = false;
 
-const contractName = "YourContract";
-const tokenName = "YourToken";
+const contractName = "SmartLock";
 const coinName = targetNetwork.coin || "ETH";
 
 // 🛰 providers
@@ -134,10 +132,10 @@ function App(props) {
   const writeContracts = useContractLoader(userSigner, { chainId: localChainId });
 
   // keep track of a variable from the contract in the local React state:
-  const purpose = useContractReader(readContracts, "YourContract", "purpose");
+  // const purpose = useContractReader(readContracts, "YourContract", "purpose");
 
   // 📟 Listen for broadcast events
-  const setPurposeEvents = useEventListener(readContracts, "YourContract", "SetPurpose", localProvider, 1);
+  // const setPurposeEvents = useEventListener(readContracts, "YourContract", "SetPurpose", localProvider, 1);
 
   //
   // 🧫 DEBUG 👨🏻‍🔬
@@ -208,54 +206,33 @@ function App(props) {
               }}
               to="/"
             >
-              Your Contract
+              Rent
             </Link>
           </Menu.Item>
-          <Menu.Item key="/token">
+          <Menu.Item key="/operate">
             <Link
               onClick={() => {
-                setRoute("/");
+                setRoute("/operate");
               }}
-              to="/token"
+              to="/operate"
             >
-              Your ERC-20 Token
+              Operate
             </Link>
           </Menu.Item>
-          <Menu.Item key="/hints">
+          <Menu.Item key="/debug">
             <Link
               onClick={() => {
-                setRoute("/hints");
+                setRoute("/debug");
               }}
-              to="/hints"
+              to="/debug"
             >
-              Hints
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="/exampleui">
-            <Link
-              onClick={() => {
-                setRoute("/exampleui");
-              }}
-              to="/exampleui"
-            >
-              ExampleUI
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="/debugcontracts">
-            <Link
-              onClick={() => {
-                setRoute("/debugcontracts");
-              }}
-              to="/debugcontracts"
-            >
-              Debug Contracts
+              Debug
             </Link>
           </Menu.Item>
         </Menu>
         <Switch>
           <Route exact path="/">
             <Contract
-              name="YourContract"
               name={contractName}
               address={address}
               signer={userSigner}
@@ -263,40 +240,34 @@ function App(props) {
               blockExplorer={blockExplorer}
               gasPrice={gasPrice}
               chainId={localChainId}
+              show={[
+                "rent",
+                "payRent",
+                "cancelRent",
+                "rentable",
+                "rented",
+                "renter",
+                "initialDeposit",
+                "renterDeposit",
+                "price",
+              ]}
             />
           </Route>
-          <Route path="/token">
+          <Route exact path="/operate">
             <Contract
-              name={tokenName}
+              name={contractName}
               address={address}
               signer={userSigner}
               provider={localProvider}
               blockExplorer={blockExplorer}
               gasPrice={gasPrice}
               chainId={localChainId}
-              show={["balanceOf", "transfer"]}
+              show={["locked", "renter", "open", "close"]}
             />
           </Route>
-          <Route path="/hints">
-            <Hints address={address} yourLocalBalance={yourLocalBalance} price={price} />
-          </Route>
-          <Route path="/exampleui">
-            <ExampleUI
-              address={address}
-              userSigner={userSigner}
-              localProvider={localProvider}
-              yourLocalBalance={yourLocalBalance}
-              price={price}
-              tx={tx}
-              writeContracts={writeContracts}
-              readContracts={readContracts}
-              purpose={purpose}
-              setPurposeEvents={setPurposeEvents}
-            />
-          </Route>
-          <Route path="/debugcontracts">
+          <Route path="/debug">
             <Contract
-              name={tokenName}
+              name={contractName}
               address={address}
               signer={userSigner}
               provider={localProvider}
@@ -323,26 +294,10 @@ function App(props) {
           logoutOfWeb3Modal={logoutOfWeb3Modal}
           blockExplorer={blockExplorer}
         />
-        <TokenBalance
-          name={tokenName}
-          img={"💰"}
-          suffix={"YTK"}
-          fontSize={16}
-          address={address}
-          contracts={readContracts}
-        />
       </div>
 
       {/* 🗺 Extra UI like gas price, eth price, faucet, and support: */}
       <div style={{ position: "fixed", textAlign: "left", left: 0, bottom: 20, padding: 10 }}>
-        {FIAT_PRICE && (
-          <Row align="middle" gutter={[4, 4]}>
-            <Col span={8}>
-              <Ramp price={price} address={address} networks={NETWORKS} />
-            </Col>
-          </Row>
-        )}
-
         <Row align="middle" gutter={[4, 4]}>
           <Col span={24}>
             {
