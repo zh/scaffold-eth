@@ -6,7 +6,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { HashRouter, Route, Switch } from "react-router-dom";
 import Web3Modal from "web3modal";
 import "./App.css";
-import { Account, BigWallet, Faucet, Header, NetworkSelect, Ramp, ThemeSwitch } from "./components";
+import { Account, BigWallet, Faucet, Header, NetworkSelect, ThemeSwitch } from "./components";
 import { GAS_PRICE, FIAT_PRICE, INFURA_ID, NETWORKS } from "./constants";
 import { useBalance, useContractLoader, useUserSigner, useExchangePrice } from "./hooks";
 
@@ -43,42 +43,9 @@ const localProvider = new ethers.providers.StaticJsonRpcProvider(localProviderUr
 // 🔭 block explorer URL
 const blockExplorer = targetNetwork.blockExplorer;
 
-/*
-  Web3 modal helps us "connect" external wallets:
-*/
-const web3Modal = new Web3Modal({
-  network: "mainnet", // Optional. If using WalletConnect on xDai, change network to "xdai" and add RPC info below for xDai chain.
-  cacheProvider: true, // optional
-  theme: "light", // optional. Change to "dark" for a dark theme.
-  providerOptions: {
-    walletconnect: {
-      package: WalletConnectProvider, // required
-      options: {
-        bridge: "https://polygon.bridge.walletconnect.org",
-        infuraId: INFURA_ID,
-        rpc: {
-          1: `https://mainnet.infura.io/v3/${INFURA_ID}`, // mainnet // For more WalletConnect providers: https://docs.walletconnect.org/quick-start/dapps/web3-provider#required
-          42: `https://kovan.infura.io/v3/${INFURA_ID}`,
-          100: "https://dai.poa.network", // xDai
-        },
-      },
-    },
-  },
-});
-
 function App(props) {
   const [injectedProvider, setInjectedProvider] = useState();
   const [address, setAddress] = useState();
-
-  const logoutOfWeb3Modal = async () => {
-    await web3Modal.clearCachedProvider();
-    if (injectedProvider && injectedProvider.provider && typeof injectedProvider.provider.disconnect == "function") {
-      await injectedProvider.provider.disconnect();
-    }
-    setTimeout(() => {
-      window.location.reload();
-    }, 1);
-  };
 
   /* 💵 This hook will get the price in fiat */
   const price = FIAT_PRICE ? useExchangePrice(targetNetwork) : 0;
@@ -135,22 +102,23 @@ function App(props) {
   const loadWeb3Modal = useCallback(async () => {
     try {
       const provider = await web3Modal.connect();
-      setInjectedProvider(new ethers.providers.Web3Provider(provider));
+      const newProvider = new ethers.providers.Web3Provider(provider);
+      setInjectedProvider(newProvider);
 
       provider.on("chainChanged", chainId => {
         console.log(`chain changed to ${chainId}! updating providers`);
-        setInjectedProvider(new ethers.providers.Web3Provider(provider));
+        setInjectedProvider(newProvider);
       });
 
       provider.on("accountsChanged", () => {
         console.log(`account changed!`);
-        setInjectedProvider(new ethers.providers.Web3Provider(provider));
+        setInjectedProvider(newProvider);
       });
 
       // Subscribe to session disconnection
       provider.on("disconnect", (code, reason) => {
         console.log(code, reason);
-        logoutOfWeb3Modal();
+        logoutOfWeb3Modal(newProvider);
       });
     } catch (e) {
       console.log(`Wev3Modal error: ${e}`);
@@ -162,11 +130,6 @@ function App(props) {
       loadWeb3Modal();
     }
   }, [loadWeb3Modal]);
-
-  const [route, setRoute] = useState();
-  useEffect(() => {
-    setRoute(window.location.pathname);
-  }, [setRoute]);
 
   const faucetAvailable = localProvider && localProvider.connection && targetNetwork.name.indexOf("local") !== -1;
 
@@ -213,13 +176,6 @@ function App(props) {
 
       {/* 🗺 Extra UI like gas price, eth price, faucet, and support: */}
       <div style={{ position: "fixed", textAlign: "left", left: 0, bottom: 20, padding: 10 }}>
-        {FIAT_PRICE && (
-          <Row align="middle" gutter={[4, 4]}>
-            <Col span={8}>
-              <Ramp price={price} address={address} networks={NETWORKS} />
-            </Col>
-          </Row>
-        )}
         <Row align="middle" gutter={[4, 4]}>
           <Col span={24}>
             {
@@ -236,5 +192,30 @@ function App(props) {
     </div>
   );
 }
+
+/*
+  Web3 modal helps us "connect" external wallets:
+*/
+const web3Modal = new Web3Modal({
+  network: "mainnet", // Optional. If using WalletConnect on xDai, change network to "xdai" and add RPC info below for xDai chain.
+  cacheProvider: true, // optional
+  theme: "light", // optional. Change to "dark" for a dark theme.
+  providerOptions: {
+    walletconnect: {
+      package: WalletConnectProvider, // required
+      options: { infuraId: INFURA_ID },
+    },
+  },
+});
+
+const logoutOfWeb3Modal = async injectedProvider => {
+  await web3Modal.clearCachedProvider();
+  if (injectedProvider && injectedProvider.provider && typeof injectedProvider.provider.disconnect == "function") {
+    await injectedProvider.provider.disconnect();
+  }
+  setTimeout(() => {
+    window.location.reload();
+  }, 1);
+};
 
 export default App;
