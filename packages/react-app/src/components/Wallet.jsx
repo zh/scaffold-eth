@@ -10,7 +10,7 @@ import Balance from "./Balance";
 import EtherInput from "./EtherInput";
 
 const { Text, Paragraph } = Typography;
-const logoURI = "https://i.postimg.cc/BQFCcgdz/eth-logo.png";
+const logoURI = "https://zh.thedev.id/sep20tokens/assets/smartbch.png";
 
 /*
   ~ What it does? ~

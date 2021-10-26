@@ -1,7 +1,9 @@
 {
-  "short_name": "🏗 Scaffold-Eth App",
-  "start_url": ".",
-  "name": "🏗 Scaffold-Eth App",
+  "short_name": "SmartBCH Wallet",
+  "name": "SmartBCH Wallet",
+  "description": "SmartBCH Wallet on Amber Testnet",
+  "homepage_url": "https://smartwallet.zhware.net",
+  "providedBy": { "name": "ZHware Co.", "url": "https://zhware.net" },
   "icons": [
     {
       "src": "favicon.ico",
@@ -22,5 +24,7 @@
   "start_url": ".",
   "display": "standalone",
   "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "background_color": "#ffffff",
+  "orientation": "portrait",
+  "skylink": "AQDY4Z6jN8p47Ko6vnkqpppy5d3jUI9teoL-sfoLAeorzA"
 }
