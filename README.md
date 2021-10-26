@@ -4,7 +4,7 @@
 
 🧪 Quickly experiment with Solidity using a frontend that adapts to your smart contract:
 
-[![Add to Homescreen](https://img.shields.io/badge/Skynet-Add%20To%20Homescreen-00c65e?logo=skynet&labelColor=0d0d0d)](https://homescreen.hns.siasky.net/#/skylink/sia://AQDY4Z6jN8p47Ko6vnkqpppy5d3jUI9teoL-sfoLAeorzA)
+[![Add to Homescreen](https://img.shields.io/badge/Skynet-Add%20To%20Homescreen-00c65e?logo=skynet&labelColor=0d0d0d)](https://homescreen.hns.siasky.net/#/skylink/AQDY4Z6jN8p47Ko6vnkqpppy5d3jUI9teoL-sfoLAeorzA)
 
 # 🏄‍♂️ Quick Start
 
