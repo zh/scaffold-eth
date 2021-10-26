@@ -39,8 +39,14 @@ const tokenName = "ScaffoldToken";
 const coinName = targetNetwork.coin || "ETH";
 
 // 🛰 providers
-// 🏠 Your local provider is usually pointed at your local blockchain
-const localProviderUrl = targetNetwork.rpcUrl;
+let localProviderUrl = targetNetwork.rpcUrl;
+if (targetNetwork.user && targetNetwork.pass) {
+  localProviderUrl = {
+    url: targetNetwork.rpcUrl,
+    user: targetNetwork.user,
+    password: targetNetwork.pass,
+  }
+}
 if (DEBUG) console.log("🏠 Connecting to provider:", localProviderUrl);
 const localProvider = new ethers.providers.StaticJsonRpcProvider(localProviderUrl);
 
