@@ -1,22 +1,15 @@
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { useThemeSwitcher } from "react-css-theme-switcher";
-import { Menu, Col, Row } from "antd";
+import { Col, Menu, Row } from "antd";
 import "antd/dist/antd.css";
 import React, { useCallback, useEffect, useState } from "react";
 import { HashRouter, Link, Route, Switch } from "react-router-dom";
 import Web3Modal from "web3modal";
 import "./App.css";
-import { Account, Faucet, Contract, Header, NetworkSelect, ThemeSwitch } from "./components";
+import { Address, Account, Contract, Events, Faucet, Header, NetworkSelect, ThemeSwitch } from "./components";
 import { GAS_PRICE, FIAT_PRICE, INFURA_ID, NETWORKS } from "./constants";
-import { Transactor } from "./helpers";
-import {
-  useBalance,
-  useContractLoader,
-  useContractReader,
-  useUserSigner,
-  useEventListener,
-  useExchangePrice,
-} from "./hooks";
+import { Transactor, formatDuration } from "./helpers";
+import { useBalance, useContractLoader, useContractReader, useUserSigner, useExchangePrice } from "./hooks";
 
 const { ethers } = require("ethers");
 /*
@@ -140,10 +133,9 @@ function App(props) {
   const writeContracts = useContractLoader(userSigner, { chainId: localChainId });
 
   // keep track of a variable from the contract in the local React state:
-  // const purpose = useContractReader(readContracts, "YourContract", "purpose");
-
-  // 📟 Listen for broadcast events
-  // const setPurposeEvents = useEventListener(readContracts, "YourContract", "SetPurpose", localProvider, 1);
+  const timeLeft = useContractReader(readContracts, "SmartLock", "timeLeft");
+  const rentBy = useContractReader(readContracts, "SmartLock", "rentBy");
+  const forRent = useContractReader(readContracts, "SmartLock", "forRent");
 
   //
   // 🧫 DEBUG 👨🏻‍🔬
@@ -200,6 +192,27 @@ function App(props) {
 
   useThemeSwitcher();
 
+  const statusDisplay = (
+    <>
+      <div style={{ padding: 8, marginTop: 32 }}>
+        <h2>Time left</h2>
+        {timeLeft && formatDuration(timeLeft.toNumber() * 1000)}
+      </div>
+    </>
+  );
+
+  const forRentDisplay = (
+    <>
+      <div style={{ padding: 8, marginTop: 32 }}>
+        <h2>For Rent</h2>
+      </div>
+    </>
+  );
+
+  const myRent = () => {
+    return address && rentBy && rentBy === address;
+  };
+
   return (
     <div className="App">
       {/* ✏️ Edit the header and change the title to your project name */}
@@ -217,16 +230,18 @@ function App(props) {
               Rent
             </Link>
           </Menu.Item>
-          <Menu.Item key="/operate">
-            <Link
-              onClick={() => {
-                setRoute("/operate");
-              }}
-              to="/operate"
-            >
-              Operate
-            </Link>
-          </Menu.Item>
+          {myRent() && (
+            <Menu.Item key="/operate">
+              <Link
+                onClick={() => {
+                  setRoute("/operate");
+                }}
+                to="/operate"
+              >
+                Operate
+              </Link>
+            </Menu.Item>
+          )}
           <Menu.Item key="/debug">
             <Link
               onClick={() => {
@@ -240,6 +255,7 @@ function App(props) {
         </Menu>
         <Switch>
           <Route exact path="/">
+            {forRent ? forRentDisplay : statusDisplay}
             <Contract
               name={contractName}
               address={address}
@@ -248,31 +264,33 @@ function App(props) {
               blockExplorer={blockExplorer}
               gasPrice={gasPrice}
               chainId={localChainId}
-              show={[
-                "rent",
-                "payRent",
-                "cancelRent",
-                "rentable",
-                "rented",
-                "renter",
-                "initialDeposit",
-                "renterDeposit",
-                "price",
-              ]}
+              show={["rent", "cancel", "rentBy"]}
             />
           </Route>
-          <Route exact path="/operate">
-            <Contract
-              name={contractName}
-              address={address}
-              signer={userSigner}
-              provider={localProvider}
-              blockExplorer={blockExplorer}
-              gasPrice={gasPrice}
-              chainId={localChainId}
-              show={["locked", "renter", "open", "close"]}
-            />
-          </Route>
+          {myRent() && (
+            <Route exact path="/operate">
+              {statusDisplay}
+              <Contract
+                name={contractName}
+                address={address}
+                signer={userSigner}
+                provider={localProvider}
+                blockExplorer={blockExplorer}
+                gasPrice={gasPrice}
+                chainId={localChainId}
+                show={["locked", "open", "close"]}
+              />
+              <div style={{ width: 500, margin: "auto", marginTop: 64 }}>
+                <Events
+                  contracts={readContracts}
+                  contractName={contractName}
+                  eventName="State"
+                  localProvider={localProvider}
+                  startBlock={1}
+                />
+              </div>
+            </Route>
+          )}
           <Route path="/debug">
             <Contract
               name={contractName}
