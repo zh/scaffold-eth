@@ -1,7 +1,9 @@
 {
-  "short_name": "🏗 Scaffold-Eth App",
-  "start_url": ".",
-  "name": "🏗 Scaffold-Eth App",
+  "short_name": "Kaleido Wallet",
+  "name": "Kaleido Wallet",
+  "description": "Scaffold-eth based wallet for kaleido.io blockchain",
+  "homepage_url": "https://kaleido.zhware.net",
+  "providedBy": { "name": "ZHware Co.", "url": "https://zhware.net/" },
   "icons": [
     {
       "src": "favicon.ico",
@@ -9,18 +11,20 @@
       "type": "image/x-icon"
     },
     {
-      "src": "logo192.png",
+      "src": "kaleido.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "logo512.png",
+      "src": "kaleido.png",
       "type": "image/png",
       "sizes": "512x512"
     }
   ],
   "start_url": ".",
   "display": "standalone",
+  "orientation": "portrait",
   "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "background_color": "#ffffff",
+  "skylink": "AQBmvg3haEzKgBX-4blypb_ZPYJueceTXN1ZxDoPgrwv0Q"
 }
