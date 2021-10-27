@@ -27,7 +27,7 @@ const { ethers } = require("ethers");
 */
 
 // 📡 What chain are your contracts deployed to?
-// const targetNetwork = NETWORKS.localhost;
+const targetNetwork = NETWORKS.localhost;
 // const targetNetwork = NETWORKS.testnetSmartBCH;
 // const targetNetwork = NETWORKS.mainnetSmartBCH;
 // const targetNetwork = NETWORKS.fujiAvalanche;
@@ -39,7 +39,7 @@ const { ethers } = require("ethers");
 // const targetNetwork = NETWORKS.moonriver;
 // const targetNetwork = NETWORKS.testnetTomo;
 // const targetNetwork = NETWORKS.mainnetTomo;
-const targetNetwork = NETWORKS.kaleido;
+// const targetNetwork = NETWORKS.kaleido;
 
 // 😬 Sorry for all the console logging
 const DEBUG = false;
