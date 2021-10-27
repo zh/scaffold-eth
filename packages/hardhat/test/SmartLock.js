@@ -52,18 +52,30 @@ describe("SmartLock contract", function () {
       await expect(
         hardhatSmartLock.connect(addr1).setRenter(addr2.address, 3600)
       ).to.revertedWith("Ownable: caller is not the owner");
+      await expect(
+        hardhatSmartLock.connect(addr1).setPrice(100)
+      ).to.revertedWith("Ownable: caller is not the owner");
     });
     it("Should not change renter if not for rent", async function () {
+      await hardhatSmartLock.setPrice(100);
       await hardhatSmartLock.setRenter(addr1.address, 3600);
       expect(await hardhatSmartLock.rentBy()).to.equal(addr1.address);
       await expect(
         hardhatSmartLock.setRenter(addr2.address, 3600)
       ).to.revertedWith("Smart Lock: already rent");
     });
+    it("Should not change price if not for rent", async function () {
+      await hardhatSmartLock.setPrice(100);
+      await hardhatSmartLock.setRenter(addr1.address, 3600);
+      await expect(hardhatSmartLock.setPrice(200)).to.revertedWith(
+        "Smart Lock: no price changes when rent"
+      );
+    });
   });
 
   describe("State changes", function () {
     beforeEach(async function () {
+      await hardhatSmartLock.setPrice(100);
       await hardhatSmartLock.setRenter(addr1.address, 3600);
     });
     it("Should allow some actions only to renter", async function () {
@@ -88,9 +100,10 @@ describe("SmartLock contract", function () {
 
   describe("Rent", function () {
     beforeEach(async function () {
-      await hardhatSmartLock.connect(addr1).rent(3600);
+      await hardhatSmartLock.setPrice(100);
+      await hardhatSmartLock.connect(addr1).rent(3600, { value: 100 * 3600 });
     });
-    it("Should allow rent", async function () {
+    it("Should allow rent for price", async function () {
       expect(await hardhatSmartLock.forRent()).to.equal(false);
       expect(await hardhatSmartLock.rentBy()).to.equal(addr1.address);
       expect(await hardhatSmartLock.locked()).to.equal(false);
@@ -104,11 +117,20 @@ describe("SmartLock contract", function () {
       );
       expect(await hardhatSmartLock.locked()).to.equal(false);
     });
-    it("Should not allow more then 24 hours rent", async function () {
+    it("Should not allow rent if not enough funds", async function () {
       await hardhatSmartLock.connect(addr1).cancel();
       await expect(
-        hardhatSmartLock.connect(addr1).rent(3600 * 25)
-      ).to.revertedWith("Smart Lock: more then 24 hours rent");
+        hardhatSmartLock.connect(addr1).rent(3600, { value: 50 })
+      ).to.revertedWith("Smart Lock: not enough for rent");
+    });
+    it("Should allow only rent between 5 minutes and 24 hours", async function () {
+      await hardhatSmartLock.connect(addr1).cancel();
+      await expect(
+        hardhatSmartLock.connect(addr1).rent(3600 * 25, { value: 100 * 25 })
+      ).to.revertedWith("Smart Lock: rent between 5 minutes and 24 hours");
+      await expect(
+        hardhatSmartLock.connect(addr1).rent(200, { value: 6 })
+      ).to.revertedWith("Smart Lock: rent between 5 minutes and 24 hours");
     });
     it("Should not operate after deadline", async function () {
       await timeForward(3);
@@ -123,7 +145,7 @@ describe("SmartLock contract", function () {
     it("Should cancel rent after deadline", async function () {
       await timeForward(3);
       expect(await hardhatSmartLock.timeLeft()).to.equal(0);
-      await hardhatSmartLock.connect(addr2).rent(3600);
+      await hardhatSmartLock.connect(addr2).rent(3600, { value: 100 * 3600 });
       expect(await hardhatSmartLock.forRent()).to.equal(false);
       expect(await hardhatSmartLock.rentBy()).to.equal(addr2.address);
     });

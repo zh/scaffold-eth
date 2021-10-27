@@ -1,17 +1,17 @@
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { useThemeSwitcher } from "react-css-theme-switcher";
-import { Col, Menu, Row } from "antd";
+import { Button, Divider, Col, Menu, Row } from "antd";
 import "antd/dist/antd.css";
 import React, { useCallback, useEffect, useState } from "react";
 import { HashRouter, Link, Route, Switch } from "react-router-dom";
 import Web3Modal from "web3modal";
 import "./App.css";
-import { Address, Account, Contract, Events, Faucet, Header, NetworkSelect, ThemeSwitch } from "./components";
+import { Address, Account, Contract, Faucet, Header, NetworkSelect, ThemeSwitch } from "./components";
 import { GAS_PRICE, FIAT_PRICE, INFURA_ID, NETWORKS } from "./constants";
 import { Transactor, formatDuration } from "./helpers";
 import { useBalance, useContractLoader, useContractReader, useUserSigner, useExchangePrice } from "./hooks";
 
-const { ethers } = require("ethers");
+const { ethers, BigNumber } = require("ethers");
 /*
     Welcome to 🏗 scaffold-multi !
 
@@ -19,7 +19,7 @@ const { ethers } = require("ethers");
 */
 
 // 📡 What chain are your contracts deployed to?
-const targetNetwork = NETWORKS.localhost;
+// const targetNetwork = NETWORKS.localhost;
 // const targetNetwork = NETWORKS.testnetSmartBCH;
 // const targetNetwork = NETWORKS.mainnetSmartBCH;
 // const targetNetwork = NETWORKS.fujiAvalanche;
@@ -31,7 +31,7 @@ const targetNetwork = NETWORKS.localhost;
 // const targetNetwork = NETWORKS.moonriver;
 // const targetNetwork = NETWORKS.testnetTomo;
 // const targetNetwork = NETWORKS.mainnetTomo;
-// const targetNetwork = NETWORKS.kaleido;
+const targetNetwork = NETWORKS.kaleido;
 
 // 😬 Sorry for all the console logging
 const DEBUG = false;
@@ -40,7 +40,6 @@ const contractName = "SmartLock";
 const coinName = targetNetwork.coin || "ETH";
 
 // 🛰 providers
-// 🏠 Your local provider is usually pointed at your local blockchain
 let localProviderUrl = targetNetwork.rpcUrl;
 if (targetNetwork.user && targetNetwork.pass) {
   localProviderUrl = {
@@ -136,6 +135,8 @@ function App(props) {
   const timeLeft = useContractReader(readContracts, "SmartLock", "timeLeft");
   const rentBy = useContractReader(readContracts, "SmartLock", "rentBy");
   const forRent = useContractReader(readContracts, "SmartLock", "forRent");
+  const rentPrice = useContractReader(readContracts, "SmartLock", "price");
+  const isLocked = useContractReader(readContracts, "SmartLock", "locked");
 
   //
   // 🧫 DEBUG 👨🏻‍🔬
@@ -192,26 +193,91 @@ function App(props) {
 
   useThemeSwitcher();
 
+  const myRent = () => {
+    return address && rentBy && rentBy === address;
+  };
+
+  const allowedActions = () => {
+    if (forRent) return ["rent"];
+    if (myRent()) return ["cancel", "locked", "open", "close"];
+    return [];
+  };
+
+  const ethRentPrice = period_in_hours => {
+    return ethers.utils.parseEther("" + totalRentPrice(period_in_hours));
+  };
+
+  const totalRentPrice = period_in_hours => {
+    return period_in_hours * ethers.utils.formatEther(rentPrice);
+  };
+
   const statusDisplay = (
     <>
       <div style={{ padding: 8, marginTop: 32 }}>
         <h2>Time left</h2>
         {timeLeft && formatDuration(timeLeft.toNumber() * 1000)}
+        <h2>Rent By</h2>
+        {rentBy && <Address address={rentBy} fontSize={16} />}
       </div>
     </>
+  );
+
+  const actionsDisplay = (
+    <div style={{ width: 500, margin: "auto", marginTop: 64, backgroundColor: isLocked ? "red" : "green" }}>
+      <h2>State: {isLocked ? "LOCKED" : "UNLOCKED"}</h2>
+      <div style={{ padding: 8 }}>
+        <Button
+          type={"primary"}
+          onClick={() => {
+            tx(writeContracts[contractName].open());
+          }}
+        >
+          {"Unlock"}
+        </Button>
+        <Button
+          type={"default"}
+          onClick={() => {
+            tx(writeContracts[contractName].close());
+          }}
+        >
+          {"Lock"}
+        </Button>
+      </div>
+    </div>
+  );
+
+  const rentButton = period_in_hours => (
+    <div style={{ padding: 8 }}>
+      <Button
+        type={"primary"}
+        onClick={() => {
+          tx(
+            writeContracts[contractName].rent(period_in_hours * 3600, {
+              value: ethRentPrice(period_in_hours),
+            }),
+          );
+        }}
+      >
+        {`Rent for ${formatDuration(period_in_hours * 3600 * 1000)} (${totalRentPrice(period_in_hours)} ${coinName})`}
+      </Button>
+    </div>
   );
 
   const forRentDisplay = (
     <>
       <div style={{ padding: 8, marginTop: 32 }}>
         <h2>For Rent</h2>
+        {rentPrice && `Price: ${ethers.utils.formatEther(rentPrice)} ${coinName}`}
+        {rentPrice && ethers.utils.formatEther(rentPrice) > 0.0 && (
+          <>
+            {rentButton(0.5)}
+            {rentButton(1.0)}
+            {rentButton(2.0)}
+          </>
+        )}
       </div>
     </>
   );
-
-  const myRent = () => {
-    return address && rentBy && rentBy === address;
-  };
 
   return (
     <div className="App">
@@ -230,18 +296,6 @@ function App(props) {
               Rent
             </Link>
           </Menu.Item>
-          {myRent() && (
-            <Menu.Item key="/operate">
-              <Link
-                onClick={() => {
-                  setRoute("/operate");
-                }}
-                to="/operate"
-              >
-                Operate
-              </Link>
-            </Menu.Item>
-          )}
           <Menu.Item key="/debug">
             <Link
               onClick={() => {
@@ -256,41 +310,23 @@ function App(props) {
         <Switch>
           <Route exact path="/">
             {forRent ? forRentDisplay : statusDisplay}
-            <Contract
-              name={contractName}
-              address={address}
-              signer={userSigner}
-              provider={localProvider}
-              blockExplorer={blockExplorer}
-              gasPrice={gasPrice}
-              chainId={localChainId}
-              show={["rent", "cancel", "rentBy"]}
-            />
+            {myRent() && (
+              <>
+                <div style={{ padding: 8 }}>
+                  <Button
+                    type={"default"}
+                    onClick={() => {
+                      tx(writeContracts[contractName].cancel());
+                    }}
+                  >
+                    {"Cancel"}
+                  </Button>
+                </div>
+                <Divider />
+                {actionsDisplay}
+              </>
+            )}
           </Route>
-          {myRent() && (
-            <Route exact path="/operate">
-              {statusDisplay}
-              <Contract
-                name={contractName}
-                address={address}
-                signer={userSigner}
-                provider={localProvider}
-                blockExplorer={blockExplorer}
-                gasPrice={gasPrice}
-                chainId={localChainId}
-                show={["locked", "open", "close"]}
-              />
-              <div style={{ width: 500, margin: "auto", marginTop: 64 }}>
-                <Events
-                  contracts={readContracts}
-                  contractName={contractName}
-                  eventName="State"
-                  localProvider={localProvider}
-                  startBlock={1}
-                />
-              </div>
-            </Route>
-          )}
           <Route path="/debug">
             <Contract
               name={contractName}
