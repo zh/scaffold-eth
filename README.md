@@ -2,8 +2,7 @@
 
 > rent assets - cars, rooms, lockers with smart contract based payments
 
-[![Add to Homescreen](https://img.shields.io/badge/Skynet-Add%20To%20Homescreen-00c65e?logo=skynet&labelCo
-lor=0d0d0d)](https://homescreen.hns.siasky.net/#/skylink/AQDPcrJcbXd3GdljYoxW3jrrfAtcGfNKn9QJ98nxtf1OcQ)
+[![Add to Homescreen](https://img.shields.io/badge/Skynet-Add%20To%20Homescreen-00c65e?logo=skynet&labelColor=0d0d0d)](https://homescreen.hns.siasky.net/#/skylink/AQDPcrJcbXd3GdljYoxW3jrrfAtcGfNKn9QJ98nxtf1OcQ)
 
 # 🏄‍♂️ Quick Start
 
