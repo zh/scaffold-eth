@@ -10,7 +10,7 @@ export default function Header() {
         title="SmartBCH Wallet"
         style={{ cursor: "pointer" }}
         avatar={{
-          src: "https://zh.thedev.id/sep20tokens/assets/smartbch.png",
+          src: "smartbch.png",
           shape: "circle",
         }}
       />
