@@ -1,7 +1,9 @@
 {
-  "short_name": "🏗 Scaffold-Eth App",
-  "start_url": ".",
-  "name": "🏗 Scaffold-Eth App",
+  "short_name": "SmartLock",
+  "name": "Blockchain Payment Module",
+  "description": "Rent assets with smart contracts based payments",
+  "homepage_url": "https://smartlock.zhware.net",
+  "providedBy": { "name": "ZHware Co.", "url": "https://zhware.net/" },
   "icons": [
     {
       "src": "favicon.ico",
@@ -21,6 +23,8 @@
   ],
   "start_url": ".",
   "display": "standalone",
+  "orientation": "portrait",
   "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "background_color": "#ffffff",
+  "skylink": "AQDPcrJcbXd3GdljYoxW3jrrfAtcGfNKn9QJ98nxtf1OcQ"
 }
