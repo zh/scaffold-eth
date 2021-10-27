@@ -10,7 +10,7 @@ import Balance from "./Balance";
 import EtherInput from "./EtherInput";
 
 const { Text, Paragraph } = Typography;
-const logoURI = "https://i.postimg.cc/BQFCcgdz/eth-logo.png";
+const logoURI = "kaleido.png";
 
 /*
   ~ What it does? ~
@@ -94,7 +94,7 @@ export default function Wallet(props) {
           level="H"
           includeMargin
           renderAs="svg"
-          imageSettings={{ src: logoURI, excavate: true, height: 48, width: 48 }}
+          imageSettings={{ src: logoURI, excavate: true, height: 40, width: 48 }}
         />
       </div>
     );

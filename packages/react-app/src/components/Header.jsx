@@ -6,7 +6,14 @@ import React from "react";
 export default function Header() {
   return (
     <a href="https://github.com/zh/scaffold-eth/tree/multi-wallet" target="_blank" rel="noopener noreferrer">
-      <PageHeader title="SPA Wallet" style={{ cursor: "pointer" }} />
+      <PageHeader
+        title="Kaleido Wallet"
+        style={{ cursor: "pointer" }}
+        avatar={{
+          src: "kaleido.png",
+          shape: "circle",
+        }}
+      />
     </a>
   );
 }

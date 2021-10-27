@@ -8,7 +8,7 @@ import Balance from "./Balance";
 import AddressInput from "./AddressInput";
 import EtherInput from "./EtherInput";
 
-const logoURI = "https://i.postimg.cc/BQFCcgdz/eth-logo.png";
+const logoURI = "kaleido.png";
 
 export default function BigWallet(props) {
   const coinName = props.coin || "ETH";
@@ -41,7 +41,7 @@ export default function BigWallet(props) {
             level="H"
             includeMargin
             renderAs="svg"
-            imageSettings={{ src: logoURI, excavate: true, height: 48, width: 48 }}
+            imageSettings={{ src: logoURI, excavate: true, height: 40, width: 48 }}
           />
         )}
       </div>
