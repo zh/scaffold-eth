@@ -34,7 +34,6 @@
     "balance": "hardhat balance",
     "mint": "hardhat mint",
     "fund": "hardhat fund",
-    "send": "hardhat send",
     "generate": "hardhat generate",
     "account": "hardhat account"
   }
