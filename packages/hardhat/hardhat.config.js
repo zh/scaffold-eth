@@ -184,6 +184,14 @@ module.exports = {
         mnemonic: mnemonic("testnet"),
       },
     },
+    kaleido: {
+      url: `https://${process.env.KALEIDO_USER}:${process.env.KALEIDO_PASS}@${process.env.KALEIDO_URL}.kaleido.io/`,
+      chainId: parseInt(process.env.KALEIDO_CHAINID, 10),
+      gasPrice: 1000000000,
+      accounts: {
+        mnemonic: mnemonic("testnet"),
+      },
+    },
   },
   solidity: {
     compilers: [
@@ -498,7 +506,10 @@ task("mint", "Send ERC-20 tokens")
     const { deployer } = await getNamedAccounts();
     const contract = await ethers.getContract(tokensContract, deployer);
     const amount = taskArgs.amount ? parseInt(taskArgs.amount, 10) : 10;
-    await contract.transfer(taskArgs.account, ethers.utils.parseEther("" + amount));
+    await contract.transfer(
+      taskArgs.account,
+      ethers.utils.parseEther("" + amount)
+    );
   });
 
 function send(signer, txparams) {

@@ -172,6 +172,16 @@ export const NETWORKS = {
     rpcUrl: "https://rpc.tomochain.com",
     gasPrice: 1000000000,
   },
+  kaleido: {
+    name: "Kaleido",
+    color: "#7003DD",
+    chainId: parseInt(process.env.REACT_APP_KALEIDO_CHAINID, 10),
+    rpcUrl: `https://${process.env.REACT_APP_KALEIDO_URL}.kaleido.io`,
+    user: process.env.REACT_APP_KALEIDO_USER,
+    pass: process.env.REACT_APP_KALEIDO_PASS,
+    coin: "STO",
+    gasPrice: 1000000000,
+  },
 };
 
 export const NETWORK = chainId => {
