@@ -192,4 +192,4 @@ export const NETWORK = chainId => {
   }
 };
 
-export const GAS_PRICE = NETWORKS.testnetFantom.gasPrice; // fix this for your network
+export const GAS_PRICE = NETWORKS.fujiAvalanche.gasPrice; // fix this for your network

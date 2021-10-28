@@ -22,7 +22,7 @@ const { ethers, BigNumber } = require("ethers");
 // const targetNetwork = NETWORKS.localhost;
 // const targetNetwork = NETWORKS.testnetSmartBCH;
 // const targetNetwork = NETWORKS.mainnetSmartBCH;
-// const targetNetwork = NETWORKS.fujiAvalanche;
+const targetNetwork = NETWORKS.fujiAvalanche;
 // const targetNetwork = NETWORKS.mainnetAvalanche;
 // const targetNetwork = NETWORKS.testnetFantom;
 // const targetNetwork = NETWORKS.fantomOpera;
@@ -31,7 +31,7 @@ const { ethers, BigNumber } = require("ethers");
 // const targetNetwork = NETWORKS.moonriver;
 // const targetNetwork = NETWORKS.testnetTomo;
 // const targetNetwork = NETWORKS.mainnetTomo;
-const targetNetwork = NETWORKS.kaleido;
+// const targetNetwork = NETWORKS.kaleido;
 
 // 😬 Sorry for all the console logging
 const DEBUG = false;
@@ -197,12 +197,6 @@ function App(props) {
     return address && rentBy && rentBy === address;
   };
 
-  const allowedActions = () => {
-    if (forRent) return ["rent"];
-    if (myRent()) return ["cancel", "locked", "open", "close"];
-    return [];
-  };
-
   const ethRentPrice = period_in_hours => {
     return ethers.utils.parseEther("" + totalRentPrice(period_in_hours));
   };
@@ -218,13 +212,25 @@ function App(props) {
         {timeLeft && formatDuration(timeLeft.toNumber() * 1000)}
         <h2>Rent By</h2>
         {rentBy && <Address address={rentBy} fontSize={16} />}
+        {rentBy && !myRent() && (
+          <div
+            style={{
+              width: 500,
+              margin: "auto",
+              marginTop: 64,
+              backgroundColor: isLocked ? "red" : "green",
+            }}
+          >
+            <h2 style={{ color: "white" }}>{isLocked ? "🔒 LOCKED" : "🔓 UNLOCKED"}</h2>
+          </div>
+        )}
       </div>
     </>
   );
 
   const actionsDisplay = (
     <div style={{ width: 500, margin: "auto", marginTop: 64, backgroundColor: isLocked ? "red" : "green" }}>
-      <h2>State: {isLocked ? "LOCKED" : "UNLOCKED"}</h2>
+      <h2 style={{ color: "white" }}>{isLocked ? "🔒 LOCKED" : "🔓 UNLOCKED"}</h2>
       <div style={{ padding: 8 }}>
         <Button
           type={"primary"}
