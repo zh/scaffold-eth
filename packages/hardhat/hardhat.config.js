@@ -18,7 +18,7 @@ const defaultNetwork = process.env.NETWORK || "localhost";
 const infuraKey = process.env.INFURA_KEY;
 const deployerAddress = process.env.DEPLOYER;
 const walletURL = process.env.WALLET_URL || "http://localhost:3000";
-const tokensContract = "YourToken";
+const tokensContract = "AwesomeAssets";
 
 /*
       📡 This is where you configure your deploy configuration for 🏗 scaffold-eth

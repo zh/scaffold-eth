@@ -16,4 +16,6 @@ export { default as TokenWallet } from "./TokenWallet";
 export { default as BigWallet } from "./BigWallet";
 export { default as Wallet } from "./Wallet";
 export { default as AddTokenLogo } from "./AddTokenLogo";
+export { default as NftCard } from "./NftCard";
+export { default as OwnerNftCard } from "./OwnerNftCard";
 export { default as NetworkSelect } from "./NetworkSelect";

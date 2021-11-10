@@ -239,4 +239,4 @@ export const NETWORK = chainId => {
   }
 };
 
-export const GAS_PRICE = 1000000000; // fix this for your network
+export const GAS_PRICE = 1050000000; // fix this for your network

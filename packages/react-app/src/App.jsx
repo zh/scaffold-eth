@@ -1,14 +1,26 @@
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { useThemeSwitcher } from "react-css-theme-switcher";
-import { Button, Menu, Col, Row } from "antd";
+import { Col, List, Menu, Row } from "antd";
 import "antd/dist/antd.css";
 import React, { useCallback, useEffect, useState } from "react";
 import { HashRouter, Link, Route, Switch } from "react-router-dom";
+import StackGrid from "react-stack-grid";
 import Web3Modal from "web3modal";
 import "./App.css";
-import { Account, Faucet, Contract, Header, NetworkSelect, Ramp, ThemeSwitch, TokenBalance } from "./components";
-import { GAS_PRICE, FIAT_PRICE, INFURA_ID, NETWORKS } from "./constants";
+import {
+  Account,
+  Contract,
+  Faucet,
+  Header,
+  NetworkSelect,
+  NftCard,
+  OwnerNftCard,
+  Ramp,
+  ThemeSwitch,
+} from "./components";
+import { GAS_PRICE, FIAT_PRICE, INFURA_ID, NETWORKS, OWNER_ADDR } from "./constants";
 import { Transactor } from "./helpers";
+import { getMetadata } from "./helpers/ipfsFunctions";
 import {
   useBalance,
   useContractLoader,
@@ -17,9 +29,10 @@ import {
   useEventListener,
   useExchangePrice,
 } from "./hooks";
-import { ExampleUI, Hints } from "./views";
+import { Events, Mint } from "./views";
 
 const { ethers } = require("ethers");
+
 /*
     Welcome to 🏗 scaffold-multi !
 
@@ -27,10 +40,11 @@ const { ethers } = require("ethers");
 */
 
 // 📡 What chain are your contracts deployed to?
-const targetNetwork = NETWORKS.localhost;
+// const targetNetwork = NETWORKS.localhost;
 // const targetNetwork = NETWORKS.polygon;
 // const targetNetwork = NETWORKS.mumbai;
 // const targetNetwork = NETWORKS.testnetSmartBCH;
+const targetNetwork = NETWORKS.testnetSmartBCH;
 // const targetNetwork = NETWORKS.mainnetSmartBCH;
 // const targetNetwork = NETWORKS.fujiAvalanche;
 // const targetNetwork = NETWORKS.mainnetAvalanche;
@@ -50,8 +64,7 @@ const targetNetwork = NETWORKS.localhost;
 // 😬 Sorry for all the console logging
 const DEBUG = false;
 
-const contractName = "YourContract";
-const tokenName = "YourToken";
+const tokenName = "AwesomeAssets";
 const coinName = targetNetwork.coin || "ETH";
 
 // 🛰 providers
@@ -111,6 +124,7 @@ function App(props) {
   const price = FIAT_PRICE ? useExchangePrice(targetNetwork) : 0;
 
   const gasPrice = targetNetwork.gasPrice || GAS_PRICE;
+  console.log("Gas Price: ", gasPrice);
   // if (DEBUG) console.log("⛽️ Gas price:", gasPrice);
   // Use your injected provider from 🦊 Metamask or if you don't have it then instantly generate a 🔥 burner wallet.
   const userSigner = useUserSigner(injectedProvider, localProvider);
@@ -146,12 +160,6 @@ function App(props) {
 
   // If you want to make 🔐 write transactions to your contracts, use the userSigner:
   const writeContracts = useContractLoader(userSigner, { chainId: localChainId });
-
-  // keep track of a variable from the contract in the local React state:
-  const purpose = useContractReader(readContracts, "YourContract", "purpose");
-
-  // 📟 Listen for broadcast events
-  const setPurposeEvents = useEventListener(readContracts, "YourContract", "SetPurpose", localProvider, 1);
 
   //
   // 🧫 DEBUG 👨🏻‍🔬
@@ -208,6 +216,77 @@ function App(props) {
 
   useThemeSwitcher();
 
+  /* NFT related code */
+  // keep track of a variable from the contract in the local React state:
+  const _tokenBalance = useContractReader(readContracts, tokenName, "balanceOf", [address]);
+  const yourCount = _tokenBalance && _tokenBalance.toNumber && _tokenBalance.toNumber();
+  if (DEBUG) console.log("🤗 Token count: ", yourCount);
+
+  // 📟 Listen for broadcast events
+  const transferEvents = useEventListener(readContracts, tokenName, "Transfer", localProvider, 1);
+  if (DEBUG) console.log("📟 Transfer events: ", transferEvents);
+
+  const actionEvents = useEventListener(readContracts, tokenName, "Action", localProvider, 1);
+
+  // Loading Collectibles
+  const [yourCollectibles, setYourCollectibles] = useState();
+  useEffect(() => {
+    const updateYourCollectibles = async () => {
+      const collectibleUpdate = [];
+      for (let idx = 0; idx < yourCount; idx++) {
+        try {
+          const tokenId = await readContracts[tokenName].tokenOfOwnerByIndex(address, idx);
+          const tokenURI = await readContracts[tokenName].tokenURI(tokenId);
+
+          const metadata = await getMetadata(tokenId, tokenURI, address);
+          const price = await readContracts[tokenName].price(tokenId);
+          metadata.price = ethers.utils.formatEther(price);
+          if (metadata) collectibleUpdate.push(metadata);
+        } catch (e) {
+          console.log(e);
+        }
+      }
+      setYourCollectibles(collectibleUpdate);
+    };
+    updateYourCollectibles();
+  }, [address, yourCount, transferEvents, actionEvents]);
+
+  // assets
+  const [loadedAssets, setLoadedAssets] = useState();
+  const _lastId = useContractReader(readContracts, tokenName, "lastId");
+  const assetCount = _lastId && _lastId.toNumber && _lastId.toNumber();
+
+  useEffect(() => {
+    const updateYourAssets = async () => {
+      let assetUpdate = [];
+      for (let idx = 1; idx <= assetCount; idx++) {
+        const _forSale = await readContracts[tokenName].forSale(idx);
+        const price = ethers.utils.formatEther(_forSale);
+        if (price != 0) {
+          const tokenURI = await readContracts[tokenName].tokenURI(idx);
+          const owner = await readContracts[tokenName].ownerOf(idx);
+          const metadata = await getMetadata(idx, tokenURI, owner);
+          assetUpdate.push({ id: idx, ...metadata, price });
+        }
+      }
+      setLoadedAssets(assetUpdate);
+    };
+    if (readContracts && readContracts[tokenName]) updateYourAssets();
+  }, [assetCount, readContracts, transferEvents, actionEvents]);
+
+  const galleryList = [];
+  for (let a in loadedAssets) {
+    galleryList.push(
+      <NftCard
+        address={address}
+        asset={loadedAssets[a]}
+        contract={writeContracts[tokenName]}
+        blockExplorer={blockExplorer}
+        coin={coinName}
+      />,
+    );
+  }
+
   return (
     <div className="App">
       {/* ✏️ Edit the header and change the title to your project name */}
@@ -222,103 +301,107 @@ function App(props) {
               }}
               to="/"
             >
-              Your Contract
+              Assets Gallery
             </Link>
           </Menu.Item>
-          <Menu.Item key="/token">
+          <Menu.Item key="/owner">
             <Link
               onClick={() => {
-                setRoute("/");
+                setRoute("/owner");
               }}
-              to="/token"
+              to="/owner"
             >
-              Your ERC-20 Token
+              Your NFTs
             </Link>
           </Menu.Item>
-          <Menu.Item key="/hints">
+          <Menu.Item key="/mint">
             <Link
               onClick={() => {
-                setRoute("/hints");
+                setRoute("/mint");
               }}
-              to="/hints"
+              to="/mint"
             >
-              Hints
+              Mint
             </Link>
           </Menu.Item>
-          <Menu.Item key="/exampleui">
-            <Link
-              onClick={() => {
-                setRoute("/exampleui");
-              }}
-              to="/exampleui"
-            >
-              ExampleUI
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="/debugcontracts">
-            <Link
-              onClick={() => {
-                setRoute("/debugcontracts");
-              }}
-              to="/debugcontracts"
-            >
-              Debug Contracts
-            </Link>
-          </Menu.Item>
+          {address && OWNER_ADDR === address && (
+            <>
+              <Menu.Item key="/events">
+                <Link
+                  onClick={() => {
+                    setRoute("/events");
+                  }}
+                  to="/events"
+                >
+                  Events
+                </Link>
+              </Menu.Item>
+              <Menu.Item key="/debug">
+                <Link
+                  onClick={() => {
+                    setRoute("/debug");
+                  }}
+                  to="/debug"
+                >
+                  Debug Contracts
+                </Link>
+              </Menu.Item>
+            </>
+          )}
         </Menu>
         <Switch>
           <Route exact path="/">
-            <Contract
-              name="YourContract"
-              name={contractName}
-              address={address}
-              signer={userSigner}
-              provider={localProvider}
-              blockExplorer={blockExplorer}
-              gasPrice={gasPrice}
-              chainId={localChainId}
-            />
+            <StackGrid columnWidth={200} gutterWidth={16} gutterHeight={16}>
+              {galleryList}
+            </StackGrid>
           </Route>
-          <Route path="/token">
-            <Contract
-              name={tokenName}
-              address={address}
-              signer={userSigner}
-              provider={localProvider}
-              blockExplorer={blockExplorer}
-              gasPrice={gasPrice}
-              chainId={localChainId}
-              show={["balanceOf", "transfer"]}
-            />
+          <Route path="/owner">
+            <div style={{ width: 640, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
+              <List
+                bordered
+                dataSource={yourCollectibles}
+                renderItem={item => {
+                  const id = item.id.toNumber();
+                  return (
+                    <List.Item key={id + "_" + item.uri + "_" + item.owner}>
+                      <OwnerNftCard
+                        address={address}
+                        item={item}
+                        tx={tx}
+                        contractName={tokenName}
+                        writeContracts={writeContracts}
+                        blockExplorer={blockExplorer}
+                        coin={coinName}
+                        price={price}
+                        fontSize={16}
+                      />
+                    </List.Item>
+                  );
+                }}
+              />
+            </div>
           </Route>
-          <Route path="/hints">
-            <Hints address={address} yourLocalBalance={yourLocalBalance} price={price} />
+          <Route path="/mint">
+            <Mint address={address} tx={tx} contractName={tokenName} writeContracts={writeContracts} />
           </Route>
-          <Route path="/exampleui">
-            <ExampleUI
-              address={address}
-              userSigner={userSigner}
-              localProvider={localProvider}
-              yourLocalBalance={yourLocalBalance}
-              price={price}
-              tx={tx}
-              writeContracts={writeContracts}
-              readContracts={readContracts}
-              purpose={purpose}
-              setPurposeEvents={setPurposeEvents}
-            />
-          </Route>
-          <Route path="/debugcontracts">
-            <Contract
-              name={tokenName}
-              address={address}
-              signer={userSigner}
-              provider={localProvider}
-              blockExplorer={blockExplorer}
-              gasPrice={gasPrice}
-              chainId={localChainId}
-            />
-          </Route>
+          {address && OWNER_ADDR === address && (
+            <>
+              <Route path="/events">
+                <Events transferEvents={transferEvents} actionEvents={actionEvents} />
+              </Route>
+              <Route path="/debug">
+                <Contract
+                  name={tokenName}
+                  address={address}
+                  signer={userSigner}
+                  provider={localProvider}
+                  blockExplorer={blockExplorer}
+                  gasPrice={gasPrice}
+                  chainId={localChainId}
+                />
+              </Route>
+            </>
+          )}
         </Switch>
       </HashRouter>
 
@@ -336,14 +419,6 @@ function App(props) {
           loadWeb3Modal={loadWeb3Modal}
           logoutOfWeb3Modal={logoutOfWeb3Modal}
           blockExplorer={blockExplorer}
-        />
-        <TokenBalance
-          name={tokenName}
-          img={"💰"}
-          suffix={"YTK"}
-          fontSize={16}
-          address={address}
-          contracts={readContracts}
         />
       </div>
 
