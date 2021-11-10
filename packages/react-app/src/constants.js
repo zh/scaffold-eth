@@ -81,7 +81,7 @@ export const NETWORKS = {
     chainId: 43113,
     coin: "AVAX",
     rpcUrl: "https://api.avax-test.network/ext/bc/C/rpc",
-    blockExplorer: "https://cchain.explorer.avax-test.network",
+    blockExplorer: "https://testnet.showtrace.io",
     gasPrice: 225000000000,
   },
   mainnetAvalanche: {
@@ -90,7 +90,7 @@ export const NETWORKS = {
     chainId: 43114,
     coin: "AVAX",
     rpcUrl: "https://api.avax.network/ext/bc/C/rpc",
-    blockExplorer: "https://cchain.explorer.avax.network",
+    blockExplorer: "https://showtrace.io",
     gasPrice: 225000000000,
   },
   testnetFantom: {
@@ -192,4 +192,4 @@ export const NETWORK = chainId => {
   }
 };
 
-export const GAS_PRICE = NETWORKS.testnetFantom.gasPrice; // fix this for your network
+export const GAS_PRICE = 1000000000; // fix this for your network
