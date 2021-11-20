@@ -39,6 +39,9 @@ const targetNetwork = NETWORKS.localhost;
 // const targetNetwork = NETWORKS.moonriver;
 // const targetNetwork = NETWORKS.testnetTomo;
 // const targetNetwork = NETWORKS.mainnetTomo;
+// const targetNetwork = NETWORKS.testnetBSC;
+// const targetNetwork = NETWORKS.mainnetBSC;
+// const targetNetwork = NETWORKS.bakerloo;
 // const targetNetwork = NETWORKS.kaleido;
 
 // 😬 Sorry for all the console logging

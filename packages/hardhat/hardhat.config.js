@@ -184,6 +184,29 @@ module.exports = {
         mnemonic: mnemonic("testnet"),
       },
     },
+    testnetBSC: {
+      url: "https://data-seed-prebsc-1-s1.binance.org:8545",
+      chainId: 97,
+      gasPrice: 20000000000,
+      accounts: {
+        mnemonic: mnemonic("testnet"),
+      },
+    },
+    mainnetBSC: {
+      url: "https://bsc-dataseed.binance.org/",
+      chainId: 56,
+      gasPrice: 20000000000,
+        mnemonic: mnemonic(),
+      },
+    },
+    bakerloo: {
+      url: "https://rpc4.bakerloo.autonity.network:8545",
+      chainId: 444900,
+      gasPrice: 10000000000,
+      accounts: {
+        mnemonic: mnemonic("testnet"),
+      },
+    },
     kaleido: {
       url: `https://${process.env.KALEIDO_USER}:${process.env.KALEIDO_PASS}@${process.env.KALEIDO_URL}.kaleido.io/`,
       chainId: parseInt(process.env.KALEIDO_CHAINID, 10),
