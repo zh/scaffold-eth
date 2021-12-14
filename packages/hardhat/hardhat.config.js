@@ -196,6 +196,7 @@ module.exports = {
       url: "https://bsc-dataseed.binance.org/",
       chainId: 56,
       gasPrice: 20000000000,
+      accounts: {
         mnemonic: mnemonic(),
       },
     },
