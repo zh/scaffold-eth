@@ -61,16 +61,26 @@ module.exports = {
     },
     xdai: {
       url: "https://rpc.xdaichain.com/",
+      chainId: 100,
       gasPrice: 1000000000,
       accounts: {
         mnemonic: mnemonic(),
       },
     },
-    matic: {
-      url: "https://rpc-mainnet.maticvigil.com/",
+    polygon: {
+      url: "https://polygon-rpc.com/",
+      chainId: 137,
       gasPrice: 1000000000,
       accounts: {
         mnemonic: mnemonic(),
+      },
+    },
+    mumbai: {
+      url: "https://rpc-mumbai.maticvigil.com/",
+      chainId: 80001,
+      gasPrice: 1000000000,
+      accounts: {
+        mnemonic: mnemonic("testnet"),
       },
     },
     testnetSmartBCH: {
@@ -158,6 +168,14 @@ module.exports = {
       chainId: 1287,
       accounts: {
         mnemonic: mnemonic("testnet"),
+      },
+    },
+    moonbeam: {
+      url: "https://rpc.api.moonbeam.network",
+      gasPrice: 1000000000,
+      chainId: 1284,
+      accounts: {
+        mnemonic: mnemonic(),
       },
     },
     moonriver: {
