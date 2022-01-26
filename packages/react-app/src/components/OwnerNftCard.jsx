@@ -21,6 +21,7 @@ import { formatUri } from "../helpers";
     contractName={contractName}
     writeContracts={writeContracts}
     blockExplorer={blockExplorer}
+    gasPrice={gasPrice}
     coin={coin}
     fontSize={fontSize}
   />
@@ -34,6 +35,7 @@ import { formatUri } from "../helpers";
 export default function OwnerNftCard(props) {
   const item = props.item;
   const id = item.id.toNumber();
+  const gasPrice = props.gasPrice;
 
   const [transferToAddresses, setTransferToAddresses] = useState({});
   const [sellPrices, setSellPrices] = useState({});
@@ -54,7 +56,11 @@ export default function OwnerNftCard(props) {
     cardActions.push(
       <Button
         onClick={() => {
-          props.tx(props.writeContracts[props.contractName].sellItem(id, ethers.utils.parseEther(sellPrices[id])));
+          props.tx(
+            props.writeContracts[props.contractName].sellItem(id, ethers.utils.parseEther(sellPrices[id]), {
+              gasPrice,
+            }),
+          );
         }}
       >
         Sell
@@ -64,7 +70,7 @@ export default function OwnerNftCard(props) {
     cardActions.push(
       <Button
         onClick={() => {
-          props.tx(props.writeContracts[props.contractName].cancelSellItem(item.id));
+          props.tx(props.writeContracts[props.contractName].cancelSellItem(item.id, { gasPrice }));
         }}
       >
         Cancel Sell
@@ -106,7 +112,11 @@ export default function OwnerNftCard(props) {
         />
         <Button
           onClick={() => {
-            props.tx(props.writeContracts[props.contractName].transferFrom(props.address, transferToAddresses[id], id));
+            props.tx(
+              props.writeContracts[props.contractName].transferFrom(props.address, transferToAddresses[id], id, {
+                gasPrice,
+              }),
+            );
           }}
         >
           Transfer

@@ -43,8 +43,8 @@ const { ethers } = require("ethers");
 // const targetNetwork = NETWORKS.localhost;
 // const targetNetwork = NETWORKS.polygon;
 // const targetNetwork = NETWORKS.mumbai;
-// const targetNetwork = NETWORKS.testnetSmartBCH;
 const targetNetwork = NETWORKS.testnetSmartBCH;
+// const targetNetwork = NETWORKS.testnetSmartBCH;
 // const targetNetwork = NETWORKS.mainnetSmartBCH;
 // const targetNetwork = NETWORKS.fujiAvalanche;
 // const targetNetwork = NETWORKS.mainnetAvalanche;
@@ -282,6 +282,7 @@ function App(props) {
         asset={loadedAssets[a]}
         contract={writeContracts[tokenName]}
         blockExplorer={blockExplorer}
+        gasPrice={gasPrice}
         coin={coinName}
       />,
     );
@@ -371,6 +372,7 @@ function App(props) {
                         contractName={tokenName}
                         writeContracts={writeContracts}
                         blockExplorer={blockExplorer}
+                        gasPrice={gasPrice}
                         coin={coinName}
                         price={price}
                         fontSize={16}
@@ -382,7 +384,13 @@ function App(props) {
             </div>
           </Route>
           <Route path="/mint">
-            <Mint address={address} tx={tx} contractName={tokenName} writeContracts={writeContracts} />
+            <Mint
+              address={address}
+              tx={tx}
+              contractName={tokenName}
+              writeContracts={writeContracts}
+              gasPrice={gasPrice}
+            />
           </Route>
           {address && OWNER_ADDR === address && (
             <>

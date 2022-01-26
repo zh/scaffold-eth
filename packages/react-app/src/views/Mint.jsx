@@ -6,7 +6,7 @@ import { ipfs, getFromIPFS, addToIPFS } from "../helpers/ipfsFunctions";
 
 const { Text } = Typography;
 
-export default function Mint({ address, tx, contractName, writeContracts }) {
+export default function Mint({ address, tx, contractName, writeContracts, gasPrice }) {
   if (!address || !tx || !contractName || !writeContracts) return null;
 
   const history = useHistory();
@@ -31,7 +31,7 @@ export default function Mint({ address, tx, contractName, writeContracts }) {
     console.log("Media CID: ", ipfsHash);
     console.log("Metadata CID: ", upload.path);
     await sleep(1000);
-    tx(writeContracts[contractName].mintItem(address, ipfsHash, upload.path));
+    tx(writeContracts[contractName].mintItem(address, ipfsHash, upload.path, { gasPrice }));
     history.replace("/owner");
   };
 

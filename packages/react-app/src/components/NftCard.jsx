@@ -22,6 +22,7 @@ import { parseJsonMessage, formatUri } from "../helpers";
     contract={writeContracts[tokenName]}
     blockExplorer={blockExplorer}
     coin={coin}
+    gasPrice={gasPrice}
   />
 
   ~ Features ~
@@ -31,10 +32,11 @@ import { parseJsonMessage, formatUri } from "../helpers";
   - Provide coin={coin} blockchain main coin name - ETH, BCH, FTM etc.
 */
 
-const buyTx = async (contract, asset) => {
+const buyTx = async (contract, asset, gasPrice) => {
   try {
     const result = await contract.buyItem(asset.id, {
       value: ethers.utils.parseEther(asset.price),
+      gasPrice,
     });
     notification.info({
       message: "Transaction Sent",
@@ -61,7 +63,7 @@ export default function NftCard(props) {
       </div>,
       <Button
         onClick={() => {
-          buyTx(props.contract, props.asset);
+          buyTx(props.contract, props.asset, props.gasPrice);
         }}
       >
         Buy

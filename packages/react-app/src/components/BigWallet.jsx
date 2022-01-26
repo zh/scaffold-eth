@@ -8,7 +8,7 @@ import Balance from "./Balance";
 import AddressInput from "./AddressInput";
 import EtherInput from "./EtherInput";
 
-const logoURI = "https://i.postimg.cc/BQFCcgdz/eth-logo.png";
+const logoURI = "smartbch.png";
 
 export default function BigWallet(props) {
   const coinName = props.coin || "ETH";

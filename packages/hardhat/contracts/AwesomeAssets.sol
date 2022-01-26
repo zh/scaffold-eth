@@ -59,10 +59,10 @@ contract AwesomeAssets is
         require(forSale[tokenId] == msg.value, "WRONG PRICE");
         forSale[tokenId] = 0;
         address payable itemOwner = payable(ownerOf(tokenId));
-        emit Action(msg.sender, tokenId, "buy", msg.value);
-        _transfer(itemOwner, msg.sender, tokenId);
-        (bool sent, bytes memory _data) = itemOwner.call{value: msg.value}("");
+        (bool sent, ) = itemOwner.call{value: msg.value}("");
         require(sent, "Failed to send Ether");
+        _transfer(itemOwner, msg.sender, tokenId);
+        emit Action(msg.sender, tokenId, "buy", msg.value);
     }
 
     function price(uint256 tokenId) external view returns (uint256) {
