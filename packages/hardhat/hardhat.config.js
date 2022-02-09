@@ -15,7 +15,7 @@ require("dotenv").config();
 const { isAddress, getAddress, formatUnits, parseUnits } = utils;
 
 const defaultNetwork = process.env.NETWORK || "localhost";
-const infuraKey = process.env.INFURA_KEY;
+const alchemyURI = process.env.ALCHEMY_URI;
 const deployerAddress = process.env.DEPLOYER;
 const walletURL = process.env.WALLET_URL || "http://localhost:3000";
 const tokensContract = "YourToken";
@@ -53,10 +53,11 @@ module.exports = {
     localhost: {
       url: "http://localhost:8545",
     },
-    kovan: {
-      url: "https://kovan.infura.io/v3/" + infuraKey,
+    rinkeby: {
+      chainId: 4,
+      url: alchemyURI,
       accounts: {
-        mnemonic: mnemonic(),
+        mnemonic: mnemonic("testnet"),
       },
     },
     xdai: {
@@ -243,6 +244,13 @@ module.exports = {
           optimizer: {
             enabled: true,
             runs: 200,
+            details: {
+              yul: true,
+              yulDetails: {
+                stackAllocation: true,
+                optimizerSteps: "dhfoDgvulfnTUtnIf",
+              },
+            },
           },
         },
       },

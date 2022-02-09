@@ -1,23 +1,32 @@
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { useThemeSwitcher } from "react-css-theme-switcher";
-import { Button, Menu, Col, Row } from "antd";
+import { Button, Card, Input, List, Menu, Col, Row } from "antd";
 import "antd/dist/antd.css";
 import React, { useCallback, useEffect, useState } from "react";
 import { HashRouter, Link, Route, Switch } from "react-router-dom";
 import Web3Modal from "web3modal";
 import "./App.css";
-import { Account, Faucet, Contract, Header, NetworkSelect, Ramp, ThemeSwitch, TokenBalance } from "./components";
-import { GAS_PRICE, FIAT_PRICE, INFURA_ID, NETWORKS } from "./constants";
+import {
+  Address,
+  AddressInput,
+  Account,
+  Faucet,
+  Contract,
+  Header,
+  NetworkSelect,
+  Ramp,
+  ThemeSwitch,
+} from "./components";
+import { GAS_PRICE, FIAT_PRICE, ALCHEMY_KEY, NETWORKS } from "./constants";
 import { Transactor } from "./helpers";
 import {
-  useBalance,
+  usePoller,
   useContractLoader,
   useContractReader,
   useUserSigner,
   useEventListener,
   useExchangePrice,
 } from "./hooks";
-import { ExampleUI, Hints } from "./views";
 
 const { ethers } = require("ethers");
 /*
@@ -27,7 +36,8 @@ const { ethers } = require("ethers");
 */
 
 // 📡 What chain are your contracts deployed to?
-const targetNetwork = NETWORKS.localhost;
+// const targetNetwork = NETWORKS.localhost;
+// const targetNetwork = NETWORKS.rinkeby;
 // const targetNetwork = NETWORKS.polygon;
 // const targetNetwork = NETWORKS.mumbai;
 // const targetNetwork = NETWORKS.testnetSmartBCH;
@@ -40,7 +50,7 @@ const targetNetwork = NETWORKS.localhost;
 // const targetNetwork = NETWORKS.moonbase;
 // const targetNetwork = NETWORKS.moonbeam;
 // const targetNetwork = NETWORKS.moonriver;
-// const targetNetwork = NETWORKS.testnetTomo;
+const targetNetwork = NETWORKS.testnetTomo;
 // const targetNetwork = NETWORKS.mainnetTomo;
 // const targetNetwork = NETWORKS.testnetBSC;
 // const targetNetwork = NETWORKS.mainnetBSC;
@@ -50,8 +60,8 @@ const targetNetwork = NETWORKS.localhost;
 // 😬 Sorry for all the console logging
 const DEBUG = false;
 
-const contractName = "YourContract";
-const tokenName = "YourToken";
+const petName = "Loogies";
+const tankName = "LoogieTank";
 const coinName = targetNetwork.coin || "ETH";
 
 // 🛰 providers
@@ -82,10 +92,10 @@ const web3Modal = new Web3Modal({
       package: WalletConnectProvider, // required
       options: {
         bridge: "https://polygon.bridge.walletconnect.org",
-        infuraId: INFURA_ID,
+        alchemyId: ALCHEMY_KEY,
         rpc: {
-          1: `https://mainnet.infura.io/v3/${INFURA_ID}`, // mainnet // For more WalletConnect providers: https://docs.walletconnect.org/quick-start/dapps/web3-provider#required
-          42: `https://kovan.infura.io/v3/${INFURA_ID}`,
+          1: `https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_KEY}`, // mainnet // For more WalletConnect providers: https://docs.walletconnect.org/quick-start/dapps/web3-provider#required
+          4: `https://eth-rinkeby.alchemyapi.io/v2/${ALCHEMY_KEY}`,
           100: "https://dai.poa.network", // xDai
         },
       },
@@ -132,12 +142,6 @@ function App(props) {
 
   // For more hooks, check out 🔗eth-hooks at: https://www.npmjs.com/package/eth-hooks
 
-  // The transactor wraps transactions and provides notificiations
-  const tx = Transactor(userSigner, gasPrice);
-
-  // 🏗 scaffold-eth is full of handy hooks like this one to get your balance:
-  const yourLocalBalance = useBalance(localProvider, address);
-
   // Just plug in different 🛰 providers to get your balance on different chains:
   // const yourMainnetBalance = useBalance(mainnetProvider, address);
 
@@ -147,26 +151,123 @@ function App(props) {
   // If you want to make 🔐 write transactions to your contracts, use the userSigner:
   const writeContracts = useContractLoader(userSigner, { chainId: localChainId });
 
+  // The transactor wraps transactions and provides notificiations
+  const tx = Transactor(userSigner, gasPrice);
+
   // keep track of a variable from the contract in the local React state:
-  const purpose = useContractReader(readContracts, "YourContract", "purpose");
+  const loogieBalance = useContractReader(readContracts, petName, "balanceOf", [address]);
+  console.log("🤗 loogie balance:", loogieBalance);
+
+  const loogieTankBalance = useContractReader(readContracts, tankName, "balanceOf", [address]);
+  console.log("🤗 loogie tank balance:", loogieTankBalance);
 
   // 📟 Listen for broadcast events
-  const setPurposeEvents = useEventListener(readContracts, "YourContract", "SetPurpose", localProvider, 1);
+  const loogieTransferEvents = useEventListener(readContracts, petName, "Transfer", localProvider, 1);
+  console.log("📟 Loogie Transfer events:", loogieTransferEvents);
+
+  const loogieTankTransferEvents = useEventListener(readContracts, tankName, "Transfer", localProvider, 1);
+  console.log("📟 Loogie Tank Transfer events:", loogieTankTransferEvents);
+
+  const yourLoogieBalance = loogieBalance && loogieBalance.toNumber && loogieBalance.toNumber();
+  const [yourLoogies, setYourLoogies] = useState();
+
+  const yourLoogieTankBalance = loogieTankBalance && loogieTankBalance.toNumber && loogieTankBalance.toNumber();
+  const [yourLoogieTanks, setYourLoogieTanks] = useState();
+
+  const [transferToAddresses, setTransferToAddresses] = useState({});
+  const [transferToTankId, setTransferToTankId] = useState({});
+
+  // call every 1500 seconds.
+  usePoller(() => {
+    updateLoogieTanks();
+  }, 1500000);
+
+  async function updateLoogieTanks() {
+    const loogieTankUpdate = [];
+    for (let tokenIndex = 0; tokenIndex < yourLoogieTankBalance; tokenIndex++) {
+      try {
+        console.log("Getting token index", tokenIndex);
+        const tokenId = await readContracts.LoogieTank.tokenOfOwnerByIndex(address, tokenIndex);
+        console.log("tokenId", tokenId);
+        const tokenURI = await readContracts.LoogieTank.tokenURI(tokenId);
+        console.log("tokenURI", tokenURI);
+        const jsonManifestString = atob(tokenURI.substring(29));
+        console.log("jsonManifestString", jsonManifestString);
+
+        try {
+          const jsonManifest = JSON.parse(jsonManifestString);
+          console.log("jsonManifest", jsonManifest);
+          loogieTankUpdate.push({ id: tokenId, uri: tokenURI, owner: address, ...jsonManifest });
+        } catch (e) {
+          console.log(e);
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    }
+    setYourLoogieTanks(loogieTankUpdate.reverse());
+  }
+
+  useEffect(() => {
+    const updateYourCollectibles = async () => {
+      const loogieUpdate = [];
+      for (let tokenIndex = 0; tokenIndex < yourLoogieBalance; tokenIndex++) {
+        try {
+          console.log("Getting token index", tokenIndex);
+          const tokenId = await readContracts.Loogies.tokenOfOwnerByIndex(address, tokenIndex);
+          console.log("tokenId", tokenId);
+          const tokenURI = await readContracts.Loogies.tokenURI(tokenId);
+          console.log("tokenURI", tokenURI);
+          const jsonManifestString = atob(tokenURI.substring(29));
+          console.log("jsonManifestString", jsonManifestString);
+          /*
+          const ipfsHash = tokenURI.replace("https://ipfs.io/ipfs/", "");
+          console.log("ipfsHash", ipfsHash);
+          const jsonManifestBuffer = await getFromIPFS(ipfsHash);
+          */
+          try {
+            const jsonManifest = JSON.parse(jsonManifestString);
+            console.log("jsonManifest", jsonManifest);
+            loogieUpdate.push({ id: tokenId, uri: tokenURI, owner: address, ...jsonManifest });
+          } catch (e) {
+            console.log(e);
+          }
+        } catch (e) {
+          console.log(e);
+        }
+      }
+      setYourLoogies(loogieUpdate.reverse());
+      updateLoogieTanks();
+    };
+    updateYourCollectibles();
+  }, [address, yourLoogieBalance, yourLoogieTankBalance]);
 
   //
   // 🧫 DEBUG 👨🏻‍🔬
   //
   useEffect(() => {
-    if (DEBUG && address && selectedChainId && yourLocalBalance && readContracts && writeContracts) {
+    if (
+      DEBUG &&
+      address &&
+      selectedChainId &&
+      yourLoogieBalance &&
+      yourLoogieTankBalance &&
+      readContracts &&
+      writeContracts
+    ) {
       console.log("_____________________________________ 🏗 scaffold-eth _____________________________________");
       console.log("🏠 localChainId", localChainId);
       console.log("👩‍💼 selected address:", address);
       console.log("🕵🏻‍♂️ selectedChainId:", selectedChainId);
-      console.log("💵 yourLocalBalance", yourLocalBalance ? ethers.utils.formatEther(yourLocalBalance) : "...");
+      console.log("💵 yourLoogiesBalance", yourLoogieBalance ? ethers.utils.formatEther(yourLoogieBalance) : "...");
+      console.log(
+        "💵 yourLoogiesBalance",
+        yourLoogieTankBalance ? ethers.utils.formatEther(yourLoogieTankBalance) : "...",
+      );
       console.log("📝 readContracts", readContracts);
       console.log("🔐 writeContracts", writeContracts);
     }
-  }, [address, selectedChainId, yourLocalBalance, readContracts, writeContracts]);
+  }, [address, selectedChainId, yourLoogieBalance, yourLoogieTankBalance, readContracts, writeContracts]);
 
   const loadWeb3Modal = useCallback(async () => {
     try {
@@ -222,55 +323,212 @@ function App(props) {
               }}
               to="/"
             >
-              Your Contract
+              Pets
             </Link>
           </Menu.Item>
-          <Menu.Item key="/token">
+          <Menu.Item key="/tank">
             <Link
               onClick={() => {
-                setRoute("/");
+                setRoute("/tank");
               }}
-              to="/token"
+              to="/tank"
             >
-              Your ERC-20 Token
+              Tanks
             </Link>
           </Menu.Item>
-          <Menu.Item key="/hints">
+          <Menu.Item key="/debugpet">
             <Link
               onClick={() => {
-                setRoute("/hints");
+                setRoute("/debugpet");
               }}
-              to="/hints"
+              to="/debugpet"
             >
-              Hints
+              Debug Pet
             </Link>
           </Menu.Item>
-          <Menu.Item key="/exampleui">
+          <Menu.Item key="/debugtank">
             <Link
               onClick={() => {
-                setRoute("/exampleui");
+                setRoute("/debugtank");
               }}
-              to="/exampleui"
+              to="/debugtank"
             >
-              ExampleUI
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="/debugcontracts">
-            <Link
-              onClick={() => {
-                setRoute("/debugcontracts");
-              }}
-              to="/debugcontracts"
-            >
-              Debug Contracts
+              Debug Tank
             </Link>
           </Menu.Item>
         </Menu>
         <Switch>
           <Route exact path="/">
+            <div style={{ maxWidth: 820, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
+              <Button
+                type={"primary"}
+                onClick={() => {
+                  tx(writeContracts.Loogies.mintItem());
+                }}
+              >
+                Mint Pet
+              </Button>
+            </div>
+            {/* */}
+            <div style={{ width: 820, margin: "auto", paddingBottom: 256 }}>
+              <List
+                bordered
+                dataSource={yourLoogies}
+                renderItem={item => {
+                  const id = item.id.toNumber();
+
+                  return (
+                    <List.Item key={id + "_" + item.uri + "_" + item.owner}>
+                      <Card
+                        title={
+                          <div>
+                            <span style={{ fontSize: 18, marginRight: 8 }}>{item.name}</span>
+                          </div>
+                        }
+                      >
+                        <img src={item.image} />
+                        <div>{item.description}</div>
+                      </Card>
+
+                      <div>
+                        owner:
+                        <Address address={item.owner} blockExplorer={blockExplorer} fontSize={16} />
+                        <AddressInput
+                          placeholder="transfer to address"
+                          value={transferToAddresses[id]}
+                          onChange={newValue => {
+                            const update = {};
+                            update[id] = newValue;
+                            setTransferToAddresses({ ...transferToAddresses, ...update });
+                          }}
+                        />
+                        <Button
+                          onClick={() => {
+                            console.log("writeContracts", writeContracts);
+                            tx(writeContracts.Loogies.transferFrom(address, transferToAddresses[id], id));
+                          }}
+                        >
+                          Transfer
+                        </Button>
+                        <br />
+                        <br />
+                        Transfer to Tank:{" "}
+                        <Address
+                          address={readContracts.LoogieTank.address}
+                          blockExplorer={blockExplorer}
+                          fontSize={16}
+                        />
+                        <Input
+                          placeholder="Tank ID"
+                          // value={transferToTankId[id]}
+                          onChange={newValue => {
+                            console.log("newValue", newValue.target.value);
+                            const update = {};
+                            update[id] = newValue.target.value;
+                            setTransferToTankId({ ...transferToTankId, ...update });
+                          }}
+                        />
+                        <Button
+                          onClick={() => {
+                            console.log("writeContracts", writeContracts);
+                            console.log("transferToTankId[id]", transferToTankId[id]);
+                            console.log(parseInt(transferToTankId[id]));
+
+                            const tankIdInBytes = "0x" + parseInt(transferToTankId[id]).toString(16).padStart(64, "0");
+                            console.log(tankIdInBytes);
+
+                            tx(
+                              writeContracts.Loogies["safeTransferFrom(address,address,uint256,bytes)"](
+                                address,
+                                readContracts.LoogieTank.address,
+                                id,
+                                tankIdInBytes,
+                              ),
+                            );
+                          }}
+                        >
+                          Transfer
+                        </Button>
+                      </div>
+                    </List.Item>
+                  );
+                }}
+              />
+            </div>
+            {/* */}
+          </Route>
+          <Route path="/tank">
+            <div style={{ maxWidth: 820, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
+              <Button
+                type={"primary"}
+                onClick={() => {
+                  tx(writeContracts.LoogieTank.mintItem());
+                }}
+              >
+                Mint Tank
+              </Button>
+              <Button onClick={() => updateLoogieTanks()}>Refresh</Button>
+            </div>
+            {/* */}
+            <div style={{ width: 820, margin: "auto", paddingBottom: 256 }}>
+              <List
+                bordered
+                dataSource={yourLoogieTanks}
+                renderItem={item => {
+                  const id = item.id.toNumber();
+
+                  return (
+                    <List.Item key={id + "_" + item.uri + "_" + item.owner}>
+                      <Card
+                        title={
+                          <div>
+                            <span style={{ fontSize: 18, marginRight: 8 }}>{item.name}</span>
+                          </div>
+                        }
+                      >
+                        <img src={item.image} />
+                        <div>{item.description}</div>
+                      </Card>
+
+                      <div>
+                        owner:
+                        <Address address={item.owner} blockExplorer={blockExplorer} fontSize={16} />
+                        <AddressInput
+                          placeholder="transfer to address"
+                          value={transferToAddresses[id]}
+                          onChange={newValue => {
+                            const update = {};
+                            update[id] = newValue;
+                            setTransferToAddresses({ ...transferToAddresses, ...update });
+                          }}
+                        />
+                        <Button
+                          onClick={() => {
+                            console.log("writeContracts", writeContracts);
+                            tx(writeContracts.LoogieTank.transferFrom(address, transferToAddresses[id], id));
+                          }}
+                        >
+                          Transfer
+                        </Button>
+                        <br />
+                        <br />
+                        <Button
+                          onClick={() => {
+                            tx(writeContracts.LoogieTank.returnAllLoogies(id));
+                          }}
+                        >
+                          Eject All Pets
+                        </Button>
+                      </div>
+                    </List.Item>
+                  );
+                }}
+              />
+            </div>
+          </Route>
+          <Route path="/debugpet">
             <Contract
-              name="YourContract"
-              name={contractName}
+              name={petName}
               address={address}
               signer={userSigner}
               provider={localProvider}
@@ -279,38 +537,9 @@ function App(props) {
               chainId={localChainId}
             />
           </Route>
-          <Route path="/token">
+          <Route path="/debugtank">
             <Contract
-              name={tokenName}
-              address={address}
-              signer={userSigner}
-              provider={localProvider}
-              blockExplorer={blockExplorer}
-              gasPrice={gasPrice}
-              chainId={localChainId}
-              show={["balanceOf", "transfer"]}
-            />
-          </Route>
-          <Route path="/hints">
-            <Hints address={address} yourLocalBalance={yourLocalBalance} price={price} />
-          </Route>
-          <Route path="/exampleui">
-            <ExampleUI
-              address={address}
-              userSigner={userSigner}
-              localProvider={localProvider}
-              yourLocalBalance={yourLocalBalance}
-              price={price}
-              tx={tx}
-              writeContracts={writeContracts}
-              readContracts={readContracts}
-              purpose={purpose}
-              setPurposeEvents={setPurposeEvents}
-            />
-          </Route>
-          <Route path="/debugcontracts">
-            <Contract
-              name={tokenName}
+              name={tankName}
               address={address}
               signer={userSigner}
               provider={localProvider}
@@ -336,14 +565,6 @@ function App(props) {
           loadWeb3Modal={loadWeb3Modal}
           logoutOfWeb3Modal={logoutOfWeb3Modal}
           blockExplorer={blockExplorer}
-        />
-        <TokenBalance
-          name={tokenName}
-          img={"💰"}
-          suffix={"YTK"}
-          fontSize={16}
-          address={address}
-          contracts={readContracts}
         />
       </div>
 

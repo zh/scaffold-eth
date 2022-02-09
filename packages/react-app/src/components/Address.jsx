@@ -15,15 +15,11 @@ import { useLookupAddress } from "../hooks";
 
   <Address
     address={address}
-    ensProvider={mainnetProvider}
     blockExplorer={blockExplorer}
     fontSize={fontSize}
   />
 
   ~ Features ~
-
-  - Provide ensProvider={mainnetProvider} and your address will be replaced by ENS name
-              (ex. "0xa870" => "user.eth")
   - Provide blockExplorer={blockExplorer}, click on address and get the link
               (ex. by default "https://etherscan.io/" or for xdai "https://blockscout.com/poa/xdai/")
   - Provide fontSize={fontSize} to change the size of address text

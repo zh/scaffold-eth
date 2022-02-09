@@ -1,7 +1,7 @@
 require("dotenv").config();
 
 export const IPFS_GATEWAY = "https://ipfs.io/ipfs/";
-export const INFURA_ID = process.env.REACT_APP_INFURA_KEY;
+export const ALCHEMY_KEY = process.env.REACT_APP_ALCHEMY_API_KEY;
 export const ETHERSCAN_KEY = process.env.REACT_APP_ETHERSCAN_KEY;
 // BLOCKNATIVE ID FOR Notify.js:
 export const BLOCKNATIVE_DAPPID = "0b58206a-f3c0-4701-a62f-73c7243e8c77";
@@ -17,14 +17,14 @@ export const NETWORKS = {
     blockExplorer: "",
     rpcUrl: "http://" + window.location.hostname + ":8545",
   },
-  kovan: {
-    name: "kovan",
+  rinkeby: {
+    name: "rinkeby",
     color: "#7003DD",
-    chainId: 42,
+    chainId: 4,
     coin: "ETH",
-    rpcUrl: `https://kovan.infura.io/v3/${INFURA_ID}`,
-    blockExplorer: "https://kovan.etherscan.io/",
-    faucet: "https://gitter.im/kovan-testnet/faucet", // https://faucet.kovan.network/
+    rpcUrl: `https://eth-rinkeby.alchemyapi.io/v2/${ALCHEMY_KEY}`,
+    faucet: "https://faucet.rinkeby.io/",
+    blockExplorer: "https://rinkeby.etherscan.io/",
   },
   xdai: {
     name: "xdai",
@@ -219,16 +219,6 @@ export const NETWORKS = {
     rpcUrl: "https://rpc4.bakerloo.autonity.network:8545",
     gasPrice: 10000000000,
   },
-  kaleido: {
-    name: "Kaleido",
-    color: "#7003DD",
-    chainId: parseInt(process.env.REACT_APP_KALEIDO_CHAINID, 10),
-    rpcUrl: `https://${process.env.REACT_APP_KALEIDO_URL}.kaleido.io`,
-    user: process.env.REACT_APP_KALEIDO_USER,
-    pass: process.env.REACT_APP_KALEIDO_PASS,
-    coin: "STO",
-    gasPrice: 1000000000,
-  },
 };
 
 export const NETWORK = chainId => {
@@ -239,4 +229,4 @@ export const NETWORK = chainId => {
   }
 };
 
-export const GAS_PRICE = 1000000000; // fix this for your network
+export const GAS_PRICE = 1050000000; // fix this for your network
