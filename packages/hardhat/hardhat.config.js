@@ -53,10 +53,11 @@ module.exports = {
     localhost: {
       url: "http://localhost:8545",
     },
-    kovan: {
-      url: "https://kovan.infura.io/v3/" + infuraKey,
+    rinkeby: {
+      url: "https://rinkeby.infura.io/v3/" + infuraKey,
+      chainId: 4,
       accounts: {
-        mnemonic: mnemonic(),
+        mnemonic: mnemonic("testnet"),
       },
     },
     xdai: {
@@ -218,6 +219,38 @@ module.exports = {
         mnemonic: mnemonic(),
       },
     },
+    testnetTelos: {
+      url: "https://testnet.telos.net/evm",
+      chainId: 41,
+      gasPrice: 500000000000,
+      accounts: {
+        mnemonic: mnemonic("testnet"),
+      },
+    },
+    mainnetTelos: {
+      url: "https://mainnet.telos.net/evm",
+      chainId: 40,
+      gasPrice: 500000000000,
+      accounts: {
+        mnemonic: mnemonic(),
+      },
+    },
+    testnetAurora: {
+      url: "https://testnet.aurora.dev",
+      chainId: 1313161555,
+      gasPrice: 120 * 1000000000,
+      accounts: {
+        mnemonic: mnemonic("testnet"),
+      },
+    },
+    mainnetAurora: {
+      url: "https://mainnet.aurora.dev",
+      chainId: 1313161554,
+      gasPrice: 120 * 1000000000,
+      accounts: {
+        mnemonic: mnemonic(),
+      },
+    },
     bakerloo: {
       url: "https://rpc4.bakerloo.autonity.network:8545",
       chainId: 444900,
@@ -279,6 +312,7 @@ module.exports = {
     mainnetAva: deployerAddress,
     testnetFantom: deployerAddress,
     fantomOpera: deployerAddress,
+    testnetAurora: deployerAddress,
   },
 };
 

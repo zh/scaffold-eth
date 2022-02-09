@@ -28,6 +28,7 @@ const { ethers } = require("ethers");
 
 // 📡 What chain are your contracts deployed to?
 const targetNetwork = NETWORKS.localhost;
+// const targetNetwork = NETWORKS.rinkeby;
 // const targetNetwork = NETWORKS.polygon;
 // const targetNetwork = NETWORKS.mumbai;
 // const targetNetwork = NETWORKS.testnetSmartBCH;
@@ -44,6 +45,10 @@ const targetNetwork = NETWORKS.localhost;
 // const targetNetwork = NETWORKS.mainnetTomo;
 // const targetNetwork = NETWORKS.testnetBSC;
 // const targetNetwork = NETWORKS.mainnetBSC;
+// const targetNetwork = NETWORKS.testnetTelos;
+// const targetNetwork = NETWORKS.mainnetTelos;
+// const targetNetwork = NETWORKS.testnetAurora;
+// const targetNetwork = NETWORKS.mainnetAurora;
 // const targetNetwork = NETWORKS.bakerloo;
 // const targetNetwork = NETWORKS.kaleido;
 
