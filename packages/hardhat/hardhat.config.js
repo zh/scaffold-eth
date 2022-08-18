@@ -267,6 +267,22 @@ module.exports = {
         mnemonic: mnemonic("testnet"),
       },
     },
+    testnetMeter: {
+      url: "https://rpctest.meter.io",
+      chainId: 83,
+      gasPrice: 1000000000,
+      accounts: {
+        mnemonic: mnemonic("testnet"),
+      },
+    },
+    mainnetMeter: {
+      url: "https://rpc.meter.io",
+      chainId: 82,
+      gasPrice: 1000000000,
+      accounts: {
+        mnemonic: mnemonic(),
+      },
+    },
   },
   solidity: {
     compilers: [
