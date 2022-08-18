@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol";
 
 contract ScaffoldToken is ERC20, ERC20Burnable, Ownable, ERC20Permit {
     constructor() ERC20("Scaffold Token", "SCF") ERC20Permit("Scaffold Token") {
-        _mint(msg.sender, 10000 * 10 ** decimals());
+        _mint(msg.sender, 10000 * 10**decimals());
     }
 
     function mint(address to, uint256 amount) public onlyOwner {

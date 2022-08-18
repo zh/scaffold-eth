@@ -175,11 +175,11 @@ export const NETWORKS = {
   kaleido: {
     name: "My Kaleido",
     color: "#7003DD",
-    chainId: 1613143670,
-    rpcUrl: "https://k0or9rwvda-k0xgoqb5h8-rpc.kr0-aws.kaleido.io",
-    user: "k0bas2dknc",
-    pass: "4lVvql6yEoB4PbcvWv5wPCdDy6yr_iWQSnNzkuK2Gyg",
-    coin: "STO",
+    chainId: parseInt(process.env.REACT_APP_KALEIDO_CHAINID, 10),
+    rpcUrl: `https://${process.env.REACT_APP_KALEIDO_URL}/`,
+    user: process.env.REACT_APP_KALEIDO_USER,
+    pass: process.env.REACT_APP_KALEIDO_PASS,
+    coin: "ETH",
     gasPrice: 1000000000,
   },
 };
@@ -192,4 +192,4 @@ export const NETWORK = chainId => {
   }
 };
 
-export const GAS_PRICE = NETWORKS.testnetFantom.gasPrice; // fix this for your network
+export const GAS_PRICE = NETWORKS.kaleido.gasPrice; // fix this for your network

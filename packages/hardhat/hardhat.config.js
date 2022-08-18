@@ -20,6 +20,9 @@ const deployerAddress = process.env.DEPLOYER;
 const walletURL = process.env.WALLET_URL || "http://localhost:3000";
 const tokensContract = "ScaffoldToken";
 
+const kaleidoAuth = `${process.env.KALEIDO_USER}:${process.env.KALEIDO_PASS}`;
+const kaleidoUrl = `https://${kaleidoAuth}@${process.env.KALEIDO_URL}/`;
+
 /*
       📡 This is where you configure your deploy configuration for 🏗 scaffold-eth
 
@@ -185,8 +188,8 @@ module.exports = {
       },
     },
     kaleido: {
-      url: "https://k0bas2dknc:4lVvql6yEoB4PbcvWv5wPCdDy6yr_iWQSnNzkuK2Gyg@k0or9rwvda-k0xgoqb5h8-rpc.kr0-aws.kaleido.io/",
-      chainId: 1613143670,
+      url: kaleidoUrl,
+      chainId: parseInt(process.env.KALEIDO_CHAINID, 10),
       gasPrice: 1000000000,
       accounts: {
         mnemonic: mnemonic("testnet"),
@@ -519,7 +522,7 @@ task("fund", "Send ERC-20 tokens")
     await contract.transfer(taskArgs.account, "" + amount * 10 ** 18);
   });
 
-task("send", "Send BCH")
+task("send", "Send coins")
   .addParam("from", "From address or account index")
   .addOptionalParam("to", "To address or account index")
   .addOptionalParam("amount", "Amount to send in ether")

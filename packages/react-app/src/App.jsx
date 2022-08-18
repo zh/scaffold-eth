@@ -45,7 +45,7 @@ if (targetNetwork.user && targetNetwork.pass) {
     url: targetNetwork.rpcUrl,
     user: targetNetwork.user,
     password: targetNetwork.pass,
-  }
+  };
 }
 if (DEBUG) console.log("🏠 Connecting to provider:", localProviderUrl);
 const localProvider = new ethers.providers.StaticJsonRpcProvider(localProviderUrl);
