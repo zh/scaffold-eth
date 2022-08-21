@@ -49,6 +49,10 @@ const targetNetwork = NETWORKS.localhost;
 // const targetNetwork = NETWORKS.mainnetTelos;
 // const targetNetwork = NETWORKS.testnetAurora;
 // const targetNetwork = NETWORKS.mainnetAurora;
+// const targetNetwork = NETWORKS.testnetMeter;
+// const targetNetwork = NETWORKS.mainnetMeter;
+// const targetNetwork = NETWORKS.testnetDogechain;
+// const targetNetwork = NETWORKS.mainnetDogechain;
 // const targetNetwork = NETWORKS.bakerloo;
 // const targetNetwork = NETWORKS.kaleido;
 
